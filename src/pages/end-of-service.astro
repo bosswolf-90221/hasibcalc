@@ -21,6 +21,8 @@ const ex = example.ok ? example.value : null;
 ---
 <CalcLayout slug="end-of-service" lede="لموظفي القطاع الخاص غير المواطنين في الإمارات بدوام كامل، وفق المادة 51 من قانون العمل الاتحادي. اكتب راتبك الأساسي وتاريخي العمل.">
   <div data-calc="end-of-service">
+    <div class="card calc-card">
+    <p class="card-label">اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات مكافأة نهاية الخدمة">
       راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
       بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
@@ -29,6 +31,7 @@ const ex = example.ok ? example.value : null;
     </form>
     <FieldErrors names={['basicSalary', 'startDate', 'endDate', 'unpaidAbsenceDays']} />
     <p class="hint">الراتب الأساسي فقط كما في عقدك، بدون بدل السكن والمواصلات وغيرها.</p>
+    </div>
 
     <ResultCard view={view} sensitive notes={[
       'الأجر اليومي محسوب على أساس الراتب الأساسي ÷ 30، وهي الطريقة الشائعة. بعض الجهات تقسم على 365 بعد ضرب الراتب في 12، والفرق نحو 1.4%.',

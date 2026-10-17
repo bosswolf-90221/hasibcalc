@@ -15,10 +15,13 @@ const a = r.ok ? r.value : null;
 ---
 <CalcLayout slug="age" lede="اختر تاريخ ميلادك، ونحسب عمرك بتاريخ اليوم في جهازك.">
   <div data-calc="age">
+    <div class="card calc-card">
+    <p class="card-label">اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="تاريخ الميلاد">
       ولدت في <DateIn name="birthDate" label="تاريخ الميلاد" value={d.birthDate} max={today} />.
     </form>
     <FieldErrors names={['birthDate']} />
+    </div>
 
     <section class="trio" aria-label="العمر بالتفصيل">
       <div><span class="n num" data-x="y">{a?.years ?? '—'}</span><span class="l">سنة</span></div>
@@ -46,10 +49,10 @@ const a = r.ok ? r.value : null;
 </CalcLayout>
 
 <style>
-  .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 28px; }
-  .trio div { display: flex; flex-direction: column; align-items: flex-start; border-top: 2px solid var(--line); padding-top: 10px; }
-  .trio .n { font-size: clamp(2rem, 7vw, 3rem); font-weight: 200; color: var(--accent); line-height: 1.1; }
-  .trio .l { font-size: var(--step--1); color: var(--soft); }
+  .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+  .trio div { display: flex; flex-direction: column; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 16px 18px; }
+  .trio .n { font-size: clamp(2rem, 7vw, 3rem); font-weight: 400; color: var(--accent); line-height: 1.1; }
+  .trio .l { font-size: .88rem; color: var(--soft); }
 </style>
 
 <script>

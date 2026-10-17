@@ -15,11 +15,14 @@ const marker = r.ok ? pos(r.value.bmi) : 0;
 ---
 <CalcLayout slug="bmi" lede="للبالغين من عمر 20 سنة فأكثر. اكتب وزنك بالكيلوغرام وطولك بالسنتيمتر.">
   <div data-calc="bmi">
+    <div class="card calc-card">
+    <p class="card-label">اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="الوزن والطول">
       وزني <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} width={3} /> كجم
       وطولي <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} width={3} /> سم.
     </form>
     <FieldErrors names={['weightKg', 'heightCm']} />
+    </div>
 
     <ResultCard view={view} notes={['مؤشر كتلة الجسم أداة فحص أولي وليس تشخيصاً، ولا يفرّق بين العضلات والدهون.', 'تصنيفات البالغين لا تنطبق على الأطفال والمراهقين، ولا على الحوامل.']}>
       <p class="formula" slot="formula"><code>BMI = الوزن بالكيلوغرام ÷ (الطول بالمتر)²</code></p>

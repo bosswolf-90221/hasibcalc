@@ -1,7 +1,8 @@
 ---
 import Base from './Base.astro';
 import AdSlot from '../components/AdSlot.astro';
-import Related from '../components/Related.astro';
+import Icon from '../components/Icon.astro';
+import CalcCard from '../components/CalcCard.astro';
 import { bySlug, CATEGORIES } from '../data/calculators';
 import { SITE } from '../config/site';
 import { arDate } from '../lib/format';
@@ -34,17 +35,44 @@ const jsonLd = [
   },
 ];
 ---
-<Base title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd}>
-  <nav class="crumbs" aria-label="مسار التنقل">
-    <ol><li><a href="/">الرئيسية</a></li><li><a href={`/category/${cat.key}/`}>{cat.name}</a></li><li aria-current="page">{c.short}</li></ol>
-  </nav>
-  <h1>{c.question}</h1>
-  <p class="lede">{lede}</p>
-  <slot />
-  <AdSlot position="afterCalculator" />
-  <article class="article">
-    <slot name="article" />
-    <p class="reviewed">آخر مراجعة للمعادلة مقابل المصادر المذكورة: {arDate(SITE.lastReviewed)}.</p>
-  </article>
-  <Related slugs={c.related} />
+<Base title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd} bare>
+  <section class="band">
+    <div class="container band-inner">
+      <nav class="crumbs" aria-label="مسار التنقل">
+        <ol><li><a href="/">الرئيسية</a></li><li><a href={`/category/${cat.key}/`}>{cat.name}</a></li><li aria-current="page">{c.short}</li></ol>
+      </nav>
+      <div class="titlerow">
+        <span class="tile big-tile" data-cat={cat.key}><Icon name={slug} size={28} /></span>
+        <h1>{c.question}</h1>
+      </div>
+      <p class="lede" style="margin-top:12px">{lede}</p>
+    </div>
+  </section>
+
+  <div class="container calc-grid">
+    <div class="calc-main">
+      <slot />
+      <AdSlot position="afterCalculator" />
+      <article class="article">
+        <slot name="article" />
+        <p class="reviewed">آخر مراجعة للمعادلة مقابل المصادر المذكورة: {arDate(SITE.lastReviewed)}.</p>
+      </article>
+    </div>
+
+    <aside class="aside" aria-label="روابط مفيدة">
+      <div class="card side-card">
+        <h2>حاسبات ذات صلة</h2>
+        <ul class="side-list">{c.related.map((s) => <li><CalcCard c={bySlug(s)} compact /></li>)}</ul>
+      </div>
+      <div class="card side-card">
+        <h2>لماذا تثق بالنتيجة؟</h2>
+        <ul class="trust">
+          <li><Icon name="book" size={18} />المعادلة معروضة كاملة تحت «كيف حسبناها؟».</li>
+          <li><Icon name="check" size={18} />مبنية على مصادر رسمية مذكورة أسفل الصفحة.</li>
+          <li><Icon name="lock" size={18} />أرقامك لا تغادر جهازك.</li>
+        </ul>
+        <p style="margin-top:12px"><a class="lnk" href="/about/">اقرأ منهجيتنا ←</a></p>
+      </div>
+    </aside>
+  </div>
 </Base>

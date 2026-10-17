@@ -18,6 +18,8 @@ const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, me
 ---
 <CalcLayout slug="loan" lede="للقرض الشخصي وتمويل السيارة والعقار. اكتب المبلغ والفائدة والمدة، واختر نوع الفائدة كما يذكره البنك.">
   <div data-calc="loan">
+    <div class="card calc-card">
+    <p class="card-label">اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات القرض">
       أريد قرضاً بقيمة <NumIn name="principal" label="مبلغ القرض" value={d.principal} width={7} />
       بفائدة سنوية <NumIn name="annualRatePercent" label="نسبة الفائدة السنوية" value={d.annualRatePercent} width={3} />%
@@ -26,6 +28,7 @@ const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, me
     </form>
     <FieldErrors names={['principal', 'annualRatePercent', 'months', 'method']} />
     <p class="hint">إعلانات تمويل السيارات تذكر الفائدة الثابتة غالباً، وقروض العقار والقروض الشخصية تذكر المتناقصة غالباً. اسأل البنك إن لم تكن متأكداً.</p>
+    </div>
 
     <ResultCard view={view} sensitive notes={[
       'نموذج الفائدة الثابتة هنا مبسّط: الفائدة على كامل المبلغ طوال المدة، موزعة بالتساوي.',

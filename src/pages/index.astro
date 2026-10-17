@@ -1,111 +1,133 @@
 ---
 import Base from '../layouts/Base.astro';
-import { CALCULATORS, CATEGORIES, inCategory, bySlug } from '../data/calculators';
+import Icon from '../components/Icon.astro';
+import CalcCard from '../components/CalcCard.astro';
+import { CALCULATORS, CATEGORIES, inCategory } from '../data/calculators';
 import { SITE } from '../config/site';
 
 const suggestions = ['نهاية الخدمة', 'ضريبة 5%', 'قسط سيارة', 'زكاة', 'خصم', 'وزني', 'عمري'];
-const pairs: [string, string, string][] = [
-  ['end-of-service', 'zakat', 'استلمت مكافأتك؟ قد تبلغ مدخراتك النصاب'],
-  ['discount', 'vat', 'بعد الخصم، أضف الضريبة لتعرف ما ستدفعه'],
-  ['loan', 'percentage', 'قارن عرضين بنسبة التغير بين قسطيهما'],
-];
+const featured = ['end-of-service', 'loan', 'vat', 'zakat'];
 ---
-<Base title={`${SITE.name}: ماذا تريد أن تحسب اليوم؟ حاسبات عربية مجانية`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" wide current="home">
-  <section class="intro">
-    <p class="eyebrow">{SITE.tagline}</p>
-    <h1>ماذا تريد أن تحسب اليوم؟</h1>
-    <p class="lede">اختر سؤالك، واكتب أرقامك في جملة واحدة، والإجابة تظهر فوراً مع طريقة حسابها.</p>
+<Base title={`${SITE.name}: حاسبات عربية مجانية وواضحة`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" bare>
+  <section class="hero">
+    <div class="container hero-inner">
+      <p class="pill"><Icon name="zap" size={14} /> {CALCULATORS.length} حاسبات مجانية بالعربية</p>
+      <h1>ماذا تريد أن تحسب اليوم؟</h1>
+      <p class="lede">اكتب أرقامك في جملة واحدة، والإجابة تظهر فوراً مع طريقة حسابها ومصدرها الرسمي.</p>
 
-    <div class="search" role="search">
-      <label for="q" class="sr-only">ابحث عن حاسبة</label>
-      <input id="q" type="search" placeholder="ابحث: نهاية الخدمة، ضريبة، قسط…" autocomplete="off" aria-controls="search-results" />
-      <div class="sugg" aria-label="اقتراحات">
-        {suggestions.map((s) => <button type="button" class="chip" data-s={s}>{s}</button>)}
+      <div class="search" role="search" id="search">
+        <div class="search-box">
+          <Icon name="search" size={22} />
+          <label for="q" class="sr-only">ابحث عن حاسبة</label>
+          <input id="q" type="search" placeholder="ابحث عن حاسبة: نهاية الخدمة، ضريبة، قسط سيارة…" autocomplete="off" aria-controls="search-results" />
+        </div>
+        <div class="sugg" aria-label="اقتراحات">
+          <span>جرّب:</span>
+          {suggestions.map((s) => <button type="button" class="chip" data-s={s}>{s}</button>)}
+        </div>
+        <ul id="search-results" class="results card" hidden aria-live="polite"></ul>
+        <p class="empty card" hidden>لا توجد حاسبة بهذا الاسم بعد. جرّب كلمة أخرى، أو <a href="/contact/">اقترح حاسبة</a>.</p>
       </div>
-      <ul id="search-results" class="qs" hidden aria-live="polite"></ul>
-      <p class="empty" hidden>لا توجد حاسبة بهذا الاسم بعد. جرّب كلمة أخرى، أو <a href="/contact/">اقترح حاسبة</a>.</p>
     </div>
   </section>
 
-  <section class="cats" aria-label="الحاسبات حسب الموضوع" id="all">
-    {CATEGORIES.map((cat) => (
-      <div class="cat">
-        <h2><a href={`/category/${cat.key}/`}>{cat.name}</a></h2>
-        <p class="cat-intro">{cat.intro}</p>
-        <ul class="qs">
-          {inCategory(cat.key).map((c) => (
-            <li><a href={`/${c.slug}/`}><span>{c.question}<span class="meta">{c.short}</span></span><span class="ar" aria-hidden="true">←</span></a></li>
-          ))}
-        </ul>
-      </div>
-    ))}
+  <section class="container section" aria-labelledby="feat-title">
+    <div class="sec-head">
+      <h2 id="feat-title">ابدأ من هنا</h2>
+      <p>أسئلة الراتب والمال التي تهم المقيمين في الإمارات والخليج.</p>
+    </div>
+    <div class="grid-cards">{featured.map((s) => <CalcCard c={CALCULATORS.find((c) => c.slug === s)!} />)}</div>
   </section>
 
-  <section class="pairs" aria-labelledby="pairs-title">
-    <h2 id="pairs-title">أسئلة تأتي معاً</h2>
-    <ul>
-      {pairs.map(([a, b, why]) => (
-        <li>
-          <p>{why}</p>
-          <a href={`/${a}/`}>{bySlug(a).question}</a>
-          <span aria-hidden="true">ثم</span>
-          <a href={`/${b}/`}>{bySlug(b).question}</a>
-        </li>
+  <section class="container section" aria-labelledby="cats-title" id="all">
+    <div class="sec-head">
+      <h2 id="cats-title">كل الحاسبات حسب الموضوع</h2>
+    </div>
+    <div class="cat-grid">
+      {CATEGORIES.map((cat) => (
+        <div class="card cat-card" data-cat={cat.key}>
+          <a class="cat-head" href={`/category/${cat.key}/`}>
+            <span class="tile"><Icon name={cat.key} size={22} /></span>
+            <span><span class="cat-name">{cat.name}</span><span class="cat-count">{inCategory(cat.key).length} حاسبات</span></span>
+          </a>
+          <p class="cat-intro">{cat.intro}</p>
+          <ul class="side-list">{inCategory(cat.key).map((c) => <li><CalcCard c={c} compact /></li>)}</ul>
+        </div>
       ))}
-    </ul>
+    </div>
   </section>
 
-  <section class="method" aria-labelledby="method-title">
-    <h2 id="method-title">كيف نحسب؟</h2>
-    <div class="method-grid">
-      <p><strong>معادلات ثابتة، لا تخمين.</strong> كل نتيجة تأتي من معادلة معروضة في صفحتها تحت «كيف حسبناها؟»، وتتحقق منها اختبارات آلية.</p>
-      <p><strong>مصادر رسمية.</strong> القوانين والنسب مأخوذة من جهات حكومية ومراجع معتمدة، مذكورة في نهاية كل صفحة مع تاريخ آخر مراجعة.</p>
-      <p><strong>أرقامك تبقى عندك.</strong> الحساب يتم داخل متصفحك، ولا نرسل ما تكتبه إلى أي خادم.</p>
+  <section class="container section" aria-labelledby="why-title">
+    <div class="sec-head center">
+      <h2 id="why-title">لماذا حاسِب؟</h2>
+      <p>حاسبات تشرح نفسها، حتى تثق بالرقم قبل أن تقرر.</p>
     </div>
-    <p><a href="/about/">اقرأ المنهجية وحدود الدقة ←</a></p>
+    <div class="why">
+      <div class="card why-card"><span class="tile"><Icon name="zap" /></span><h3>نتيجة فورية</h3><p>لا أزرار ولا انتظار. غيّر أي رقم في الجملة وتتحدث النتيجة مباشرة.</p></div>
+      <div class="card why-card"><span class="tile"><Icon name="book" /></span><h3>المعادلة أمامك</h3><p>كل نتيجة معها طريقة حسابها خطوة بخطوة تحت «كيف حسبناها؟».</p></div>
+      <div class="card why-card"><span class="tile"><Icon name="check" /></span><h3>مصادر رسمية</h3><p>القوانين والنسب من جهات حكومية ومراجع معتمدة، مع تاريخ آخر مراجعة.</p></div>
+      <div class="card why-card"><span class="tile"><Icon name="lock" /></span><h3>خصوصيتك محفوظة</h3><p>الحساب يتم داخل متصفحك، وأرقامك لا تُرسل إلى أي خادم.</p></div>
+    </div>
+  </section>
+
+  <section class="container section">
+    <div class="cta">
+      <div>
+        <h2>لم تجد الحاسبة التي تحتاجها؟</h2>
+        <p>اقترحها علينا، ونضيف الحاسبات الأكثر طلباً.</p>
+      </div>
+      <a class="btn primary" href="/contact/">اقترح حاسبة</a>
+    </div>
   </section>
 </Base>
 
 <style>
-  .intro { max-width: var(--read); }
-  .intro h1 { font-weight: 300; font-size: var(--step-4); margin-bottom: 10px; }
-  .search { margin-top: 26px; }
-  .search input {
-    width: 100%; font: inherit; font-size: 1.15rem; color: var(--ink); background: var(--surface);
-    border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; min-height: 54px;
-  }
-  .search input:focus { outline: none; border-color: var(--accent); }
-  .sugg { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-  .chip { font: inherit; font-size: .88rem; color: var(--soft); background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 6px 14px; min-height: 38px; cursor: pointer; }
+  .hero { background: radial-gradient(1200px 400px at 50% -80px, color-mix(in srgb, var(--accent) 18%, transparent), transparent), linear-gradient(180deg, var(--accent-bg), var(--bg)); border-bottom: 1px solid var(--line); }
+  .hero-inner { text-align: center; padding-block: 64px 56px; display: flex; flex-direction: column; align-items: center; }
+  .hero h1 { font-size: clamp(2.1rem, 6vw, 3.4rem); font-weight: 700; margin-bottom: 12px; }
+  .hero .lede { margin-inline: auto; font-size: 1.15rem; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; font-weight: 500; color: var(--accent-strong); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; box-shadow: var(--shadow-sm); margin-bottom: 18px; }
+  .search { width: 100%; max-width: 680px; margin-top: 26px; position: relative; }
+  .search-box { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 6px 20px; box-shadow: var(--shadow-lg); color: var(--soft); }
+  .search-box:focus-within { border-color: var(--accent); box-shadow: var(--shadow-lg), 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .search-box input { flex: 1; min-width: 0; font: inherit; font-size: 1.12rem; color: var(--ink); background: transparent; border: 0; padding: 14px 0; min-height: 56px; }
+  .search-box input:focus { outline: none; }
+  .sugg { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; font-size: .88rem; color: var(--soft); }
+  .chip { font: inherit; font-size: .86rem; font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 6px 14px; min-height: 36px; cursor: pointer; }
   .chip:hover { color: var(--accent); border-color: var(--accent); }
-  #search-results { margin-top: 10px; }
-  .empty { color: var(--soft); margin-top: 14px; }
+  .results { list-style: none; margin: 12px 0 0; padding: 6px; text-align: start; box-shadow: var(--shadow-lg); }
+  .results :global(a) { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 12px; text-decoration: none; font-weight: 500; }
+  .results :global(a:hover), .results :global(a:focus-visible) { background: var(--accent-bg); color: var(--accent-strong); }
+  .results :global(.k) { font-size: .82rem; color: var(--soft); font-weight: 400; }
+  .empty { margin-top: 12px; padding: 14px; color: var(--soft); }
 
-  .cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); }
-  .cat h2 { font-size: var(--step-0); font-weight: 500; margin: 0; }
-  .cat h2 a { text-decoration: none; }
-  .cat-intro { color: var(--soft); font-size: var(--step--1); margin: 4px 0 6px; min-height: 3.4em; }
-  .cat .qs a { font-size: 1.12rem; }
+  .section { padding-top: 56px; }
+  .sec-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 20px; }
+  .sec-head h2 { font-size: 1.5rem; margin: 0; }
+  .sec-head p { color: var(--soft); margin: 0; }
+  .sec-head.center { text-align: center; align-items: center; }
 
-  .pairs { margin-top: 64px; }
-  .pairs h2, .method h2 { font-size: var(--step--1); font-weight: 400; color: var(--soft); }
-  .pairs ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .pairs li { background: var(--surface); border-radius: var(--radius); padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; }
-  .pairs li p { color: var(--soft); font-size: var(--step--1); margin: 0 0 6px; }
-  .pairs li a { color: var(--accent); text-decoration: none; font-weight: 400; }
-  .pairs li a:hover { text-decoration: underline; }
-  .pairs li span { color: var(--soft); font-size: .8rem; }
+  .cat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .cat-card { padding: 22px; }
+  .cat-head { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .cat-name { display: block; font-weight: 600; font-size: 1.12rem; }
+  .cat-count { display: block; font-size: .82rem; color: var(--soft); }
+  .cat-head:hover .cat-name { color: var(--accent); }
+  .cat-intro { color: var(--soft); font-size: .9rem; margin: 12px 0 8px; }
 
-  .method { margin-top: 64px; max-width: var(--read); }
-  .method-grid { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
-  .method strong { font-weight: 500; }
-  .method a { color: var(--accent); text-decoration: none; }
+  .why { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .why-card { padding: 24px; }
+  .why-card .tile { margin-bottom: 14px; }
+  .why-card h3 { font-weight: 600; font-size: 1.05rem; }
+  .why-card p { color: var(--soft); font-size: .92rem; margin: 0; }
 
-  @media (max-width: 860px) {
-    .cats { grid-template-columns: 1fr; gap: 28px; margin-top: 48px; }
-    .cat-intro { min-height: 0; }
-    .pairs ul { grid-template-columns: 1fr; }
-  }
+  .cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; background: var(--accent); color: var(--accent-ink); border-radius: var(--radius-lg); padding: 32px 36px; }
+  .cta h2 { color: inherit; margin: 0 0 4px; }
+  .cta p { margin: 0; opacity: .92; }
+  .cta .btn.primary { background: var(--surface); color: var(--accent-strong); border-color: var(--surface); font-size: 1rem; padding: 12px 26px; }
+
+  @media (max-width: 980px) { .cat-grid { grid-template-columns: 1fr; } .why { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .why { grid-template-columns: 1fr; } .hero-inner { padding-block: 44px 40px; } .cta { padding: 24px; } }
 </style>
 
 <script>
@@ -113,51 +135,31 @@ const pairs: [string, string, string][] = [
   const norm = (s: string) =>
     s.toLowerCase()
       .replace(/[ً-ْـ]/g, '')
-      .replace(/[أإآ]/g, 'ا')
-      .replace(/ى/g, 'ي')
-      .replace(/ة/g, 'ه')
-      .replace(/ؤ/g, 'و')
-      .replace(/ئ/g, 'ي')
+      .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي')
       .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
-      .replace(/^ال/, '')
       .trim();
   const items = CALCULATORS.map((c) => ({ c, hay: norm([c.question, c.short, ...c.terms].join(' ')) }));
   const input = document.querySelector<HTMLInputElement>('#q')!;
   const list = document.querySelector<HTMLUListElement>('#search-results')!;
   const empty = document.querySelector<HTMLElement>('.empty')!;
-
   function run() {
     const q = norm(input.value);
     if (!q) { list.hidden = true; empty.hidden = true; return; }
     const words = q.split(/\s+/).map((w) => w.replace(/^ال/, '')).filter(Boolean);
     const hits = items.filter((it) => words.every((w) => it.hay.includes(w)));
-    list.replaceChildren(
-      ...hits.map(({ c }) => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = `/${c.slug}/`;
-        const t = document.createElement('span');
-        t.textContent = c.question;
-        const ar = document.createElement('span');
-        ar.className = 'ar';
-        ar.setAttribute('aria-hidden', 'true');
-        ar.textContent = '←';
-        a.append(t, ar);
-        li.append(a);
-        return li;
-      }),
-    );
+    list.replaceChildren(...hits.map(({ c }) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `/${c.slug}/`;
+      const t = document.createElement('span'); t.textContent = c.question;
+      const k = document.createElement('span'); k.textContent = c.short; k.className = 'k';
+      a.append(t, k); li.append(a); return li;
+    }));
     list.hidden = hits.length === 0;
     empty.hidden = hits.length !== 0;
   }
   input.addEventListener('input', run);
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const first = list.querySelector('a');
-      if (first) location.href = first.getAttribute('href')!;
-    }
-  });
-  document.querySelectorAll<HTMLButtonElement>('.chip').forEach((b) =>
-    b.addEventListener('click', () => { input.value = b.dataset.s!; run(); input.focus(); }),
-  );
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const a = list.querySelector('a'); if (a) location.href = a.getAttribute('href')!; } });
+  document.querySelectorAll<HTMLButtonElement>('.chip').forEach((b) => b.addEventListener('click', () => { input.value = b.dataset.s!; run(); input.focus(); }));
+  if (location.hash === '#search') input.focus();
 </script>

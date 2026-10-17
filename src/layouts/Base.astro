@@ -1,28 +1,27 @@
 ---
-import '@fontsource/readex-pro/200.css';
 import '@fontsource/readex-pro/300.css';
 import '@fontsource/readex-pro/400.css';
 import '@fontsource/readex-pro/500.css';
 import '@fontsource/readex-pro/600.css';
+import '@fontsource/readex-pro/700.css';
 import '../styles/global.css';
+import Icon from '../components/Icon.astro';
 import { SITE, ADS, ANALYTICS } from '../config/site';
+import { CALCULATORS, CATEGORIES } from '../data/calculators';
 
 export interface Props {
   title: string;
   description: string;
   path: string; // e.g. "/vat/"
-  wide?: boolean;
+  bare?: boolean; // page draws its own bands/containers
   noindex?: boolean;
   jsonLd?: Record<string, unknown>[];
-  current?: 'home' | 'about' | 'none';
 }
-const { title, description, path, wide = false, noindex = false, jsonLd = [], current = 'none' } = Astro.props;
+const { title, description, path, bare = false, noindex = false, jsonLd = [] } = Astro.props;
 const canonical = SITE.url + path;
 const fullTitle = path === '/' ? title : `${title} | ${SITE.name}`;
-const ld = [
-  { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: SITE.url + '/', inLanguage: 'ar' },
-  ...jsonLd,
-];
+const ld = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: SITE.url + '/', inLanguage: 'ar' }, ...jsonLd];
+const here = (p: string) => (path.startsWith(p) && p !== '/') || path === p ? 'page' : undefined;
 ---
 <!doctype html>
 <html lang="ar" dir="rtl">
@@ -33,10 +32,9 @@ const ld = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#f6f8f8" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#111718" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1516" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:locale" content={SITE.locale} />
@@ -45,42 +43,55 @@ const ld = [
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={SITE.url + '/og.png'} />
     <meta name="twitter:card" content="summary_large_image" />
-
     {ANALYTICS.searchConsoleToken && <meta name="google-site-verification" content={ANALYTICS.searchConsoleToken} />}
-
-
-    {ADS.enabled && (
-      <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>
-    )}
+    {ADS.enabled && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>}
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   </head>
   <body>
     <a class="skip" href="#main">انتقل إلى المحتوى</a>
-    <header class="site-head">
-      <div class={`wrap ${wide ? 'wide' : ''}`}>
-        <a class="logo" href="/" aria-label="حاسِب، الصفحة الرئيسية"><i aria-hidden="true"></i>{SITE.name}</a>
-        <nav aria-label="روابط رئيسية">
-          <a href="/" aria-current={current === 'home' ? 'page' : undefined}>كل الحاسبات</a>
-          <a href="/about/" aria-current={current === 'about' ? 'page' : undefined}>كيف نحسب</a>
+    <header class="topbar">
+      <div class="container topbar-row">
+        <a class="brand" href="/" aria-label="حاسِب، الصفحة الرئيسية">
+          <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 9h12M6 15h12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+          <span>{SITE.name}</span>
+        </a>
+        <nav class="mainnav" aria-label="روابط رئيسية">
+          {CATEGORIES.map((c) => <a href={`/category/${c.key}/`} aria-current={here(`/category/${c.key}/`)}>{c.name}</a>)}
+          <a href="/about/" aria-current={here('/about/')}>كيف نحسب</a>
         </nav>
+        <a class="btn-search" href="/#search" aria-label="ابحث عن حاسبة"><Icon name="search" size={18} /><span>ابحث</span></a>
       </div>
     </header>
-    <main id="main" class={`wrap ${wide ? 'wide' : ''}`}>
-      <slot />
+
+    <main id="main">
+      {bare ? <slot /> : <div class="container narrow page-pad"><slot /></div>}
     </main>
-    <footer class="site-foot">
-      <div class={`wrap ${wide ? 'wide' : ''}`}>
-        <span>© {new Date().getFullYear()} {SITE.name} · {SITE.tagline}. النتائج تقديرية ولا تُغني عن مختص.</span>
-        <nav aria-label="روابط الموقع">
-          <a href="/category/money/">المال والعمل</a>
-          <a href="/category/shopping/">التسوق والنسب</a>
-          <a href="/category/health-age/">الصحة والعمر</a>
-          <a href="/about/">من نحن</a>
-          <a href="/privacy/">الخصوصية</a>
-          <a href="/terms/">الشروط</a>
-          <a href="/contact/">اتصل بنا</a>
+
+    <footer class="footer">
+      <div class="container cols">
+        <div class="about">
+          <a class="brand light" href="/"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 9h12M6 15h12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span><span>{SITE.name}</span></a>
+          <p>{SITE.tagline}. حاسبات عربية مجانية بمعادلات واضحة ومصادر رسمية.</p>
+        </div>
+        <nav aria-label="الحاسبات">
+          <h2>الحاسبات</h2>
+          <ul>{CALCULATORS.map((c) => <li><a href={`/${c.slug}/`}>{c.short}</a></li>)}</ul>
+        </nav>
+        <nav aria-label="التصنيفات">
+          <h2>التصنيفات</h2>
+          <ul>{CATEGORIES.map((c) => <li><a href={`/category/${c.key}/`}>{c.name}</a></li>)}</ul>
+        </nav>
+        <nav aria-label="عن الموقع">
+          <h2>عن الموقع</h2>
+          <ul>
+            <li><a href="/about/">من نحن وكيف نحسب</a></li>
+            <li><a href="/privacy/">سياسة الخصوصية</a></li>
+            <li><a href="/terms/">الشروط والأحكام</a></li>
+            <li><a href="/contact/">اتصل بنا</a></li>
+          </ul>
         </nav>
       </div>
+      <div class="container legal">© {new Date().getFullYear()} {SITE.name}. النتائج تقديرية لأغراض المعلومات ولا تُغني عن استشارة مختص.</div>
     </footer>
   </body>
 </html>

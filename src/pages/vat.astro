@@ -14,6 +14,8 @@ const v = r.ok ? r.value : null;
 ---
 <CalcLayout slug="vat" lede="اختر هل تريد إضافة الضريبة إلى السعر أو استخراجها من سعر شامل، ثم اكتب المبلغ.">
   <div data-calc="vat">
+    <div class="card calc-card">
+    <p class="card-label">اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات حساب الضريبة">
       أريد <Pills name="mode" legend="نوع الحساب" selected={d.mode} options={[{ value: 'add', label: 'إضافة' }, { value: 'extract', label: 'استخراج' }]} />
       ضريبة <Pills name="ratePercent" legend="نسبة الضريبة" selected={d.ratePercent} options={[{ value: '5', label: '5%' }, { value: '15', label: '15%' }, { value: '10', label: '10%' }]} />
@@ -21,6 +23,7 @@ const v = r.ok ? r.value : null;
     </form>
     <FieldErrors names={['amount', 'ratePercent', 'mode']} />
     <p class="hint">5% هي النسبة العامة لضريبة القيمة المضافة في الإمارات. النسبتان الأخريان خياران حسابيان عامان.</p>
+    </div>
 
     <ResultCard view={view} notes={['النتائج مقرّبة إلى خانتين عشريتين للعرض، والحساب الداخلي بدقة كاملة.', 'بعض السلع والخدمات معفاة أو خاضعة لنسبة صفر، فتحقق من الفاتورة.']}>
       <p class="formula" slot="formula">الإضافة: <code>الإجمالي = المبلغ × (1 + النسبة)</code><br />الاستخراج: <code>قبل الضريبة = الشامل ÷ (1 + النسبة)</code></p>

@@ -12,6 +12,8 @@ const view = r.ok ? zakatView(r.value) : errorView(r, 'زكاتك')!;
 ---
 <CalcLayout slug="zakat" lede="حساب مبدئي لزكاة النقد والمدخرات والاستثمارات. اكتب سعر غرام الذهب اليوم كما تجده لدى محل أو مصدر موثوق، لأننا لا نعرض سعراً آنياً.">
   <div data-calc="zakat">
+    <div class="card calc-card">
+    <p class="card-label">اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات الزكاة">
       عندي نقد ومدخرات <NumIn name="cash" label="النقد والمدخرات" value={d.cash} width={7} />،
       واستثمارات تجب فيها الزكاة <NumIn name="investments" label="الاستثمارات الخاضعة للزكاة" value={d.investments} width={7} />،
@@ -19,6 +21,7 @@ const view = r.ok ? zakatView(r.value) : errorView(r, 'زكاتك')!;
       وسعر غرام الذهب عيار 24 اليوم <NumIn name="goldPricePerGram" label="سعر غرام الذهب عيار 24" value="" placeholder="؟" width={4} /> درهماً.
     </form>
     <FieldErrors names={['cash', 'investments', 'debts', 'goldPricePerGram']} />
+    </div>
 
     <ResultCard view={view} sensitive notes={[
       'تجب الزكاة إذا بلغ المال النصاب وحال عليه الحول الهجري.',

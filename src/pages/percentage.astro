@@ -11,7 +11,7 @@ const b = whatPercent(40, 250);
 const c = percentChange(250, 300);
 ---
 <CalcLayout slug="percentage" lede="ثلاثة أسئلة مختلفة تُخلط كثيراً. لكل سؤال جملته ونتيجته، فاختر السؤال الذي يطابق حالتك.">
-  <section class="pq" data-calc="pct-of" aria-labelledby="q1">
+  <section class="pq card calc-card" data-calc="pct-of" aria-labelledby="q1">
     <h2 id="q1" class="q">نسبة من رقم</h2>
     <form class="sentence" onsubmit="return false">كم يساوي <NumIn name="p1_percent" label="النسبة المئوية" value={40} width={3} />% من <NumIn name="p1_base" label="الرقم" value={250} width={6} />؟</form>
     <FieldErrors names={['p1_percent', 'p1_base']} />
@@ -20,7 +20,7 @@ const c = percentChange(250, 300);
     </ResultCard>
   </section>
 
-  <section class="pq" data-calc="what-pct" aria-labelledby="q2">
+  <section class="pq card calc-card" data-calc="what-pct" aria-labelledby="q2">
     <h2 id="q2" class="q">كم يمثل رقم من آخر</h2>
     <form class="sentence" onsubmit="return false">كم يمثل <NumIn name="p2_part" label="الجزء" value={40} width={5} /> من <NumIn name="p2_whole" label="الكل" value={250} width={6} />؟</form>
     <FieldErrors names={['p2_part', 'p2_whole']} />
@@ -29,7 +29,7 @@ const c = percentChange(250, 300);
     </ResultCard>
   </section>
 
-  <section class="pq" data-calc="change" aria-labelledby="q3">
+  <section class="pq card calc-card" data-calc="change" aria-labelledby="q3">
     <h2 id="q3" class="q">نسبة الزيادة أو النقص</h2>
     <form class="sentence" onsubmit="return false">تغيّرت القيمة من <NumIn name="p3_from" label="القيمة الأصلية" value={250} width={6} /> إلى <NumIn name="p3_to" label="القيمة الجديدة" value={300} width={6} /></form>
     <FieldErrors names={['p3_from', 'p3_to']} />
@@ -56,10 +56,9 @@ const c = percentChange(250, 300);
 </CalcLayout>
 
 <style>
-  .pq { padding-block: 8px 28px; }
-  .pq + .pq { border-top: 1px solid var(--line); padding-top: 32px; }
-  .q { font-size: var(--step--1); font-weight: 400; color: var(--accent); margin-bottom: 0; }
-  .pq :global(.result) { margin-top: 18px; padding-block: 20px 14px; }
+  .pq + .pq { margin-top: 20px; }
+  .q { font-size: .95rem; font-weight: 600; color: var(--accent); margin-bottom: 0; }
+  .pq :global(.result) { margin-top: 18px; padding-block: 20px 14px; box-shadow: none; }
   .pq :global(.r-value) { font-size: clamp(2.2rem, 8vw, 3.2rem); }
 </style>
 

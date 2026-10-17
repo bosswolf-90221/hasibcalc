@@ -14,14 +14,17 @@ const v = r.ok ? r.value : null;
 ---
 <CalcLayout slug="discount" lede="اكتب السعر ونسبة الخصم. إذا كان هناك خصم إضافي، مثل كود أو عرض بطاقة، اكتبه أيضاً، وإلا اتركه صفراً.">
   <div data-calc="discount">
+    <div class="card calc-card">
+    <p class="card-label">اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات الخصم">
       سعر القطعة <NumIn name="price" label="السعر الأصلي" value={d.price} width={6} /> وعليها خصم
       <NumIn name="first" label="نسبة الخصم الأول" value={d.first} width={2} />% ثم خصم إضافي
       <NumIn name="second" label="نسبة الخصم الإضافي" value={d.second} width={2} />%.
     </form>
     <FieldErrors names={['price', 'first', 'second']} />
+    </div>
 
-    <section class="tag" aria-label="السعر قبل وبعد">
+    <section class="tag exhibit" aria-label="السعر قبل وبعد">
       <s class="num" data-x="old">{money(v?.price)}</s>
       <span class="arrow" aria-hidden="true">←</span>
       <span class="num now" data-x="new">{money(v?.final)}</span>
@@ -53,10 +56,10 @@ const v = r.ok ? r.value : null;
 </CalcLayout>
 
 <style>
-  .tag { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-top: 28px; font-size: var(--step-2); }
+  .tag { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; font-size: clamp(1.3rem, 3vw, 1.6rem); }
   .tag s { color: var(--soft); text-decoration-thickness: 2px; }
   .tag .arrow { color: var(--faint); font-size: 1rem; }
-  .tag .now { color: var(--ink); font-weight: 400; }
+  .tag .now { color: var(--ink); font-weight: 600; }
 </style>
 
 <script>
