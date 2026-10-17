@@ -1,0 +1,8 @@
+---
+export interface Props { name: string; label: string; value: string; max?: string }
+const { name, label, value, max } = Astro.props;
+const id = `f-${name}`;
+---
+<span class="field"><label class="sr-only" for={id}>{label}</label><input
+  class="in" id={id} name={name} data-field={name} data-default={value} type="date" value={value} max={max}
+  aria-describedby={`${id}-err`} /></span>

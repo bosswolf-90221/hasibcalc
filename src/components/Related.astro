@@ -1,0 +1,11 @@
+---
+import { bySlug } from '../data/calculators';
+export interface Props { slugs: string[]; title?: string }
+const { slugs, title = 'قد تحتاج أيضاً' } = Astro.props;
+---
+<nav class="related" aria-labelledby="rel-title">
+  <h2 id="rel-title">{title}</h2>
+  <ul class="qs">
+    {slugs.map((s) => { const c = bySlug(s); return <li><a href={`/${c.slug}/`}><span>{c.question}</span><span class="ar" aria-hidden="true">←</span></a></li>; })}
+  </ul>
+</nav>

@@ -1,0 +1,85 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../config/site';
+const hasForm = Boolean(SITE.contactFormEndpoint);
+const hasEmail = Boolean(SITE.contactEmail);
+if (!hasForm && !hasEmail) console.warn('[hasib] Contact page: set PUBLIC_CONTACT_FORM_ENDPOINT and/or PUBLIC_CONTACT_EMAIL.');
+---
+<Base title="اتصل بنا" description="راسل فريق حاسِب لاقتراح حاسبة جديدة أو الإبلاغ عن خطأ في معادلة." path="/contact/">
+  <article class="doc">
+    <h1>اتصل بنا</h1>
+    <p class="lede">وجدت خطأ في معادلة؟ تريد حاسبة جديدة؟ اكتب لنا.</p>
+
+    {hasForm ? (
+      <form id="contact" class="cform" action={SITE.contactFormEndpoint} method="POST" novalidate data-endpoint={SITE.contactFormEndpoint}>
+        <div class="f"><label for="c-name">اسمك</label><input id="c-name" name="name" required maxlength="80" autocomplete="name" aria-describedby="c-name-err" /><span class="field-error" id="c-name-err" hidden></span></div>
+        <div class="f"><label for="c-email">بريدك الإلكتروني</label><input id="c-email" name="email" type="email" required maxlength="120" autocomplete="email" dir="ltr" aria-describedby="c-email-err" /><span class="field-error" id="c-email-err" hidden></span></div>
+        <div class="f"><label for="c-topic">الموضوع</label>
+          <select id="c-topic" name="topic"><option>اقتراح حاسبة</option><option>خطأ في معادلة</option><option>ملاحظة على التصميم</option><option>أخرى</option></select></div>
+        <div class="f"><label for="c-msg">رسالتك</label><textarea id="c-msg" name="message" rows="6" required minlength="10" maxlength="3000" aria-describedby="c-msg-err"></textarea><span class="field-error" id="c-msg-err" hidden></span></div>
+        <div class="hp" aria-hidden="true"><label for="c-web">اترك هذا الحقل فارغاً</label><input id="c-web" name="_gotcha" tabindex="-1" autocomplete="off" /></div>
+        <button class="btn primary" type="submit">أرسل الرسالة</button>
+        <p class="status" role="status" aria-live="polite"></p>
+      </form>
+    ) : (
+      <p class="callout">نموذج التواصل غير مفعّل بعد.{hasEmail ? '' : ' سنضيف وسيلة تواصل قريباً.'}</p>
+    )}
+
+    {hasEmail && <p>أو راسلنا مباشرة على: <span class="num mail">{SITE.contactEmail}</span></p>}
+    <p class="hint">لا نشارك بياناتك مع أحد، ونستخدمها للرد على رسالتك فقط. التفاصيل في <a href="/privacy/">سياسة الخصوصية</a>.</p>
+  </article>
+</Base>
+
+<style>
+  .cform { display: flex; flex-direction: column; gap: 18px; margin-top: 24px; }
+  .f { display: flex; flex-direction: column; gap: 6px; }
+  .f label { font-size: .92rem; font-weight: 400; }
+  .f input, .f select, .f textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; min-height: 48px; }
+  .f input:focus, .f select:focus, .f textarea:focus { outline: none; border-color: var(--accent); }
+  .f [aria-invalid='true'] { border-color: var(--warn); }
+  .hp { position: absolute; inset-inline-start: -9999px; }
+  .btn.primary { align-self: flex-start; background: var(--accent); color: var(--accent-ink); border-color: var(--accent); padding-inline: 24px; }
+  .btn.primary:hover { color: var(--accent-ink); opacity: .9; }
+  .status { min-height: 1.6em; color: var(--soft); }
+  .mail { user-select: all; }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#contact');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('.status')!;
+    const setErr = (id: string, msg: string) => {
+      const input = form.querySelector<HTMLElement>(`#${id}`)!;
+      const err = form.querySelector<HTMLElement>(`#${id}-err`)!;
+      input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+      err.textContent = msg;
+      err.hidden = !msg;
+      return !msg;
+    };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const name = String(fd.get('name') || '').trim();
+      const email = String(fd.get('email') || '').trim();
+      const msg = String(fd.get('message') || '').trim();
+      const okName = setErr('c-name', name ? '' : 'اكتب اسمك');
+      const okEmail = setErr('c-email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? '' : 'اكتب بريداً إلكترونياً صحيحاً');
+      const okMsg = setErr('c-msg', msg.length >= 10 ? '' : 'الرسالة قصيرة جداً، اكتب 10 أحرف على الأقل');
+      if (!(okName && okEmail && okMsg)) return;
+      if (fd.get('_gotcha')) return; // bot
+      const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      btn.disabled = true;
+      status.textContent = 'جارٍ الإرسال…';
+      try {
+        const res = await fetch(form.dataset.endpoint!, { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        status.textContent = 'وصلتنا رسالتك، شكراً لك. سنرد على بريدك قريباً.';
+      } catch {
+        status.textContent = 'لم نتمكن من إرسال الرسالة الآن. رسالتك ما زالت في النموذج، حاول مرة أخرى بعد قليل.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+</script>

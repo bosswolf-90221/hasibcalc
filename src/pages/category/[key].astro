@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import { CATEGORIES, inCategory, CALCULATORS } from '../../data/calculators';
+
+export function getStaticPaths() {
+  return CATEGORIES.map((c) => ({ params: { key: c.key } }));
+}
+const cat = CATEGORIES.find((c) => c.key === Astro.params.key)!;
+const items = inCategory(cat.key);
+const others = CATEGORIES.filter((c) => c.key !== cat.key);
+const outside = CALCULATORS.filter((c) => !c.categories.includes(cat.key)).slice(0, 3);
+---
+<Base title={`حاسبات ${cat.name}`} description={cat.description} path={`/category/${cat.key}/`}>
+  <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">{cat.name}</li></ol></nav>
+  <p class="eyebrow">تصنيف</p>
+  <h1>{cat.name}</h1>
+  <p class="lede">{cat.intro}</p>
+  <ul class="qs listing">
+    {items.map((c) => (
+      <li>
+        <a href={`/${c.slug}/`}>
+          <span>{c.question}<span class="meta">{c.description}</span></span>
+          <span class="ar" aria-hidden="true">←</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <section class="related">
+    <h2>من تصنيفات أخرى</h2>
+    <ul class="qs">
+      {outside.map((c) => <li><a href={`/${c.slug}/`}><span>{c.question}</span><span class="ar" aria-hidden="true">←</span></a></li>)}
+    </ul>
+    <p class="hint">تصفح أيضاً: {others.map((o, i) => <>{i > 0 && ' · '}<a href={`/category/${o.key}/`}>{o.name}</a></>)}</p>
+  </section>
+</Base>
+
+<style>
+  .listing { margin-top: 24px; }
+  .listing .meta { font-size: .9rem; line-height: 1.7; margin-top: 6px; max-width: 54ch; }
+</style>

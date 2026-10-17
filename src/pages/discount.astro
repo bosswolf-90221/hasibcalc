@@ -1,0 +1,79 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcDiscount } from '../lib/calc/discount';
+import { discountView, errorView } from '../lib/views';
+import { money } from '../lib/format';
+
+const d = { price: 399, first: 30, second: 10 };
+const r = calcDiscount(d);
+const view = r.ok ? discountView(r.value) : errorView(r, 'ستدفع')!;
+const v = r.ok ? r.value : null;
+---
+<CalcLayout slug="discount" lede="اكتب السعر ونسبة الخصم. إذا كان هناك خصم إضافي، مثل كود أو عرض بطاقة، اكتبه أيضاً، وإلا اتركه صفراً.">
+  <div data-calc="discount">
+    <form class="sentence" onsubmit="return false" aria-label="بيانات الخصم">
+      سعر القطعة <NumIn name="price" label="السعر الأصلي" value={d.price} width={6} /> وعليها خصم
+      <NumIn name="first" label="نسبة الخصم الأول" value={d.first} width={2} />% ثم خصم إضافي
+      <NumIn name="second" label="نسبة الخصم الإضافي" value={d.second} width={2} />%.
+    </form>
+    <FieldErrors names={['price', 'first', 'second']} />
+
+    <section class="tag" aria-label="السعر قبل وبعد">
+      <s class="num" data-x="old">{money(v?.price)}</s>
+      <span class="arrow" aria-hidden="true">←</span>
+      <span class="num now" data-x="new">{money(v?.final)}</span>
+    </section>
+
+    <ResultCard view={view}>
+      <p class="formula" slot="formula"><code>النهائي = السعر × (1 − الخصم الأول) × (1 − الخصم الإضافي)</code></p>
+    </ResultCard>
+  </div>
+
+  <Fragment slot="article">
+    <h2>لماذا لا تُجمع الخصومات؟</h2>
+    <p>الخصم الإضافي يُطبق على السعر بعد الخصم الأول، وليس على السعر الأصلي. لذلك خصم 30% ثم 10% يساوي خصماً فعلياً قدره 37%، وليس 40%.</p>
+    <div class="example">
+      <p>قطعة بـ 100 درهم: بعد 30% تصبح 70، وبعد 10% إضافية تصبح 63. وفّرت 37 درهماً، أي 37%.</p>
+    </div>
+    <h2>أخطاء شائعة</h2>
+    <ul>
+      <li>توقّع أن «خصم حتى 70%» يشمل كل القطع، وهو غالباً يشمل بعضها فقط.</li>
+      <li>نسيان الضريبة: إذا كان السعر المعروض قبل الضريبة، أضف 5% بعد الخصم. <a href="/vat/">حاسبة الضريبة</a>.</li>
+    </ul>
+    <h2>متى لا تنطبق؟</h2>
+    <p>عندما يكون الخصم مبلغاً ثابتاً وليس نسبة، مثل «50 درهماً على مشتريات فوق 300»، أو عندما يُطبَّق الخصم الإضافي على السعر الأصلي بحسب شروط العرض.</p>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>كيف أعرف نسبة الخصم من السعرين؟</summary><p>(السعر الأصلي − السعر الجديد) ÷ السعر الأصلي × 100. أو استخدم <a href="/percentage/">حاسبة نسبة التغير</a>.</p></details>
+    </div>
+  </Fragment>
+</CalcLayout>
+
+<style>
+  .tag { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-top: 28px; font-size: var(--step-2); }
+  .tag s { color: var(--soft); text-decoration-thickness: 2px; }
+  .tag .arrow { color: var(--faint); font-size: 1rem; }
+  .tag .now { color: var(--ink); font-weight: 400; }
+</style>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcDiscount } from '../lib/calc/discount';
+  import { discountView } from '../lib/views';
+  import { money } from '../lib/format';
+  const root = document.querySelector<HTMLElement>('[data-calc="discount"]')!;
+  const x = (k: string) => root.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcDiscount({ price: num(f.price), first: num(f.first), second: num(f.second) ?? 0 });
+      return { result, view: result.ok ? discountView(result.value) : null };
+    },
+    extras: (v) => {
+      x('old').textContent = money(v.price);
+      x('new').textContent = money(v.final);
+    },
+  });
+</script>

@@ -1,0 +1,88 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcZakat } from '../lib/calc/zakat';
+import { zakatView, errorView } from '../lib/views';
+
+const d = { cash: 60000, investments: 20000, debts: 5000, goldPricePerGram: null };
+const r = calcZakat(d);
+const view = r.ok ? zakatView(r.value) : errorView(r, 'زكاتك')!;
+---
+<CalcLayout slug="zakat" lede="حساب مبدئي لزكاة النقد والمدخرات والاستثمارات. اكتب سعر غرام الذهب اليوم كما تجده لدى محل أو مصدر موثوق، لأننا لا نعرض سعراً آنياً.">
+  <div data-calc="zakat">
+    <form class="sentence" onsubmit="return false" aria-label="بيانات الزكاة">
+      عندي نقد ومدخرات <NumIn name="cash" label="النقد والمدخرات" value={d.cash} width={7} />،
+      واستثمارات تجب فيها الزكاة <NumIn name="investments" label="الاستثمارات الخاضعة للزكاة" value={d.investments} width={7} />،
+      وعليّ ديون حالّة <NumIn name="debts" label="الديون الحالّة التي تُخصم" value={d.debts} width={6} />،
+      وسعر غرام الذهب عيار 24 اليوم <NumIn name="goldPricePerGram" label="سعر غرام الذهب عيار 24" value="" placeholder="؟" width={4} /> درهماً.
+    </form>
+    <FieldErrors names={['cash', 'investments', 'debts', 'goldPricePerGram']} />
+
+    <ResultCard view={view} sensitive notes={[
+      'تجب الزكاة إذا بلغ المال النصاب وحال عليه الحول الهجري.',
+      'طريقة احتساب الأسهم والصناديق والعقارات المعدّة للتجارة والديون تختلف بحسب نوعها، وفيها تفاصيل فقهية.',
+      'نخصم الديون الحالّة المستحقة عليك، وهو قول معتبر وفيه خلاف. اسأل جهة الإفتاء إن كان دينك مؤجلاً.',
+    ]}>
+      <p class="formula" slot="formula"><code>الصافي = النقد + الاستثمارات − الديون</code> · <code>النصاب = 85 × سعر الغرام</code> · <code>الزكاة = الصافي × 2.5%</code></p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="nisab-title" data-x="nisabbox" hidden>
+      <h2 id="nisab-title">صافي مالك مقارنةً بالنصاب</h2>
+      <div class="bar" role="img" aria-label="صافي المال مقارنة بالنصاب"><span class="a" data-x="netbar"></span></div>
+      <div class="legend"><span class="a"><i></i>صافي مالك</span><span data-x="ratio"></span></div>
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف تُحسب زكاة المال؟</h2>
+    <p>زكاة النقود ربع العشر، أي 2.5%، بشرطين: أن يبلغ المال النصاب، وأن يمر عليه حول هجري كامل. والنصاب يعادل قيمة 85 غراماً من الذهب الخالص، ولذلك يتغير بتغير سعر الذهب.</p>
+    <div class="example">
+      <p>صافي مال 75,000 درهم، وسعر الغرام 400 درهم: النصاب 85 × 400 = 34,000. المال تجاوز النصاب، فالزكاة 75,000 × 2.5% = 1,875 درهماً.</p>
+    </div>
+    <h2>لماذا لا نعرض سعر الذهب تلقائياً؟</h2>
+    <p>لأن سعر الذهب يتغير خلال اليوم ويختلف بين المصادر. وعرض رقم غير محدّث قد يعطيك نصاباً خاطئاً، فتكتبه أنت من مصدر تثق به.</p>
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>الحاسبة لا تحسب زكاة الذهب والفضة المملوكة للزينة، ولا الزروع، ولا الأنعام، ولا عروض التجارة المعقدة. وهي لا تغني عن سؤال جهة إفتاء معتمدة.</p>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>هل أستخدم نصاب الذهب أم الفضة؟</summary><p>هذه الحاسبة تعتمد نصاب الذهب. بعض العلماء يرون الأخذ بنصاب الفضة لأنه أحظ للفقراء، فيجب الزكاة على مبلغ أقل.</p></details>
+      <details><summary>متى يبدأ الحول؟</summary><p>من اليوم الذي بلغ فيه مالك النصاب، وتجب الزكاة بعد مرور سنة هجرية كاملة عليه.</p></details>
+    </div>
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://islamqa.info/en/answers/214221" rel="noopener" target="_blank">IslamQA: كيف تُحسب زكاة الذهب ونصابه</a></li>
+      <li>للفتوى في حالتك: المركز الرسمي للإفتاء في الهيئة العامة للشؤون الإسلامية والأوقاف بالإمارات.</li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcZakat } from '../lib/calc/zakat';
+  import { zakatView } from '../lib/views';
+  import { money } from '../lib/format';
+  const root = document.querySelector<HTMLElement>('[data-calc="zakat"]')!;
+  const x = (k: string) => root.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const gold = f.goldPricePerGram.trim() === '' ? null : num(f.goldPricePerGram);
+      const result = calcZakat({
+        cash: num(f.cash) ?? 0,
+        investments: num(f.investments) ?? 0,
+        debts: num(f.debts) ?? 0,
+        goldPricePerGram: f.goldPricePerGram.trim() === '' ? null : gold ?? NaN,
+      });
+      return { result, view: result.ok ? zakatView(result.value) : null };
+    },
+    extras: (z) => {
+      const box = x('nisabbox');
+      if (z.nisab === null) { box.hidden = true; return; }
+      box.hidden = false;
+      const scale = Math.max(z.net, z.nisab) || 1;
+      x('netbar').style.width = `${(z.net / scale) * 100}%`;
+      x('ratio').textContent = z.net >= z.nisab ? `تجاوزت النصاب بـ ${money(z.net - z.nisab)}` : `الخط الكامل هو النصاب ${money(z.nisab)}`;
+    },
+  });
+</script>

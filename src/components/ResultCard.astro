@@ -1,0 +1,32 @@
+---
+import type { View } from '../lib/views';
+import { fmt } from '../lib/format';
+export interface Props { view: View; notes?: string[]; shareable?: boolean; sensitive?: boolean; uid?: string }
+const { view, notes = [], shareable = true, sensitive = false, uid = 'r' } = Astro.props;
+---
+<section class="result" data-result data-state={view.error ? 'error' : 'ok'} aria-labelledby={`${uid}-title`}>
+  <p class="r-error" data-r="error" hidden={!view.error}>{view.error}</p>
+  <div class="r-ok">
+    <p class="r-label" id={`${uid}-title`} data-r="label">{view.label}</p>
+    <p class="r-value"><span class="v" data-r="value" data-decimals={view.decimals}>{fmt(view.value, view.decimals)}</span><span class="u" data-r="unit">{view.unit}</span></p>
+    <p class="r-sentence" data-r="sentence">{view.sentence}</p>
+    <span class="r-badge" data-r="badge" hidden={!view.badge}>{view.badge}</span>
+  </div>
+  <div class="r-actions">
+    <button class="btn" type="button" data-act="copy">انسخ النتيجة</button>
+    {shareable && <button class="btn" type="button" data-act="share-clean">انسخ رابط الحاسبة</button>}
+    {shareable && <button class="btn" type="button" data-act="share-values" data-sensitive={sensitive ? 'true' : undefined}>انسخ الرابط مع أرقامي</button>}
+    <button class="btn" type="button" data-act="reset">إعادة تعيين</button>
+    <span class="toast" role="status" data-r="toast"></span>
+  </div>
+  <p class="hint" data-r="from-url" hidden>عبّأنا الأرقام من الرابط الذي فتحته. <button class="btn" type="button" data-act="clear-url">احذف أرقامي من الرابط</button></p>
+  <details class="how">
+    <summary>كيف حسبناها؟</summary>
+    <dl class="rows" data-r="rows">
+      {view.rows.map(([k, v]) => <div><dt>{k}</dt><dd class="num">{v}</dd></div>)}
+    </dl>
+    <slot name="formula" />
+    {notes.length > 0 && <ul class="how-notes">{notes.map((n) => <li>{n}</li>)}</ul>}
+  </details>
+  <p class="sr-only" aria-live="polite" data-r="live"></p>
+</section>

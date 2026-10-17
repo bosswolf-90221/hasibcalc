@@ -1,0 +1,10 @@
+---
+// A number written inside the sentence. type="text" + inputmode lets people type Arabic digits and thousands separators.
+export interface Props { name: string; label: string; value: string | number; width?: number; placeholder?: string; suffix?: string }
+const { name, label, value, width = 5, placeholder = '', suffix } = Astro.props;
+const id = `f-${name}`;
+---
+<span class="field"><label class="sr-only" for={id}>{label}</label><input
+  class="in" id={id} name={name} data-field={name} data-default={String(value)} type="text" inputmode="decimal"
+  autocomplete="off" spellcheck="false" value={String(value)} placeholder={placeholder}
+  style={`width:${width + 1.2}ch`} aria-describedby={`${id}-err`} />{suffix && <span aria-hidden="true">{suffix}</span>}</span>

@@ -1,0 +1,128 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import Pills from '../components/Pills.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcLoan } from '../lib/calc/loan';
+import { loanView, errorView } from '../lib/views';
+import { money } from '../lib/format';
+
+const d = { principal: 100000, annualRatePercent: 4.5, months: 48, method: 'reducing' as const };
+const r = calcLoan(d);
+const view = r.ok ? loanView(r.value, d.method) : errorView(r, 'قسطك الشهري')!;
+const years = r.ok ? r.value.years : [];
+const maxY = Math.max(1, ...years.map((y) => y.principal + y.interest));
+const cmpFlat = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, method: 'flat' });
+const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, method: 'reducing' });
+---
+<CalcLayout slug="loan" lede="للقرض الشخصي وتمويل السيارة والعقار. اكتب المبلغ والفائدة والمدة، واختر نوع الفائدة كما يذكره البنك.">
+  <div data-calc="loan">
+    <form class="sentence" onsubmit="return false" aria-label="بيانات القرض">
+      أريد قرضاً بقيمة <NumIn name="principal" label="مبلغ القرض" value={d.principal} width={7} />
+      بفائدة سنوية <NumIn name="annualRatePercent" label="نسبة الفائدة السنوية" value={d.annualRatePercent} width={3} />%
+      <Pills name="method" legend="نوع الفائدة" selected={d.method} options={[{ value: 'reducing', label: 'متناقصة' }, { value: 'flat', label: 'ثابتة' }]} />
+      لمدة <NumIn name="months" label="مدة القرض بالأشهر" value={d.months} width={3} /> شهراً.
+    </form>
+    <FieldErrors names={['principal', 'annualRatePercent', 'months', 'method']} />
+    <p class="hint">إعلانات تمويل السيارات تذكر الفائدة الثابتة غالباً، وقروض العقار والقروض الشخصية تذكر المتناقصة غالباً. اسأل البنك إن لم تكن متأكداً.</p>
+
+    <ResultCard view={view} sensitive notes={[
+      'نموذج الفائدة الثابتة هنا مبسّط: الفائدة على كامل المبلغ طوال المدة، موزعة بالتساوي.',
+      'رسوم المعالجة والتأمين وتوقيت أول قسط قد تغيّر القسط الحقيقي.',
+      'القسط مقرّب للعرض إلى خانتين، والجدول محسوب بالدقة الكاملة.',
+    ]}>
+      <p class="formula" slot="formula">المتناقصة: <code>القسط = P × r ÷ (1 − (1 + r)^−n)</code> حيث r الفائدة السنوية ÷ 12.<br />الثابتة: <code>القسط = (P + P × الفائدة × n ÷ 12) ÷ n</code></p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="sched-title">
+      <h2 id="sched-title">كم تدفع من الأصل ومن الفائدة كل سنة</h2>
+      <div class="sched" data-x="sched">
+        {years.map((y) => (
+          <div class="sched-row">
+            <span class="yr">السنة {y.year}</span>
+            <span class="bar" style={`width:${((y.principal + y.interest) / maxY) * 100}%`}><span class="a" style={`width:${(y.principal / (y.principal + y.interest)) * 100}%`}></span><span class="b" style={`width:${(y.interest / (y.principal + y.interest)) * 100}%`}></span></span>
+            <span class="vals num">{money(y.principal)} + {money(y.interest)}</span>
+          </div>
+        ))}
+      </div>
+      <div class="legend"><span class="a"><i></i>من أصل القرض</span><span class="b"><i></i>فوائد</span></div>
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>الفائدة الثابتة أم المتناقصة؟</h2>
+    <p>في <strong>المتناقصة</strong> تُحسب الفائدة كل شهر على الرصيد المتبقي فقط، فتقل مع كل قسط. في <strong>الثابتة</strong> تُحسب على كامل مبلغ القرض طوال المدة، لذلك تبدو نسبتها أقل في الإعلان لكن تكلفتها الفعلية أعلى.</p>
+    <div class="example">
+      <p>قرض 50,000 لمدة 36 شهراً بنسبة 3%: بالفائدة الثابتة تدفع فوائد <strong class="num">{cmpFlat.ok ? money(cmpFlat.value.totalInterest) : ''}</strong>، وبالمتناقصة <strong class="num">{cmpRed.ok ? money(cmpRed.value.totalInterest) : ''}</strong>. الفرق كله من طريقة الحساب وليس من النسبة.</p>
+    </div>
+    <h2>أخطاء شائعة</h2>
+    <ul>
+      <li>مقارنة عرضين أحدهما بفائدة ثابتة والآخر بمتناقصة بالنسبة المعلنة وحدها.</li>
+      <li>نسيان رسوم المعالجة والتأمين عند حساب التكلفة الكلية.</li>
+    </ul>
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>عند وجود فترة سماح، أو فائدة متغيرة تتبع مؤشراً مثل إيبور، أو دفعة أخيرة كبيرة، أو تمويل إسلامي بهامش ربح بصيغة مختلفة. اطلب من البنك جدول السداد الرسمي ومعدل التكلفة السنوي.</p>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>ماذا لو كانت الفائدة صفراً؟</summary><p>القسط يساوي المبلغ مقسوماً على عدد الأشهر، والحاسبة تتعامل مع هذه الحالة مباشرة.</p></details>
+      <details><summary>هل يقل القسط إذا سددت مبكراً؟</summary><p>السداد المبكر يقلل الرصيد والفوائد في المتناقصة، وقد يفرض البنك رسوماً عليه. تحقق من عقدك.</p></details>
+    </div>
+    <h2>المصادر</h2>
+    <ul class="sources"><li><a href="https://www.centralbank.ae/" rel="noopener" target="_blank">مصرف الإمارات العربية المتحدة المركزي</a>: لمعرفة حقوق المستهلك المالي وأنظمة الإقراض.</li></ul>
+  </Fragment>
+</CalcLayout>
+
+<style is:global>
+  .sched { display: flex; flex-direction: column; gap: 10px; }
+  .sched-row { display: grid; grid-template-columns: 4.5rem 1fr auto; align-items: center; gap: 12px; font-size: .88rem; }
+  .sched-row .yr { color: var(--soft); }
+  .sched-row .bar { height: 10px; }
+  .sched-row .vals { color: var(--soft); font-size: .8rem; }
+  @media (max-width: 560px) { .sched-row { grid-template-columns: 4rem 1fr; } .sched-row .vals { grid-column: 2; } }
+</style>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcLoan } from '../lib/calc/loan';
+  import { loanView } from '../lib/views';
+  import { money } from '../lib/format';
+  const root = document.querySelector<HTMLElement>('[data-calc="loan"]')!;
+  const sched = root.querySelector<HTMLElement>('[data-x="sched"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const method = f.method === 'flat' ? 'flat' : 'reducing';
+      const result = calcLoan({ principal: num(f.principal), annualRatePercent: num(f.annualRatePercent), months: num(f.months), method });
+      return { result, view: result.ok ? loanView(result.value, method) : null };
+    },
+    extras: (r) => {
+      const shown = r.years.length > 30 ? r.years.filter((_, i) => i % Math.ceil(r.years.length / 30) === 0) : r.years;
+      const max = Math.max(1, ...shown.map((y) => y.principal + y.interest));
+      sched.replaceChildren(
+        ...shown.map((y) => {
+          const row = document.createElement('div');
+          row.className = 'sched-row';
+          const yr = document.createElement('span');
+          yr.className = 'yr';
+          yr.textContent = `السنة ${y.year}`;
+          const bar = document.createElement('span');
+          bar.className = 'bar';
+          const sum = y.principal + y.interest || 1;
+          bar.style.width = `${(sum / max) * 100}%`;
+          const a = document.createElement('span');
+          a.className = 'a';
+          a.style.width = `${(y.principal / sum) * 100}%`;
+          const b = document.createElement('span');
+          b.className = 'b';
+          b.style.width = `${(y.interest / sum) * 100}%`;
+          bar.append(a, b);
+          const vals = document.createElement('span');
+          vals.className = 'vals num';
+          vals.textContent = `${money(y.principal)} + ${money(y.interest)}`;
+          row.append(yr, bar, vals);
+          return row;
+        }),
+      );
+    },
+  });
+</script>

@@ -1,0 +1,80 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import DateIn from '../components/DateIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcAge } from '../lib/calc/age';
+import { ageView, errorView } from '../lib/views';
+import { toISODate } from '../lib/calc/core';
+
+const today = toISODate(new Date());
+const d = { birthDate: '1995-06-15' };
+const r = calcAge({ birthDate: d.birthDate, onDate: today });
+const view = r.ok ? ageView(r.value, today) : errorView(r, 'عمرك')!;
+const a = r.ok ? r.value : null;
+---
+<CalcLayout slug="age" lede="اختر تاريخ ميلادك، ونحسب عمرك بتاريخ اليوم في جهازك.">
+  <div data-calc="age">
+    <form class="sentence" onsubmit="return false" aria-label="تاريخ الميلاد">
+      ولدت في <DateIn name="birthDate" label="تاريخ الميلاد" value={d.birthDate} max={today} />.
+    </form>
+    <FieldErrors names={['birthDate']} />
+
+    <section class="trio" aria-label="العمر بالتفصيل">
+      <div><span class="n num" data-x="y">{a?.years ?? '—'}</span><span class="l">سنة</span></div>
+      <div><span class="n num" data-x="m">{a?.months ?? '—'}</span><span class="l">شهر</span></div>
+      <div><span class="n num" data-x="d">{a?.days ?? '—'}</span><span class="l">يوم</span></div>
+    </section>
+
+    <ResultCard view={view} notes={['من وُلد في 29 فبراير نعتبر عيد ميلاده 28 فبراير في السنوات غير الكبيسة.', 'التاريخ المستخدم هو تاريخ اليوم بحسب جهازك وتوقيته المحلي.']} />
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف يُحسب العمر بدقة؟</h2>
+    <p>نحسب السنوات الكاملة منذ يوم الميلاد، ثم الأشهر الكاملة بعد آخر عيد ميلاد، ثم الأيام المتبقية. ولا نقسم الأيام على 365، لأن الأشهر تختلف في طولها، والسنة الكبيسة فيها 366 يوماً.</p>
+    <div class="example">
+      <p>مولود في 15 يونيو 1995، وتاريخ اليوم 17 أكتوبر 2026: عمره 31 سنة، و4 أشهر، ويومان.</p>
+    </div>
+    <h2>أخطاء شائعة</h2>
+    <ul>
+      <li>طرح سنة الميلاد من السنة الحالية فقط، فيزيد العمر سنة قبل عيد الميلاد.</li>
+      <li>حساب الأشهر بثلاثين يوماً ثابتة.</li>
+    </ul>
+    <h2>متى لا تنطبق؟</h2>
+    <p>الحاسبة تعتمد التقويم الميلادي. إذا كانت الجهة التي تتعامل معها تحسب العمر بالتقويم الهجري، فالنتيجة ستختلف.</p>
+  </Fragment>
+</CalcLayout>
+
+<style>
+  .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 28px; }
+  .trio div { display: flex; flex-direction: column; align-items: flex-start; border-top: 2px solid var(--line); padding-top: 10px; }
+  .trio .n { font-size: clamp(2rem, 7vw, 3rem); font-weight: 200; color: var(--accent); line-height: 1.1; }
+  .trio .l { font-size: var(--step--1); color: var(--soft); }
+</style>
+
+<script>
+  import { mountCalculator } from '../scripts/runtime';
+  import { calcAge } from '../lib/calc/age';
+  import { ageView } from '../lib/views';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="age"]')!;
+  const x = (k: string) => root.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
+  const birth = root.querySelector<HTMLInputElement>('#f-birthDate')!;
+  birth.max = localTodayISO();
+  const calc = mountCalculator(root, {
+    compute: (f) => {
+      const onDate = localTodayISO();
+      const result = calcAge({ birthDate: f.birthDate, onDate });
+      return { result, view: result.ok ? ageView(result.value, onDate) : null };
+    },
+    extras: (a) => {
+      x('y').textContent = String(a.years);
+      x('m').textContent = String(a.months);
+      x('d').textContent = String(a.days);
+    },
+  });
+  // Refresh once when the local date changes, without polling.
+  const now = new Date();
+  const msToMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime() + 1000;
+  setTimeout(() => calc.update(), msToMidnight);
+</script>

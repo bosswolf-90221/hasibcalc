@@ -1,0 +1,86 @@
+---
+import '@fontsource/readex-pro/200.css';
+import '@fontsource/readex-pro/300.css';
+import '@fontsource/readex-pro/400.css';
+import '@fontsource/readex-pro/500.css';
+import '@fontsource/readex-pro/600.css';
+import '../styles/global.css';
+import { SITE, ADS, ANALYTICS } from '../config/site';
+
+export interface Props {
+  title: string;
+  description: string;
+  path: string; // e.g. "/vat/"
+  wide?: boolean;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>[];
+  current?: 'home' | 'about' | 'none';
+}
+const { title, description, path, wide = false, noindex = false, jsonLd = [], current = 'none' } = Astro.props;
+const canonical = SITE.url + path;
+const fullTitle = path === '/' ? title : `${title} | ${SITE.name}`;
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: SITE.url + '/', inLanguage: 'ar' },
+  ...jsonLd,
+];
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#f6f8f8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111718" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content={SITE.locale} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={SITE.url + '/og.png'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {ANALYTICS.searchConsoleToken && <meta name="google-site-verification" content={ANALYTICS.searchConsoleToken} />}
+
+
+    {ADS.enabled && (
+      <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>
+    )}
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  </head>
+  <body>
+    <a class="skip" href="#main">انتقل إلى المحتوى</a>
+    <header class="site-head">
+      <div class={`wrap ${wide ? 'wide' : ''}`}>
+        <a class="logo" href="/" aria-label="حاسِب، الصفحة الرئيسية"><i aria-hidden="true"></i>{SITE.name}</a>
+        <nav aria-label="روابط رئيسية">
+          <a href="/" aria-current={current === 'home' ? 'page' : undefined}>كل الحاسبات</a>
+          <a href="/about/" aria-current={current === 'about' ? 'page' : undefined}>كيف نحسب</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main" class={`wrap ${wide ? 'wide' : ''}`}>
+      <slot />
+    </main>
+    <footer class="site-foot">
+      <div class={`wrap ${wide ? 'wide' : ''}`}>
+        <span>© {new Date().getFullYear()} {SITE.name} · {SITE.tagline}. النتائج تقديرية ولا تُغني عن مختص.</span>
+        <nav aria-label="روابط الموقع">
+          <a href="/category/money/">المال والعمل</a>
+          <a href="/category/shopping/">التسوق والنسب</a>
+          <a href="/category/health-age/">الصحة والعمر</a>
+          <a href="/about/">من نحن</a>
+          <a href="/privacy/">الخصوصية</a>
+          <a href="/terms/">الشروط</a>
+          <a href="/contact/">اتصل بنا</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

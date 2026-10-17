@@ -1,0 +1,80 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import Pills from '../components/Pills.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcVat } from '../lib/calc/vat';
+import { vatView, errorView } from '../lib/views';
+
+const d = { mode: 'add' as const, ratePercent: '5', amount: 1000 };
+const r = calcVat({ mode: d.mode, ratePercent: 5, amount: d.amount });
+const view = r.ok ? vatView(r.value, d.mode) : errorView(r, '')!;
+const v = r.ok ? r.value : null;
+---
+<CalcLayout slug="vat" lede="اختر هل تريد إضافة الضريبة إلى السعر أو استخراجها من سعر شامل، ثم اكتب المبلغ.">
+  <div data-calc="vat">
+    <form class="sentence" onsubmit="return false" aria-label="بيانات حساب الضريبة">
+      أريد <Pills name="mode" legend="نوع الحساب" selected={d.mode} options={[{ value: 'add', label: 'إضافة' }, { value: 'extract', label: 'استخراج' }]} />
+      ضريبة <Pills name="ratePercent" legend="نسبة الضريبة" selected={d.ratePercent} options={[{ value: '5', label: '5%' }, { value: '15', label: '15%' }, { value: '10', label: '10%' }]} />
+      على مبلغ <NumIn name="amount" label="المبلغ" value={d.amount} width={7} />.
+    </form>
+    <FieldErrors names={['amount', 'ratePercent', 'mode']} />
+    <p class="hint">5% هي النسبة العامة لضريبة القيمة المضافة في الإمارات. النسبتان الأخريان خياران حسابيان عامان.</p>
+
+    <ResultCard view={view} notes={['النتائج مقرّبة إلى خانتين عشريتين للعرض، والحساب الداخلي بدقة كاملة.', 'بعض السلع والخدمات معفاة أو خاضعة لنسبة صفر، فتحقق من الفاتورة.']}>
+      <p class="formula" slot="formula">الإضافة: <code>الإجمالي = المبلغ × (1 + النسبة)</code><br />الاستخراج: <code>قبل الضريبة = الشامل ÷ (1 + النسبة)</code></p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="split-title">
+      <h2 id="split-title">من أين يتكوّن الإجمالي</h2>
+      <div class="bar" role="img" aria-label="نسبة المبلغ الأساسي إلى الضريبة">
+        <span class="a" data-x="base" style={`width:${v && v.total ? (v.base / v.total) * 100 : 100}%`}></span>
+        <span class="b" data-x="tax" style={`width:${v && v.total ? (v.tax / v.total) * 100 : 0}%`}></span>
+      </div>
+      <div class="legend"><span class="a"><i></i>المبلغ الأساسي</span><span class="b"><i></i>الضريبة</span></div>
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>الفرق بين إضافة الضريبة واستخراجها</h2>
+    <p><strong>الإضافة</strong> تبدأ من سعر قبل الضريبة وتحسب ما يدفعه العميل. <strong>الاستخراج</strong> يبدأ من سعر شامل، مثل سعر على رف متجر، ويفصل منه الضريبة.</p>
+    <div class="example">
+      <p>سعر شامل 1,050 درهماً بنسبة 5%: قبل الضريبة = 1,050 ÷ 1.05 = 1,000، والضريبة 50 درهماً.</p>
+    </div>
+    <h2>الخطأ الأشهر</h2>
+    <p>ضرب السعر الشامل في 5% يعطي 52.50 بدلاً من 50، لأن الضريبة محسوبة على السعر الأصلي وليس على السعر الشامل. استخدم القسمة على 1.05.</p>
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>عندما تكون السلعة معفاة أو خاضعة لنسبة صفر، أو عندما يحتوي السعر على رسوم أخرى غير الضريبة. للتسجيل الضريبي والفواتير الرسمية ارجع إلى الهيئة الاتحادية للضرائب.</p>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>متى بدأت ضريبة القيمة المضافة في الإمارات؟</summary><p>في 1 يناير 2018 بنسبة عامة قدرها 5%، بحسب وزارة المالية.</p></details>
+      <details><summary>هل تُطبَّق الضريبة على الخصم أم على السعر الأصلي؟</summary><p>على السعر الذي تدفعه فعلاً بعد الخصم. احسب الخصم أولاً، ثم أضف الضريبة.</p></details>
+    </div>
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://mof.gov.ae/en/public-finance/tax/" rel="noopener" target="_blank">وزارة المالية الإماراتية: الضرائب</a></li>
+      <li><a href="https://tax.gov.ae/" rel="noopener" target="_blank">الهيئة الاتحادية للضرائب</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcVat } from '../lib/calc/vat';
+  import { vatView } from '../lib/views';
+  const root = document.querySelector<HTMLElement>('[data-calc="vat"]')!;
+  const x = (k: string) => root.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const mode = f.mode === 'extract' ? 'extract' : 'add';
+      const result = calcVat({ mode, ratePercent: num(f.ratePercent), amount: num(f.amount) });
+      return { result, view: result.ok ? vatView(result.value, mode) : null };
+    },
+    extras: (v) => {
+      const t = v.total || 1;
+      x('base').style.width = `${v.total ? (v.base / t) * 100 : 100}%`;
+      x('tax').style.width = `${v.total ? (v.tax / t) * 100 : 0}%`;
+    },
+  });
+</script>

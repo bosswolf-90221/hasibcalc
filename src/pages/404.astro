@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import { CALCULATORS } from '../data/calculators';
+---
+<Base title="الصفحة غير موجودة" description="الصفحة التي تبحث عنها غير موجودة في حاسِب. اختر إحدى الحاسبات المتوفرة: نهاية الخدمة، القسط، الضريبة، الزكاة وغيرها." path="/404/" noindex>
+  <p class="eyebrow">404</p>
+  <h1>هذه الصفحة غير موجودة</h1>
+  <p class="lede">ربما تغيّر الرابط أو كُتب بشكل خاطئ. هذه الحاسبات المتوفرة:</p>
+  <ul class="qs">{CALCULATORS.map((c) => <li><a href={`/${c.slug}/`}><span>{c.question}</span><span class="ar" aria-hidden="true">←</span></a></li>)}</ul>
+</Base>

@@ -1,0 +1,8 @@
+---
+// One message area per sentence; each input points to its own line here via aria-describedby.
+export interface Props { names: string[] }
+const { names } = Astro.props;
+---
+<div class="errors" aria-live="polite">
+  {names.map((n) => <span class="field-error" id={`f-${n}-err`} hidden></span>)}
+</div>

@@ -1,0 +1,94 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcBmi } from '../lib/calc/bmi';
+import { bmiView, errorView } from '../lib/views';
+
+const d = { weightKg: 75, heightCm: 175 };
+const r = calcBmi(d);
+const view = r.ok ? bmiView(r.value) : errorView(r, 'مؤشر كتلة جسمك')!;
+// Scale shown from 15 to 40
+const pos = (b: number) => Math.min(100, Math.max(0, ((b - 15) / 25) * 100));
+const marker = r.ok ? pos(r.value.bmi) : 0;
+---
+<CalcLayout slug="bmi" lede="للبالغين من عمر 20 سنة فأكثر. اكتب وزنك بالكيلوغرام وطولك بالسنتيمتر.">
+  <div data-calc="bmi">
+    <form class="sentence" onsubmit="return false" aria-label="الوزن والطول">
+      وزني <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} width={3} /> كجم
+      وطولي <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} width={3} /> سم.
+    </form>
+    <FieldErrors names={['weightKg', 'heightCm']} />
+
+    <ResultCard view={view} notes={['مؤشر كتلة الجسم أداة فحص أولي وليس تشخيصاً، ولا يفرّق بين العضلات والدهون.', 'تصنيفات البالغين لا تنطبق على الأطفال والمراهقين، ولا على الحوامل.']}>
+      <p class="formula" slot="formula"><code>BMI = الوزن بالكيلوغرام ÷ (الطول بالمتر)²</code></p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="scale-title">
+      <h2 id="scale-title">أين يقع مؤشرك</h2>
+      <div class="scale" role="img" aria-label="مقياس مؤشر كتلة الجسم من 15 إلى 40">
+        <span class="z z1" style={`width:${pos(18.5)}%`}></span>
+        <span class="z z2" style={`width:${pos(25) - pos(18.5)}%`}></span>
+        <span class="z z3" style={`width:${pos(30) - pos(25)}%`}></span>
+        <span class="z z4" style={`width:${100 - pos(30)}%`}></span>
+        <span class="mk" data-x="mk" style={`inset-inline-start:${marker}%`}></span>
+      </div>
+      <div class="ticks" aria-hidden="true">
+        <span style={`inset-inline-start:${pos(18.5)}%`}>18.5</span>
+        <span style={`inset-inline-start:${pos(25)}%`}>25</span>
+        <span style={`inset-inline-start:${pos(30)}%`}>30</span>
+      </div>
+      <div class="legend scale-legend"><span>نقص وزن</span><span>طبيعي</span><span>زيادة</span><span>سمنة</span></div>
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف يُحسب مؤشر كتلة الجسم؟</h2>
+    <p>نقسم الوزن بالكيلوغرام على مربع الطول بالمتر. ثم نقارن الرقم بتصنيف البالغين المعتمد من منظمة الصحة العالمية والمراكز الأمريكية لمكافحة الأمراض.</p>
+    <ul>
+      <li>أقل من 18.5: نقص وزن.</li>
+      <li>من 18.5 إلى أقل من 25: نطاق طبيعي.</li>
+      <li>من 25 إلى أقل من 30: زيادة وزن.</li>
+      <li>30 فأكثر: سمنة.</li>
+    </ul>
+    <div class="example"><p>وزن 75 كجم وطول 175 سم: 75 ÷ (1.75 × 1.75) = 24.5، أي ضمن النطاق الطبيعي.</p></div>
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>عند الرياضيين ذوي الكتلة العضلية العالية، والحوامل، وكبار السن، ولمن هم دون 20 سنة، إذ تُستخدم لهم منحنيات نمو بحسب العمر والجنس. لأي قرار صحي استشر طبيبك.</p>
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html" rel="noopener" target="_blank">CDC: تصنيفات مؤشر كتلة الجسم للبالغين</a></li>
+      <li><a href="https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index" rel="noopener" target="_blank">منظمة الصحة العالمية: مؤشر كتلة الجسم</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<style is:global>
+  .scale { position: relative; display: flex; height: 14px; border-radius: 99px; overflow: visible; margin-top: 18px; }
+  .scale .z { height: 100%; }
+  .scale .z1 { background: color-mix(in srgb, var(--accent) 25%, var(--surface)); border-start-start-radius: 99px; border-end-start-radius: 99px; }
+  .scale .z2 { background: var(--accent); }
+  .scale .z3 { background: color-mix(in srgb, var(--warn) 45%, var(--surface)); }
+  .scale .z4 { background: var(--warn); border-start-end-radius: 99px; border-end-end-radius: 99px; }
+  .scale .mk { position: absolute; top: -7px; width: 4px; height: 28px; background: var(--ink); border-radius: 4px; transform: translateX(50%); transition: inset-inline-start .45s ease; }
+  .ticks { position: relative; height: 22px; font-size: .78rem; color: var(--soft); margin-top: 6px; }
+  .ticks span { position: absolute; transform: translateX(50%); }
+  .scale-legend { justify-content: space-between; }
+</style>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcBmi } from '../lib/calc/bmi';
+  import { bmiView } from '../lib/views';
+  const root = document.querySelector<HTMLElement>('[data-calc="bmi"]')!;
+  const mk = root.querySelector<HTMLElement>('[data-x="mk"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcBmi({ weightKg: num(f.weightKg), heightCm: num(f.heightCm) });
+      return { result, view: result.ok ? bmiView(result.value) : null };
+    },
+    extras: (b) => {
+      mk.style.insetInlineStart = `${Math.min(100, Math.max(0, ((b.bmi - 15) / 25) * 100))}%`;
+    },
+  });
+</script>

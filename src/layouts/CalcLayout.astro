@@ -1,0 +1,50 @@
+---
+import Base from './Base.astro';
+import AdSlot from '../components/AdSlot.astro';
+import Related from '../components/Related.astro';
+import { bySlug, CATEGORIES } from '../data/calculators';
+import { SITE } from '../config/site';
+import { arDate } from '../lib/format';
+
+export interface Props { slug: string; lede: string }
+const { slug, lede } = Astro.props;
+const c = bySlug(slug);
+const cat = CATEGORIES.find((x) => x.key === c.categories[0])!;
+const path = `/${slug}/`;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: cat.name, item: `${SITE.url}/category/${cat.key}/` },
+      { '@type': 'ListItem', position: 3, name: c.short, item: SITE.url + path },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: c.seoTitle,
+    url: SITE.url + path,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'ar',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'AED' },
+  },
+];
+---
+<Base title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd}>
+  <nav class="crumbs" aria-label="مسار التنقل">
+    <ol><li><a href="/">الرئيسية</a></li><li><a href={`/category/${cat.key}/`}>{cat.name}</a></li><li aria-current="page">{c.short}</li></ol>
+  </nav>
+  <h1>{c.question}</h1>
+  <p class="lede">{lede}</p>
+  <slot />
+  <AdSlot position="afterCalculator" />
+  <article class="article">
+    <slot name="article" />
+    <p class="reviewed">آخر مراجعة للمعادلة مقابل المصادر المذكورة: {arDate(SITE.lastReviewed)}.</p>
+  </article>
+  <Related slugs={c.related} />
+</Base>
