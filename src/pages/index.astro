@@ -8,6 +8,7 @@ import ResultCard from '../components/ResultCard.astro';
 import Reveal from '../components/motion/Reveal.tsx';
 import { CALCULATORS, bySlug } from '../data/calculators';
 import { SITE } from '../config/site';
+import { GUIDES } from '../data/guides';
 import { calcGratuity } from '../lib/calc/gratuity';
 import { gratuityView, errorView } from '../lib/views';
 import { toISODate } from '../lib/calc/core';
@@ -73,6 +74,11 @@ const chips = ['end-of-service', 'hijri', 'loan', 'vat', 'pregnancy', 'calories'
     <section class="sec" aria-labelledby="more-h">
       <div class="sec-head"><h2 id="more-h">حاسبات أخرى</h2><p>كل حاسبة لها صفحة بشرح ومثال محسوب وأسئلة شائعة.</p></div>
       <Reveal client:idle selector="li"><CalcIndex items={more} compact /></Reveal>
+    </section>
+
+    <section class="sec" aria-labelledby="guides-h">
+      <div class="sec-head"><h2 id="guides-h">أدلة مختصرة</h2><p>شرح بأمثلة محسوبة لأكثر الأسئلة تكراراً. <a href="/guides/" style="color:var(--accent)">كل الأدلة</a></p></div>
+      <Reveal client:idle selector="li"><ul class="guide-list">{GUIDES.slice(0, 3).map((g) => <li><a href={`/guides/${g.slug}/`}><small>{g.kicker}</small><b>{g.title}</b><span>{g.description}</span></a></li>)}</ul></Reveal>
     </section>
 
     <section class="sec" aria-labelledby="how-h">
