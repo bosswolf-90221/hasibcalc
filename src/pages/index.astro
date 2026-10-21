@@ -24,8 +24,8 @@ const split = (g: typeof r) => {
 };
 const [sa, sb] = split(r);
 const shelf = ['loan', 'vat', 'zakat', 'bmi'].map(bySlug);
-const more = ['end-of-service', 'percentage', 'discount', 'age'].map(bySlug);
-const chips = CALCULATORS.slice(0, 6);
+const more = CALCULATORS.filter((c) => !['loan', 'vat', 'zakat', 'bmi'].includes(c.slug));
+const chips = ['end-of-service', 'hijri', 'loan', 'vat', 'pregnancy', 'calories'].map(bySlug);
 ---
 <Base title={`${SITE.name}: أريد أن أعرف… حاسبات عربية مجانية`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" bare>
   <section class="stage hero" aria-labelledby="h">

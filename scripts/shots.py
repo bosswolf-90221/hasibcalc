@@ -4,7 +4,7 @@ from playwright.sync_api import sync_playwright
 import os
 BASE = os.environ.get('BASE_URL', 'http://localhost:4321')
 OUT = sys.argv[1]
-pages = ['/', '/end-of-service/', '/vat/', '/loan/', '/percentage/', '/discount/', '/age/', '/bmi/', '/zakat/', '/category/money/', '/about/', '/privacy/', '/contact/', '/nope/']
+pages = ['/', '/end-of-service/', '/vat/', '/loan/', '/percentage/', '/discount/', '/age/', '/bmi/', '/zakat/', '/hijri/', '/days-between/', '/pregnancy/', '/calories/', '/category/dates/', '/category/money/', '/about/', '/privacy/', '/contact/', '/nope/']
 report = {}
 with sync_playwright() as p:
     b = p.chromium.launch()

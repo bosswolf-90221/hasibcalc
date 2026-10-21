@@ -1,0 +1,81 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import DateIn from '../components/DateIn.astro';
+import Pills from '../components/Pills.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcDateSpan } from '../lib/calc/dates';
+import { dateSpanView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { spanBlocks } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+
+const today = toISODate(new Date());
+const end = `${Number(today.slice(0, 4)) + 1}-01-01`;
+const r = calcDateSpan({ startDate: today, endDate: end, includeEnd: false, weekend: 'sat-sun' });
+const view = r.ok ? dateSpanView(r.value, false) : errorView(r, 'عدد الأيام')!;
+---
+<CalcLayout slug="days-between" lede="اكتب تاريخ البداية والنهاية، ونحسب المدة بالأيام والأسابيع والأشهر، وعدد أيام العمل بحسب عطلة نهاية الأسبوع في بلدك.">
+  <div data-calc="days-between">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتب التاريخين في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="التاريخان">
+        من <DateIn name="startDate" label="تاريخ البداية" value={today} /> إلى <DateIn name="endDate" label="تاريخ النهاية" value={end} />،
+        <Pills name="includeEnd" legend="احتساب اليوم الأخير" selected="no" options={[{ value: 'no', label: 'بدون اليوم الأخير' }, { value: 'yes', label: 'مع اليوم الأخير' }]} />
+        وعطلتي <Pills name="weekend" legend="عطلة نهاية الأسبوع" selected="sat-sun" options={[{ value: 'sat-sun', label: 'السبت والأحد' }, { value: 'fri-sat', label: 'الجمعة والسبت' }]} />
+      </form>
+      <FieldErrors names={['startDate', 'endDate']} />
+      <p class="hint">عطلة السبت والأحد معتمدة في الإمارات، والجمعة والسبت في السعودية ومعظم دول الخليج. الحاسبة لا تخصم العطل الرسمية.</p>
+    </div>
+    <ResultCard view={view}>
+      <p class="formula" slot="formula"><code>الأيام = تاريخ النهاية − تاريخ البداية</code>، ونضيف يوماً إذا اخترت احتساب اليوم الأخير. أيام العمل = الأيام − أيام عطلة نهاية الأسبوع الواقعة في المدة.</p>
+    </ResultCard>
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> أيام العمل وأيام العطلة</h2>
+      <div data-x="span" set:html={spanBlocks(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف يُحسب عدد الأيام بين تاريخين؟</h2>
+    <p>نطرح تاريخ البداية من تاريخ النهاية بالأيام الفعلية في التقويم، فنحسب طول كل شهر كما هو (28 أو 29 أو 30 أو 31 يوماً) ونراعي السنة الكبيسة. ثم نحوّل الناتج إلى أسابيع وأشهر كاملة.</p>
+    <h2>هل أحسب اليوم الأخير؟</h2>
+    <p>يعتمد على سؤالك. «كم يوماً باقٍ حتى الموعد؟» لا يُحسب فيه اليوم الأخير. أما مدة إجازة من 1 إلى 10 من الشهر فهي 10 أيام، أي مع اليوم الأخير.</p>
+    <div class="example">
+      <p>من 1 أكتوبر 2026 إلى 31 أكتوبر 2026 مع اليوم الأخير: <strong>31 يوماً</strong>. منها 22 يوم عمل بعطلة السبت والأحد، و21 يوم عمل بعطلة الجمعة والسبت، لأن الشهر يبدأ يوم الخميس.</p>
+    </div>
+    <h2>أخطاء شائعة</h2>
+    <ul>
+      <li>اعتبار كل شهر 30 يوماً عند الحساب اليدوي.</li>
+      <li>نسيان 29 فبراير في السنة الكبيسة.</li>
+      <li>احتساب العطل الرسمية كأيام عمل. هذه الحاسبة لا تعرف العطل الرسمية، فاخصمها بنفسك.</li>
+    </ul>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>كيف أعرف كم يوماً باقٍ على مناسبة؟</summary><p>اجعل تاريخ البداية اليوم، وتاريخ النهاية يوم المناسبة، واختر «بدون اليوم الأخير».</p></details>
+      <details><summary>هل يمكن أن يكون تاريخ النهاية قبل البداية؟</summary><p>نعم، نحسب المدة بين التاريخين وننبهك أن الترتيب معكوس.</p></details>
+    </div>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator } from '../scripts/runtime';
+  import { calcDateSpan, type Weekend } from '../lib/calc/dates';
+  import { dateSpanView } from '../lib/views-extra';
+  import { spanBlocks } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="days-between"]')!;
+  const p = new URLSearchParams(location.search);
+  const s = root.querySelector<HTMLInputElement>('#f-startDate')!;
+  const e = root.querySelector<HTMLInputElement>('#f-endDate')!;
+  if (!p.has('startDate')) { s.value = localTodayISO(); s.dataset.default = s.value; }
+  if (!p.has('endDate')) { e.value = `${Number(s.value.slice(0, 4)) + 1}-01-01`; e.dataset.default = e.value; }
+  mountCalculator(root, {
+    compute: (f) => {
+      const includeEnd = f.includeEnd === 'yes';
+      const result = calcDateSpan({ startDate: f.startDate, endDate: f.endDate, includeEnd, weekend: (f.weekend as Weekend) || 'sat-sun' });
+      return { result, view: result.ok ? dateSpanView(result.value, includeEnd) : null };
+    },
+    extras: (sp) => { root.querySelector<HTMLElement>('[data-x="span"]')!.innerHTML = spanBlocks(sp); },
+  });
+</script>

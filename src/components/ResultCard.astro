@@ -17,7 +17,7 @@ const { view, notes = [], shareable = true, sensitive = false, uid = 'r', small 
     <p class="r-sentence" data-r="sentence">{view.sentence}</p>
   </div>
   <dl class="rows" data-r="rows" hidden={mini}>
-    {view.rows.map(([k, v]) => <div><dt>{k}</dt><dd class="num">{v}</dd></div>)}
+    {view.rows.map(([k, v]) => <div><dt>{k}</dt><dd class={/[\u0600-\u06FF]/.test(v) ? undefined : 'num'}>{v}</dd></div>)}
   </dl>
   <div class="r-actions">
     <button class="btn" type="button" data-act="copy">انسخ النتيجة</button>

@@ -1,5 +1,5 @@
 // Single source of truth for calculator pages: routes, metadata, categories, search terms and related links.
-export type CategoryKey = 'money' | 'shopping' | 'health-age';
+export type CategoryKey = 'money' | 'shopping' | 'health-age' | 'dates';
 
 export type CalculatorMeta = {
   slug: string;
@@ -90,7 +90,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     sample: '31',
     seoTitle: 'حاسبة العمر بالسنوات والأشهر والأيام',
     description: 'احسب عمرك بالضبط بالسنوات والأشهر والأيام، وعدد الأيام التي عشتها، وكم بقي على عيد ميلادك القادم.',
-    categories: ['health-age'],
+    categories: ['health-age', 'dates'],
     terms: ['عمر', 'العمر', 'عمري', 'ميلاد', 'عيد ميلاد', 'تاريخ', 'سن'],
     related: ['bmi', 'percentage', 'end-of-service', 'discount'],
   },
@@ -120,6 +120,58 @@ export const CALCULATORS: CalculatorMeta[] = [
     terms: ['زكاة', 'الزكاة', 'نصاب', 'ذهب', 'مدخرات', 'ربع العشر', 'رمضان'],
     related: ['end-of-service', 'loan', 'percentage', 'vat'],
   },
+  {
+    slug: 'hijri',
+    question: 'كم التاريخ بالهجري؟',
+    short: 'تحويل التاريخ',
+    blurb: 'من الميلادي إلى الهجري وبالعكس، بتقويم أم القرى',
+    tone: '#0e7490',
+    sample: '1448',
+    seoTitle: 'تحويل التاريخ من ميلادي إلى هجري وبالعكس (أم القرى)',
+    description: 'حوّل أي تاريخ من الميلادي إلى الهجري أو من الهجري إلى الميلادي بتقويم أم القرى، مع اسم اليوم وعدد أيام الشهر الهجري.',
+    categories: ['dates'],
+    terms: ['هجري', 'الهجري', 'ميلادي', 'تحويل التاريخ', 'تاريخ اليوم', 'أم القرى', 'التقويم', 'رمضان', 'hijri'],
+    related: ['days-between', 'age', 'pregnancy', 'zakat'],
+  },
+  {
+    slug: 'days-between',
+    question: 'كم يوماً بين تاريخين؟',
+    short: 'الأيام بين تاريخين',
+    blurb: 'الأيام والأسابيع والأشهر، وأيام العمل',
+    tone: '#475569',
+    sample: '365',
+    seoTitle: 'حساب عدد الأيام بين تاريخين وأيام العمل',
+    description: 'احسب عدد الأيام والأسابيع والأشهر بين تاريخين، وعدد أيام العمل بعطلة السبت والأحد أو الجمعة والسبت، مع خيار احتساب اليوم الأخير.',
+    categories: ['dates'],
+    terms: ['أيام', 'الأيام', 'بين تاريخين', 'عدد الأيام', 'مدة', 'أيام العمل', 'كم باقي', 'عد تنازلي'],
+    related: ['hijri', 'age', 'end-of-service', 'pregnancy'],
+  },
+  {
+    slug: 'pregnancy',
+    question: 'متى موعد ولادتي؟',
+    short: 'موعد الولادة',
+    blurb: 'موعد الولادة المتوقع وعمر الحمل بالأسابيع',
+    tone: '#a21caf',
+    sample: '280',
+    seoTitle: 'حاسبة الحمل وموعد الولادة المتوقع بالأسابيع',
+    description: 'احسبي موعد الولادة المتوقع من أول يوم في آخر دورة، وعمر الحمل بالأسابيع والأيام، والثلث الذي أنتِ فيه، مع مراعاة طول الدورة.',
+    categories: ['health-age'],
+    terms: ['حمل', 'الحمل', 'ولادة', 'موعد الولادة', 'حاسبة الحمل', 'أسابيع الحمل', 'حامل', 'الدورة'],
+    related: ['days-between', 'hijri', 'calories', 'bmi'],
+  },
+  {
+    slug: 'calories',
+    question: 'كم سعرة يحتاج جسمي يومياً؟',
+    short: 'السعرات اليومية',
+    blurb: 'احتياجك اليومي بحسب عمرك ووزنك ونشاطك',
+    tone: '#15803d',
+    sample: '2,740',
+    seoTitle: 'حاسبة السعرات الحرارية اليومية للبالغين',
+    description: 'احسب عدد السعرات التي يحتاجها جسمك يومياً للمحافظة على وزنك بمعادلة ميفلين سان جيور، بحسب جنسك وعمرك ووزنك وطولك ومستوى نشاطك.',
+    categories: ['health-age'],
+    terms: ['سعرات', 'السعرات', 'سعرة', 'حرارية', 'رجيم', 'دايت', 'تخسيس', 'calories', 'حرق'],
+    related: ['bmi', 'age', 'pregnancy', 'percentage'],
+  },
 ];
 
 export const CATEGORIES: { key: CategoryKey; name: string; intro: string; description: string }[] = [
@@ -138,8 +190,14 @@ export const CATEGORIES: { key: CategoryKey; name: string; intro: string; descri
   {
     key: 'health-age',
     name: 'الصحة والعمر',
-    intro: 'أرقام عنك أنت: عمرك بالضبط، ومؤشر كتلة جسمك ونطاق وزنك.',
-    description: 'حاسبات شخصية: العمر بالسنوات والأشهر والأيام، ومؤشر كتلة الجسم BMI للبالغين.',
+    intro: 'أرقام عنك أنت: عمرك بالضبط، ومؤشر كتلة جسمك، وموعد الولادة، وسعراتك اليومية.',
+    description: 'حاسبات شخصية: العمر بالسنوات والأشهر والأيام، ومؤشر كتلة الجسم BMI، وموعد الولادة، والسعرات اليومية.',
+  },
+  {
+    key: 'dates',
+    name: 'التاريخ والوقت',
+    intro: 'التاريخ الهجري والميلادي، والأيام بين تاريخين، وكم بقي على موعدك.',
+    description: 'حاسبات التاريخ: تحويل التاريخ من ميلادي إلى هجري وبالعكس بتقويم أم القرى، وعدد الأيام وأيام العمل بين تاريخين.',
   },
 ];
 

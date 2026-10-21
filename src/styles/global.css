@@ -428,3 +428,23 @@ details.how .how-body { padding-bottom: 14px; }
   .result.mini .r-actions .primary { grid-column: 1 / -1; justify-self: stretch; text-align: center; }
 }
 .r-actions a.btn { display: inline-flex; align-items: center; justify-content: center; }
+
+/* calendar leaves (hijri) */
+.leaves { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.leaf { display: flex; flex-direction: column; align-items: center; min-width: 150px; padding: 0 0 14px; border-radius: 18px; background: var(--card); box-shadow: var(--shadow-card); overflow: hidden; }
+.leaf .lk { align-self: stretch; text-align: center; background: var(--deep); color: var(--mint); font-size: .8rem; padding: 6px 12px; margin-bottom: 8px; }
+.leaf b { font-size: 3rem; font-weight: 600; line-height: 1.1; }
+.leaf span:not(.lk) { font-weight: 500; }
+.leaf small { color: var(--soft); }
+.leaf-day { text-align: center; color: var(--soft); margin: 12px 0 0; font-size: .92rem; }
+/* working-day split */
+.split { display: flex; height: 14px; border-radius: 99px; overflow: hidden; margin-bottom: 16px; background: var(--card); }
+.split .sa { background: var(--em-2); transition: width .45s ease; }
+.split .sb { background: #3fa7ff; transition: width .45s ease; }
+/* horizontal bars in tables */
+.bar-cell { width: 45%; }
+.hbar { display: block; height: 8px; border-radius: 99px; background: var(--em-2); transition: width .45s ease; }
+.ledger tr.total .hbar { background: var(--accent); }
+.leaves + .leaf-day, .bscale + .leaf-day { margin-top: 14px; }
+select.in.sel { appearance: none; cursor: pointer; padding-inline: 12px 30px; font-size: .9em; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: left 14px center, left 9px center; background-size: 5px 5px; background-repeat: no-repeat; }
+.machine .pq .exhibit { margin: 20px 0 0; padding: 20px; border-radius: 18px; }

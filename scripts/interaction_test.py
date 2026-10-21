@@ -69,6 +69,26 @@ with sync_playwright() as p:
     focused = pg.evaluate('document.activeElement && document.activeElement.textContent.trim().slice(0,20)')
     check('keyboard: skip link then header reachable', bool(focused))
 
+    pg.goto(B + '/hijri/')
+    pg.fill('#f-date', '2026-10-21')
+    check('hijri: 21 Oct 2026 → 10 جمادى الأولى 1448', val(pg, '[data-calc="to-hijri"]') == '10' and 'جمادى الأولى 1448' in pg.locator('[data-calc="to-hijri"] [data-r="unit"]').inner_text())
+    pg.fill('#f-hYear', '1447'); pg.select_option('#f-hMonth', '9'); pg.fill('#f-hDay', '1')
+    check('hijri: 1 Ramadan 1447 → 18 Feb 2026', val(pg, '[data-calc="to-greg"]') == '18' and 'فبراير 2026' in pg.locator('[data-calc="to-greg"] [data-r="unit"]').inner_text())
+
+    pg.goto(B + '/days-between/')
+    pg.fill('#f-startDate', '2026-10-01'); pg.fill('#f-endDate', '2026-10-31'); pg.click('label:has(input[value="yes"])')
+    check('days: Oct 2026 inclusive = 31', val(pg) == '31', val(pg))
+    check('days: 22 working days (Sat–Sun)', '22 يوم عمل' in pg.locator('[data-r="badge"]').inner_text())
+
+    pg.goto(B + '/pregnancy/')
+    pg.fill('#f-cycleDays', '60'); pg.wait_for_timeout(300)
+    check('pregnancy: invalid cycle flagged', pg.locator('#f-cycleDays-err').is_visible())
+
+    pg.goto(B + '/calories/')
+    check('calories: default 2,740', val(pg) == '2,740', val(pg))
+    pg.select_option('#f-activity', 'sedentary')
+    check('calories: activity select recomputes', val(pg) == '2,121', val(pg))
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)

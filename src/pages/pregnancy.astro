@@ -1,0 +1,82 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import DateIn from '../components/DateIn.astro';
+import NumIn from '../components/NumIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcPregnancy } from '../lib/calc/pregnancy';
+import { pregnancyView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { pregnancyRuler } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+
+const now = new Date();
+const today = toISODate(now);
+const lmp = toISODate(new Date(now.getTime() - 70 * 86_400_000));
+const r = calcPregnancy({ lmpDate: lmp, cycleDays: 28, onDate: today });
+const view = r.ok ? pregnancyView(r.value) : errorView(r, 'موعد الولادة المتوقع')!;
+---
+<CalcLayout slug="pregnancy" lede="اكتبي تاريخ أول يوم من آخر دورة شهرية وطول دورتك المعتاد، ونحسب موعد الولادة المتوقع وعمر الحمل اليوم.">
+  <div data-calc="pregnancy">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتبي التاريخ في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات الحمل">
+        أول يوم من آخر دورة كان <DateIn name="lmpDate" label="أول يوم من آخر دورة شهرية" value={lmp} max={today} />،
+        ودورتي عادة <NumIn name="cycleDays" label="طول الدورة بالأيام" value={28} width={2} /> يوماً.
+      </form>
+      <FieldErrors names={['lmpDate', 'cycleDays']} />
+      <p class="hint">إذا لم تعرفي طول دورتك فاتركيه 28 يوماً، وهو المتوسط الشائع.</p>
+    </div>
+    <ResultCard view={view} notes={['النتيجة تقدير. نحو 4% فقط من الولادات تحدث في الموعد المتوقع بالضبط.', 'إذا أجريتِ تصوير الموجات فوق الصوتية في الثلث الأول، فموعده المقدّر أدق من هذا الحساب.', 'هذه الحاسبة للمعلومات العامة، ومتابعة الحمل تكون مع طبيبتك.']}>
+      <p class="formula" slot="formula"><code>موعد الولادة = أول يوم من آخر دورة + 280 يوماً + (طول الدورة − 28)</code>، وهي قاعدة نيغلي المعتمدة.</p>
+    </ResultCard>
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> أين أنتِ من الأسابيع الأربعين؟</h2>
+      <div data-x="ruler" set:html={pregnancyRuler(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف يُحسب موعد الولادة؟</h2>
+    <p>يُحسب الحمل طبياً من <strong>أول يوم في آخر دورة شهرية</strong>، لا من يوم الإخصاب، لأنه التاريخ الذي تعرفه أغلب النساء. ومدة الحمل المعتادة 280 يوماً، أي 40 أسبوعاً من ذلك اليوم. إذا كانت دورتك أطول أو أقصر من 28 يوماً، يتأخر الإباض أو يتقدم، فنزيح الموعد بالفرق.</p>
+    <div class="example">
+      <p>آخر دورة بدأت في 1 يناير 2026، والدورة 28 يوماً: موعد الولادة المتوقع <strong>8 أكتوبر 2026</strong>. في 12 مارس 2026 يكون عمر الحمل 10 أسابيع بالضبط. ولو كانت الدورة 32 يوماً، يصبح الموعد 12 أكتوبر.</p>
+    </div>
+    <h2>أثلاث الحمل</h2>
+    <ul>
+      <li><strong>الثلث الأول:</strong> من الأسبوع 1 إلى نهاية الأسبوع 13.</li>
+      <li><strong>الثلث الثاني:</strong> من الأسبوع 14 إلى نهاية الأسبوع 27.</li>
+      <li><strong>الثلث الثالث:</strong> من الأسبوع 28 حتى الولادة.</li>
+    </ul>
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>عند عدم انتظام الدورة، أو الحمل بعد أطفال الأنابيب (يُحسب من تاريخ نقل الأجنة)، أو إذا حددت الطبيبة موعداً مختلفاً بالأشعة. في هذه الحالات اعتمدي موعد الطبيبة.</p>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>لماذا يُحسب الحمل قبل حدوثه بأسبوعين؟</summary><p>لأن العد يبدأ من أول يوم في آخر دورة، والإخصاب يحدث عادة بعد نحو أسبوعين من ذلك اليوم. لذلك يكون «الأسبوع 4» فعلياً بعد أسبوعين من الإخصاب.</p></details>
+      <details><summary>هل الولادة في الأسبوع 38 مبكرة؟</summary><p>الولادة من بداية الأسبوع 37 إلى نهاية الأسبوع 41 تُعد ضمن المدة الطبيعية.</p></details>
+    </div>
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/05/methods-for-estimating-the-due-date" rel="noopener" target="_blank">الكلية الأمريكية لأطباء النساء والتوليد: طرق تقدير موعد الولادة</a></li>
+      <li><a href="https://www.nhs.uk/pregnancy/finding-out/due-date-calculator/" rel="noopener" target="_blank">الخدمة الصحية البريطانية NHS: موعد الولادة</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcPregnancy } from '../lib/calc/pregnancy';
+  import { pregnancyView } from '../lib/views-extra';
+  import { pregnancyRuler } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="pregnancy"]')!;
+  const lmp = root.querySelector<HTMLInputElement>('#f-lmpDate')!;
+  lmp.max = localTodayISO();
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcPregnancy({ lmpDate: f.lmpDate, cycleDays: num(f.cycleDays), onDate: localTodayISO() });
+      return { result, view: result.ok ? pregnancyView(result.value) : null };
+    },
+    extras: (p) => { root.querySelector<HTMLElement>('[data-x="ruler"]')!.innerHTML = pregnancyRuler(p); },
+  });
+</script>

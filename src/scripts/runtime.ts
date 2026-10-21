@@ -34,7 +34,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     const f: Fields = {};
     for (const el of fieldEls()) {
       const name = el.dataset.field!;
-      if (el instanceof HTMLInputElement) f[name] = el.value;
+      if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement) f[name] = el.value;
       else f[name] = el.querySelector<HTMLInputElement>('input:checked')?.value ?? el.dataset.default ?? '';
     }
     return f;
@@ -44,6 +44,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     const el = root.querySelector<HTMLElement>(`[data-field="${CSS.escape(name)}"]`);
     if (!el) return;
     if (el instanceof HTMLInputElement) el.value = value;
+    else if (el instanceof HTMLSelectElement) { if (Array.from(el.options).some((o) => o.value === value)) el.value = value; }
     else {
       const radio = el.querySelector<HTMLInputElement>(`input[value="${CSS.escape(value)}"]`);
       if (radio) radio.checked = true;
@@ -55,7 +56,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     for (const el of fieldEls()) {
       const name = el.dataset.field!;
       const msg = byField.get(name);
-      const input = el instanceof HTMLInputElement ? el : null;
+      const input = el instanceof HTMLInputElement || el instanceof HTMLSelectElement ? el : null;
       if (input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
       const errEl = root.querySelector<HTMLElement>(`#f-${CSS.escape(name)}-err`);
       if (errEl) {
@@ -104,7 +105,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
         const dd = document.createElement('dd');
         dt.textContent = k;
         dd.textContent = v;
-        dd.className = 'num';
+        if (!/[\u0600-\u06FF]/.test(v)) dd.className = 'num';
         d.append(dt, dd);
         return d;
       }),
