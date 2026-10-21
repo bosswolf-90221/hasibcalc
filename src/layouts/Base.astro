@@ -5,6 +5,9 @@ import '@fontsource/readex-pro/400.css';
 import '@fontsource/readex-pro/500.css';
 import '@fontsource/readex-pro/600.css';
 import '../styles/global.css';
+import ar300 from '@fontsource/readex-pro/files/readex-pro-arabic-300-normal.woff2?url';
+import ar500 from '@fontsource/readex-pro/files/readex-pro-arabic-500-normal.woff2?url';
+import la200 from '@fontsource/readex-pro/files/readex-pro-latin-200-normal.woff2?url';
 import { SITE, ADS, ANALYTICS } from '../config/site';
 import { CALCULATORS, CATEGORIES } from '../data/calculators';
 
@@ -33,6 +36,7 @@ const ld = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.n
     <meta name="theme-color" content="#f6f8f8" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#111718" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {[ar300, ar500, la200].map((f) => <link rel="preload" href={f} as="font" type="font/woff2" crossorigin />)}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:locale" content={SITE.locale} />

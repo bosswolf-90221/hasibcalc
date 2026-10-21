@@ -34,5 +34,5 @@ const { view, notes = [], shareable = true, sensitive = false, uid = 'r', small 
       {notes.length > 0 && <ul class="how-notes">{notes.map((n) => <li>{n}</li>)}</ul>}
     </div>
   </details>
-  <p class="sr-only" aria-live="polite" data-r="live"></p>
+  <p class="sr-only" role="status" aria-atomic="true" data-r="live"></p>
 </section>

@@ -2,6 +2,7 @@
 import type { CalcResult, FieldError } from '../lib/calc/core';
 import type { View } from '../lib/views';
 import { fmt } from '../lib/format';
+import { toNumber } from '../lib/calc/core';
 
 export type Fields = Record<string, string>;
 export type Computed<R> = { result: CalcResult<R>; view: View | null };
@@ -150,6 +151,13 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     update();
   });
   root.addEventListener('change', update);
+  root.addEventListener('focusout', (e) => {
+    const el = e.target as HTMLInputElement;
+    if (!(el instanceof HTMLInputElement) || el.inputMode !== 'decimal' || !el.value.trim()) return;
+    const n = toNumber(el.value);
+    if (n === null || Math.abs(n) < 10000) return;
+    el.value = n.toLocaleString('en-US', { maximumFractionDigits: 6 });
+  });
 
   const toast = (msg: string) => {
     const t = $('toast');

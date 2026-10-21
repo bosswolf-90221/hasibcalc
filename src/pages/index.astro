@@ -28,7 +28,7 @@ const suggestions = ['نهاية الخدمة', 'ضريبة 5%', 'قسط سيا�
     </div>
     <div class="find-pop">
       <ul id="search-results" class="find-results" role="listbox" hidden></ul>
-      <p class="find-empty" hidden>لا توجد حاسبة بهذا الاسم بعد. <a href="/contact/">اقترح حاسبة</a>.</p>
+      <p class="find-empty" hidden>لا توجد حاسبة بهذا الاسم بعد. جرّب <a href="/end-of-service/">نهاية الخدمة</a> أو <a href="/loan/">القسط الشهري</a> أو <a href="/vat/">الضريبة</a>، أو <a href="/contact/">اقترح حاسبة</a>.</p>
     </div>
     <p class="sugg">جرّب: {suggestions.map((s, i) => <>{i > 0 && <span aria-hidden="true"> · </span>}<button type="button" class="sugg-btn" data-s={s}>{s}</button></>)}</p>
   </section>
