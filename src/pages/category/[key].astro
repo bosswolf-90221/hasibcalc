@@ -21,7 +21,7 @@ const outside = CALCULATORS.filter((c) => !c.categories.includes(cat.key)).slice
       </div>
     </div>
   </section>
-  <div class="container" style="padding-top:28px">
+  <div class="container" style="position:relative;z-index:2;margin-top:-48px">
     <div class="grid-cards">{items.map((c) => <CalcCard c={c} />)}</div>
     <h2 style="margin-top:48px">من تصنيفات أخرى</h2>
     <div class="grid-cards">{outside.map((c) => <CalcCard c={c} />)}</div>
