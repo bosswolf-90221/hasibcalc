@@ -3,10 +3,11 @@ import Base from '../layouts/Base.astro';
 import { ADS, ANALYTICS, SITE } from '../config/site';
 ---
 <Base title="سياسة الخصوصية" description="ما البيانات التي يجمعها حاسِب، وكيف تتم الحسابات داخل متصفحك، واستخدام الإعلانات وملفات تعريف الارتباط." path="/privacy/">
-  <article class="doc article">
+  <Fragment slot="stage">
+    <p class="kick">الخصوصية</p>
     <h1>سياسة الخصوصية</h1>
     <p class="updated">آخر تحديث: 17 أكتوبر 2026</p>
-
+  </Fragment>
     <h2>الأرقام التي تكتبها</h2>
     <p>كل الحسابات تتم داخل متصفحك. الأرقام التي تكتبها في الحاسبات، مثل الراتب أو الوزن أو المدخرات، لا تُرسل إلى خوادمنا ولا تُحفظ لدينا.</p>
     <p>إذا ضغطت «انسخ الرابط مع أرقامي»، توضع أرقامك داخل الرابط نفسه. كل من يفتح هذا الرابط سيرى الأرقام، فلا تشاركه إلا مع من تثق به. وزر «انسخ رابط الحاسبة» ينسخ رابطاً بدون أرقام.</p>
@@ -34,5 +35,5 @@ import { ADS, ANALYTICS, SITE } from '../config/site';
 
     <h2>تواصل بشأن الخصوصية</h2>
     <p>لأي سؤال عن خصوصيتك: {SITE.contactEmail ? <span class="num">{SITE.contactEmail}</span> : <a href="/contact/">صفحة اتصل بنا</a>}.</p>
-  </article>
+  
 </Base>

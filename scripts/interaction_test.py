@@ -9,7 +9,7 @@ def check(name, cond, detail=''):
     if not cond: fails.append(name)
 def val(pg, root='[data-calc]'):
     pg.wait_for_timeout(700)
-    return pg.locator(f'{root} [data-r="value"]').first.inner_text().strip()
+    return pg.locator(f'{root} [data-r="value"] .sr-only').first.text_content().strip()
 with sync_playwright() as p:
     b = p.chromium.launch(); ctx = b.new_context(viewport={'width': 390, 'height': 844}, permissions=['clipboard-read', 'clipboard-write'])
     pg = ctx.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
@@ -58,6 +58,8 @@ with sync_playwright() as p:
     check('age: result renders a whole number', re.fullmatch(r'\d+', val(pg)) is not None, val(pg))
 
     pg.goto(B + '/')
+    check('home: live calculator shows a number', re.fullmatch(r'[\d,]+\.\d\d', val(pg)) is not None, val(pg))
+    pg.click('.topsearch'); pg.wait_for_timeout(200)
     pg.fill('#q', 'قسط سيارة'); pg.wait_for_timeout(200)
     check('home search: finds the loan page', pg.locator('#search-results a[href="/loan/"]').count() == 1)
     pg.fill('#q', 'زكاه'); pg.wait_for_timeout(200)

@@ -17,6 +17,8 @@ with sync_playwright() as p:
                 pg.on('pageerror', lambda e: errs.append(str(e)))
                 pg.on('console', lambda m: errs.append(m.text) if m.type == 'error' else None)
                 pg.goto(BASE + path, wait_until='networkidle')
+                pg.evaluate('async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } window.scrollTo(0, 0); }')
+                pg.wait_for_timeout(500)
                 overflow = pg.evaluate('document.documentElement.scrollWidth > window.innerWidth + 1')
                 key = f'{scheme}-{tag}{path}'
                 report[key] = {'errors': errs, 'overflow': overflow}

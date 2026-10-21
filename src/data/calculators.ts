@@ -6,6 +6,8 @@ export type CalculatorMeta = {
   question: string; // H1, and how people actually ask
   short: string; // short name for chips and lists
   blurb: string; // one short line for the editorial index
+  tone: string; // tile colour
+  sample: string; // example result shown on tiles
   seoTitle: string;
   description: string;
   categories: CategoryKey[];
@@ -19,6 +21,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'كم مكافأة نهاية خدمتي؟',
     short: 'نهاية الخدمة',
     blurb: '21 يوماً ثم 30 يوماً عن كل سنة، وفق المادة 51',
+    tone: '#0f6b52',
+    sample: '49,194',
     seoTitle: 'حاسبة مكافأة نهاية الخدمة في الإمارات (القطاع الخاص)',
     description: 'احسب مكافأة نهاية الخدمة وفق المادة 51 من قانون العمل الإماراتي: 21 يوماً عن أول 5 سنوات و30 يوماً بعدها، مع الحد الأعلى وأيام الغياب.',
     categories: ['money'],
@@ -30,6 +34,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'كم الضريبة على هذا المبلغ؟',
     short: 'ضريبة القيمة المضافة',
     blurb: 'أضف 5% إلى السعر أو استخرجها منه',
+    tone: '#4b4bd6',
+    sample: '50.00',
     seoTitle: 'حاسبة ضريبة القيمة المضافة 5%: إضافة واستخراج',
     description: 'أضف ضريبة القيمة المضافة إلى السعر أو استخرجها من سعر شامل، بنسبة 5% الإماراتية أو أي نسبة أخرى، مع شرح الفرق بين الطريقتين.',
     categories: ['money', 'shopping'],
@@ -41,6 +47,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'كم قسطي الشهري؟',
     short: 'القسط الشهري',
     blurb: 'فائدة ثابتة أو متناقصة، مع جدول السداد',
+    tone: '#cf3f20',
+    sample: '2,280',
     seoTitle: 'حاسبة القرض والقسط الشهري: فائدة ثابتة أو متناقصة',
     description: 'احسب القسط الشهري لقرض شخصي أو تمويل سيارة أو عقار، وقارن بين الفائدة الثابتة والمتناقصة، مع جدول توزيع الأصل والفائدة.',
     categories: ['money'],
@@ -52,6 +60,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'كم تساوي النسبة؟',
     short: 'النسبة المئوية',
     blurb: 'نسبة من رقم، ونسبة رقم لآخر، ونسبة التغير',
+    tone: '#2f6fd6',
+    sample: '100',
     seoTitle: 'حاسبة النسبة المئوية: نسبة من رقم، ونسبة رقم لآخر، ونسبة التغير',
     description: 'ثلاث حسبات للنسبة المئوية في صفحة واحدة: كم يساوي 40% من 250، وكم تمثل 40 من 250، ونسبة الزيادة أو النقص بين قيمتين.',
     categories: ['shopping'],
@@ -63,6 +73,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'كم السعر بعد الخصم؟',
     short: 'الخصم',
     blurb: 'السعر النهائي بعد خصم وخصم إضافي',
+    tone: '#c2410c',
+    sample: '251.37',
     seoTitle: 'حاسبة الخصم: السعر بعد التخفيض والخصم الإضافي',
     description: 'اعرف السعر النهائي بعد الخصم، وكم توفّر، ونسبة الخصم الفعلية عند وجود خصم إضافي فوق الخصم الأول.',
     categories: ['shopping'],
@@ -74,6 +86,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'كم عمري بالضبط؟',
     short: 'العمر',
     blurb: 'بالسنة والشهر واليوم، والأيام لعيد ميلادك',
+    tone: '#7a4bd6',
+    sample: '31',
     seoTitle: 'حاسبة العمر بالسنوات والأشهر والأيام',
     description: 'احسب عمرك بالضبط بالسنوات والأشهر والأيام، وعدد الأيام التي عشتها، وكم بقي على عيد ميلادك القادم.',
     categories: ['health-age'],
@@ -85,6 +99,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'هل وزني طبيعي؟',
     short: 'مؤشر كتلة الجسم',
     blurb: 'مؤشر كتلة الجسم ونطاق الوزن لطولك',
+    tone: '#c7305f',
+    sample: '24.5',
     seoTitle: 'حاسبة مؤشر كتلة الجسم BMI للبالغين',
     description: 'احسب مؤشر كتلة الجسم من وزنك وطولك، واعرف تصنيفه للبالغين ونطاق الوزن الموافق للنطاق الطبيعي لطولك.',
     categories: ['health-age'],
@@ -96,6 +112,8 @@ export const CALCULATORS: CalculatorMeta[] = [
     question: 'كم زكاة مالي؟',
     short: 'زكاة المال',
     blurb: 'ربع العشر بعد خصم الديون وحساب النصاب',
+    tone: '#a86600',
+    sample: '1,875',
     seoTitle: 'حاسبة زكاة المال والنصاب بالذهب',
     description: 'احسب الزكاة المبدئية على النقد والمدخرات والاستثمارات، مع خصم الديون وتحديد النصاب بسعر غرام الذهب الذي تدخله.',
     categories: ['money'],

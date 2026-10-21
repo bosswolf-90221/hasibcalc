@@ -1,7 +1,7 @@
 // Browser runtime shared by every calculator: read the sentence, compute, render, animate, copy, share, reset.
 import type { CalcResult, FieldError } from '../lib/calc/core';
 import type { View } from '../lib/views';
-import { fmt } from '../lib/format';
+import { fmt, odo, odoText } from '../lib/format';
 import { toNumber } from '../lib/calc/core';
 
 export type Fields = Record<string, string>;
@@ -22,7 +22,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
   const $ = (k: string) => result.querySelector<HTMLElement>(`[data-r="${k}"]`)!;
   const valueEl = $('value');
   const prefix = opts.paramPrefix ?? '';
-  let shown = Number((valueEl.textContent || '').replace(/,/g, '')) || 0;
+  let shown = Number(odoText(valueEl).replace(/,/g, '')) || 0;
   let lastInput = 0;
   let raf = 0;
   let liveTimer = 0;
@@ -71,7 +71,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     const tiny = Math.abs(target - shown) <= Math.abs(shown) * 0.002;
     if (reduceMotion() || burst || tiny) {
       shown = target;
-      valueEl.textContent = fmt(target, decimals);
+      valueEl.innerHTML = odo(fmt(target, decimals));
       return;
     }
     const from = shown;
@@ -80,7 +80,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       const p = Math.min(1, (t - t0) / 450);
       const e = 1 - Math.pow(1 - p, 3);
       shown = from + (target - from) * e;
-      valueEl.textContent = fmt(shown, decimals);
+      valueEl.innerHTML = odo(fmt(shown, decimals));
       if (p < 1) raf = requestAnimationFrame(step);
       else shown = target;
     };
@@ -180,7 +180,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     if (!btn) return;
     const act = btn.dataset.act;
     if (act === 'copy') {
-      const text = `${$('label').textContent}: ${valueEl.textContent} ${$('unit').textContent}`.replace(/\s+/g, ' ').trim();
+      const text = `${$('label').textContent}: ${odoText(valueEl)} ${$('unit').textContent}`.replace(/\s+/g, ' ').trim();
       copy(`${text}\n${cleanUrl()}`, 'نسخنا النتيجة');
     } else if (act === 'share-clean') {
       copy(cleanUrl(), 'نسخنا رابط الحاسبة بدون أرقامك');

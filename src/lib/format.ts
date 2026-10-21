@@ -35,3 +35,14 @@ export function plural(n: number, forms: { one: string; two: string; few: string
 export const years = (n: number) => plural(n, { one: 'سنة واحدة', two: 'سنتان', few: 'سنوات', many: 'سنة' });
 export const days = (n: number) => plural(n, { one: 'يوم واحد', two: 'يومان', few: 'أيام', many: 'يوماً' });
 export const months = (n: number) => plural(n, { one: 'شهر واحد', two: 'شهران', few: 'أشهر', many: 'شهراً' });
+
+/** Counter-style digits: each digit in its own cell, separators narrow. Input is our own formatted number. */
+export function odo(text: string): string {
+  const cells = Array.from(text)
+    .map((ch) => (/\d/.test(ch) ? `<i>${ch}</i>` : ch === '—' ? `<i>—</i>` : `<i class="c">${ch === '-' ? '−' : ch}</i>`))
+    .join('');
+  // screen readers get the whole number once; the cells are decoration
+  return `<span class="sr-only">${text}</span><span class="cells" aria-hidden="true">${cells}</span>`;
+}
+/** The plain number inside an odo() element. */
+export const odoText = (el: Element) => el.querySelector('.sr-only')?.textContent ?? el.textContent ?? '';

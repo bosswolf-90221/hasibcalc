@@ -1,38 +1,41 @@
 ---
-// The result as an extension of the sentence: ruler, label, giant number, unit, then editorial rows.
+// The answer: a dark counter display (one cell per digit), then the detail rows, actions and the formula.
 import type { View } from '../lib/views';
-import { fmt } from '../lib/format';
-export interface Props { view: View; notes?: string[]; shareable?: boolean; sensitive?: boolean; uid?: string; small?: boolean }
-const { view, notes = [], shareable = true, sensitive = false, uid = 'r', small = false } = Astro.props;
+import { fmt, odo } from '../lib/format';
+export interface Props { view: View; notes?: string[]; shareable?: boolean; sensitive?: boolean; uid?: string; small?: boolean; mini?: boolean; more?: string }
+const { view, notes = [], shareable = true, sensitive = false, uid = 'r', small = false, mini = false, more } = Astro.props;
 ---
-<section class={`result ${small ? 'small' : ''}`} data-result data-state={view.error ? 'error' : 'ok'} aria-labelledby={`${uid}-title`}>
-  <div class="ruler" aria-hidden="true"></div>
+<section class={`result ${small ? 'small' : ''} ${mini ? 'mini' : ''}`} data-result data-state={view.error ? 'error' : 'ok'} aria-labelledby={`${uid}-title`}>
   <p class="r-error" data-r="error" hidden={!view.error}>{view.error}</p>
-  <div class="r-ok">
+  <div class="display">
     <div class="r-head">
       <p class="r-label" id={`${uid}-title`} data-r="label">{view.label}</p>
       <span class="r-badge" data-r="badge" hidden={!view.badge}>{view.badge}</span>
     </div>
-    <p class="r-value"><span class="v" data-r="value" data-decimals={view.decimals}>{fmt(view.value, view.decimals)}</span><span class="u" data-r="unit">{view.unit}</span></p>
+    <p class="r-value"><span class="v odo" data-r="value" data-decimals={view.decimals} set:html={odo(fmt(view.value, view.decimals))} /><span class="u" data-r="unit">{view.unit}</span></p>
+    <slot name="display" />
     <p class="r-sentence" data-r="sentence">{view.sentence}</p>
-    <dl class="rows" data-r="rows">
-      {view.rows.map(([k, v]) => <div><dt>{k}</dt><dd class="num">{v}</dd></div>)}
-    </dl>
   </div>
+  <dl class="rows" data-r="rows" hidden={mini}>
+    {view.rows.map(([k, v]) => <div><dt>{k}</dt><dd class="num">{v}</dd></div>)}
+  </dl>
   <div class="r-actions">
     <button class="btn" type="button" data-act="copy">انسخ النتيجة</button>
-    {shareable && <button class="btn" type="button" data-act="share-clean">انسخ رابط الحاسبة</button>}
-    {shareable && <button class="btn" type="button" data-act="share-values" data-sensitive={sensitive ? 'true' : undefined}>انسخ الرابط مع أرقامي</button>}
+    {shareable && !mini && <button class="btn" type="button" data-act="share-clean">انسخ رابط الحاسبة</button>}
+    {shareable && !mini && <button class="btn" type="button" data-act="share-values" data-sensitive={sensitive ? 'true' : undefined}>انسخ الرابط مع أرقامي</button>}
     <button class="btn" type="button" data-act="reset">إعادة تعيين</button>
+    {more && <a class="btn primary" href={more}>التفاصيل والشرح ←</a>}
     <span class="toast" role="status" data-r="toast"></span>
   </div>
   <p class="from-url" data-r="from-url" hidden>عبّأنا الأرقام من الرابط الذي فتحته. <button class="btn" type="button" data-act="clear-url">احذف أرقامي من الرابط</button></p>
-  <details class="how">
-    <summary>كيف حسبناها؟</summary>
-    <div class="how-body">
-      <slot name="formula" />
-      {notes.length > 0 && <ul class="how-notes">{notes.map((n) => <li>{n}</li>)}</ul>}
-    </div>
-  </details>
+  {!mini && (
+    <details class="how">
+      <summary>كيف حسبناها؟</summary>
+      <div class="how-body">
+        <slot name="formula" />
+        {notes.length > 0 && <ul class="how-notes">{notes.map((n) => <li>{n}</li>)}</ul>}
+      </div>
+    </details>
+  )}
   <p class="sr-only" role="status" aria-atomic="true" data-r="live"></p>
 </section>

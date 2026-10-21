@@ -50,11 +50,10 @@ const a = r.ok ? r.value : null;
 </CalcLayout>
 
 <style>
-  .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
-  .trio div { display: flex; flex-direction: column; padding: 14px 0 0; }
-  .trio div + div { border-inline-start: 1px solid var(--rule); padding-inline-start: 22px; }
-  .trio .n { font-size: clamp(2.6rem, 9vw, 4.6rem); font-weight: 200; color: var(--ink); line-height: 1; letter-spacing: -.03em; }
-  .trio .l { font-size: var(--t-small); color: var(--accent); margin-top: 6px; }
+  .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .trio div { display: flex; flex-direction: column; align-items: center; padding: 16px 8px; border-radius: 16px; background: var(--deep); }
+  .trio .n { font-size: clamp(2.2rem, 7vw, 3.4rem); font-weight: 600; color: var(--mint); line-height: 1; }
+  .trio .l { font-size: .85rem; color: #9fc6b8; margin-top: 8px; }
 </style>
 
 <script>

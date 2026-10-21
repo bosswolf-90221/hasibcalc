@@ -1,188 +1,149 @@
 ---
 import Base from '../layouts/Base.astro';
 import CalcIndex from '../components/CalcIndex.astro';
+import NumIn from '../components/NumIn.astro';
+import DateIn from '../components/DateIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
 import Reveal from '../components/motion/Reveal.tsx';
-import { CALCULATORS, CATEGORIES, inCategory } from '../data/calculators';
+import { CALCULATORS, bySlug } from '../data/calculators';
 import { SITE } from '../config/site';
-import { arDate } from '../lib/format';
+import { calcGratuity } from '../lib/calc/gratuity';
+import { gratuityView, errorView } from '../lib/views';
+import { toISODate } from '../lib/calc/core';
 
-const suggestions = ['نهاية الخدمة', 'ضريبة 5%', 'قسط سيارة', 'زكاة', 'خصم', 'وزني'];
+const today = toISODate(new Date());
+const d = { basicSalary: 8000, startDate: '2019-03-01', endDate: today };
+const r = calcGratuity(d);
+const view = r.ok ? gratuityView(r.value) : errorView(r, 'مكافأة نهاية خدمتك')!;
+const split = (g: typeof r) => {
+  if (!g.ok) return [0, 0];
+  const y = Math.min(g.value.serviceYears, 30);
+  const a = Math.min(y, 5), b = Math.max(0, y - 5);
+  return [a, b];
+};
+const [sa, sb] = split(r);
+const shelf = ['loan', 'vat', 'zakat', 'bmi'].map(bySlug);
+const more = ['end-of-service', 'percentage', 'discount', 'age'].map(bySlug);
+const chips = CALCULATORS.slice(0, 6);
 ---
-<Base title={`${SITE.name}: ماذا تريد أن تحسب اليوم؟`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" bare>
-  <section class="container opening" aria-labelledby="h">
-    <div class="o-meta">
-      <p class="kicker"><b>{String(CALCULATORS.length).padStart(2, '0')}</b> حاسبات · العدد الحالي</p>
-      <p class="kicker">آخر مراجعة للمعادلات · {arDate(SITE.lastReviewed)}</p>
-    </div>
-    <h1 id="h">ماذا تريد<br />أن تحسب <span class="today">اليوم؟</span></h1>
-    <div class="o-side">
-      <p>اكتب أرقامك داخل جملة، والإجابة تظهر فوراً مع معادلتها ومصدرها الرسمي. بدون تسجيل، وأرقامك لا تغادر جهازك.</p>
-    </div>
-  </section>
-
-  <section class="container finder" role="search" aria-label="ابحث عن حاسبة">
-    <div class="ruler" aria-hidden="true"></div>
-    <div class="find-row">
-      <label for="q" class="find-label">ابحث</label>
-      <input id="q" type="search" placeholder="نهاية الخدمة، ضريبة، قسط سيارة…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list" />
-      <span class="find-hint" aria-hidden="true">Enter ↵</span>
-    </div>
-    <div class="find-pop">
-      <ul id="search-results" class="find-results" role="listbox" hidden></ul>
-      <p class="find-empty" hidden>لا توجد حاسبة بهذا الاسم بعد. جرّب <a href="/end-of-service/">نهاية الخدمة</a> أو <a href="/loan/">القسط الشهري</a> أو <a href="/vat/">الضريبة</a>، أو <a href="/contact/">اقترح حاسبة</a>.</p>
-    </div>
-    <p class="sugg">جرّب: {suggestions.map((s, i) => <>{i > 0 && <span aria-hidden="true"> · </span>}<button type="button" class="sugg-btn" data-s={s}>{s}</button></>)}</p>
-  </section>
-
-  <section class="container catalog" id="index" aria-labelledby="idx-title">
-    <aside class="filter" aria-label="التصنيفات">
-      <div class="filter-inner">
-        <h2 id="idx-title" class="kicker">الفهرس</h2>
-        <div class="filter-list" role="group" aria-label="اعرض حسب التصنيف">
-          <button type="button" class="f-btn" data-f="all" aria-pressed="true"><span>الكل</span><span class="nums">{CALCULATORS.length}</span></button>
-          {CATEGORIES.map((c) => (
-            <button type="button" class="f-btn" data-f={c.key} aria-pressed="false"><span>{c.name}</span><span class="nums">{inCategory(c.key).length}</span></button>
-          ))}
-        </div>
+<Base title={`${SITE.name}: أريد أن أعرف… حاسبات عربية مجانية`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" bare>
+  <section class="stage hero" aria-labelledby="h">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="kick">حاسبات عربية مجانية</p>
+        <h1 id="h">أريد أن أعرف<span class="sr-only">: حاسبات عربية تجيب عن أسئلتك الحسابية</span></h1>
+        <label class="ask">
+          <span class="sr-only">اختر سؤالك</span>
+          <select id="ask" aria-label="اختر سؤالك">
+            {CALCULATORS.map((c) => <option value={`/${c.slug}/`} selected={c.slug === 'end-of-service'}>{c.question}</option>)}
+          </select>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </label>
+        <p class="lede">اختر سؤالك، واكتب أرقامك في جملة. تظهر الإجابة فوراً مع طريقة الحساب ومصدرها الرسمي، بلا تسجيل، ولا تغادر أرقامك جهازك.</p>
+        <ul class="chips" aria-label="أسئلة شائعة">
+          {chips.map((c) => <li><a href={`/${c.slug}/`} style={`--t:${c.tone}`}>{c.short}</a></li>)}
+        </ul>
       </div>
-    </aside>
-    <div class="list-col">
-      <CalcIndex items={CALCULATORS} id="calc-list" />
+
+      <div class="machine" data-calc="home-eos">
+        <div class="machine-top"><span>جرّبها الآن: نهاية الخدمة</span><b>تحسب وأنت تكتب</b></div>
+        <form class="sentence" onsubmit="return false" aria-label="جرّب حاسبة نهاية الخدمة">
+          راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
+          بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+          وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />
+        </form>
+        <FieldErrors names={['basicSalary', 'startDate', 'endDate']} />
+        <ResultCard view={view} mini uid="h" more="/end-of-service/">
+          <Fragment slot="display">
+            <div class="dbar" aria-hidden="true"><span data-bar="a" style={`width:${(sa / Math.max(sa + sb, 1)) * 100}%`}></span><span data-bar="b" style={`width:${(sb / Math.max(sa + sb, 1)) * 100}%`}></span></div>
+            <div class="dlegend" aria-hidden="true"><span><i></i>أول 5 سنوات · 21 يوم/سنة</span><span><i></i>بعدها · 30 يوم/سنة</span></div>
+          </Fragment>
+        </ResultCard>
+      </div>
     </div>
   </section>
 
-  <section class="container method" aria-labelledby="m-title">
-    <h2 id="m-title" class="kicker">المنهجية</h2>
-    <Reveal client:idle selector="li">
-    <ol class="m-list">
-      <li><span class="nums">01</span><p><strong>معادلات ثابتة.</strong> كل رقم يأتي من معادلة مكتوبة في صفحته تحت «كيف حسبناها؟»، وتتحقق منها اختبارات آلية.</p></li>
-      <li><span class="nums">02</span><p><strong>مصادر رسمية.</strong> القوانين والنسب من جهات حكومية ومراجع معتمدة، مع رابطها وتاريخ آخر مراجعة.</p></li>
-      <li><span class="nums">03</span><p><strong>حدود واضحة.</strong> كل صفحة تقول متى لا تنطبق النتيجة، بدل رقم قطعي مضلل. <a href="/about/">اقرأ المنهجية</a>.</p></li>
-    </ol>
-    </Reveal>
-  </section>
+  <div class="container">
+    <section class="shelf" id="index" aria-labelledby="idx-h">
+      <h2 id="idx-h" class="sr-only">كل الحاسبات</h2>
+      <CalcIndex items={shelf} />
+    </section>
+
+    <section class="sec" aria-labelledby="more-h">
+      <div class="sec-head"><h2 id="more-h">حاسبات أخرى</h2><p>كل حاسبة لها صفحة بشرح ومثال محسوب وأسئلة شائعة.</p></div>
+      <Reveal client:idle selector="li"><CalcIndex items={more} compact /></Reveal>
+    </section>
+
+    <section class="sec" aria-labelledby="how-h">
+      <div class="sec-head"><h2 id="how-h">احسب بجملة لا باستمارة</h2><p>ثلاث خطوات، بلا تسجيل ولا تحميل.</p></div>
+      <Reveal client:idle selector="li">
+        <ol class="steps">
+          <li class="card"><span class="n">1</span><h3>اختر سؤالك</h3><p>من «أريد أن أعرف…» في الأعلى، أو من البحث.</p><div class="demo">أريد أن أعرف <u>كم قسطي الشهري؟</u></div></li>
+          <li class="card"><span class="n">2</span><h3>اكتب أرقامك داخل الجملة</h3><p>الأرقام نفسها هي الخانات.</p><div class="demo">قرض بقيمة <u class="num">100,000</u> لمدة <u class="num">48</u> شهراً</div></li>
+          <li class="card"><span class="n">3</span><h3>احصل على الإجابة وطريقتها</h3><p>تظهر النتيجة فوراً، ومعها المعادلة والمصدر. <a href="/about/">كيف نحسب</a></p><div class="demo">قسطك: <b class="num">2,280.35</b> درهم</div></li>
+        </ol>
+      </Reveal>
+    </section>
+  </div>
 </Base>
 
 <style>
-  .opening { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 28px; padding-block: 56px 40px; align-items: end; }
-  .o-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 10px; margin-bottom: 48px; }
-  .opening h1 { grid-column: 1 / span 8; font-size: var(--t-display); font-weight: 500; line-height: 1.08; letter-spacing: -.02em; }
-  .today { color: var(--accent); }
-  .o-side { grid-column: 10 / span 3; padding-bottom: 14px; }
-  .o-side p { color: var(--soft); font-size: 1rem; line-height: 1.8; margin: 0; border-top: 1px solid var(--rule); padding-top: 12px; }
-
-  .finder { position: relative; padding-bottom: 8px; }
-  .find-row { display: flex; align-items: baseline; gap: 18px; border-bottom: 2px solid var(--ink); padding-block: 14px 6px; }
-  .find-row:focus-within { border-bottom-color: var(--accent); }
-  .find-label { font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; color: var(--accent); flex: none; }
-  .find-row input { flex: 1; min-width: 0; font: inherit; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 300; color: var(--ink); background: transparent; border: 0; padding: 6px 0; min-height: 56px; }
-  .find-row input::placeholder { color: var(--muted); }
-  .find-row input:focus { outline: none; }
-  .find-row input::-webkit-search-cancel-button { display: none; }
-  .find-hint { font-size: var(--t-micro); color: var(--muted); flex: none; }
-  .find-pop { position: absolute; inset-inline: max(22px, env(safe-area-inset-left, 0px)); z-index: 10; }
-  .find-results { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--rule); border-top: 0; }
-  .find-results :global(a) { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 18px; text-decoration: none; border-bottom: 1px solid var(--line); font-size: 1.1rem; }
-  .find-results :global(a[aria-selected='true']), .find-results :global(a:hover) { background: var(--accent-bg); color: var(--ink); }
-  .find-results :global(.k) { font-size: var(--t-micro); color: var(--muted); }
-  .find-empty { margin: 0; padding: 14px 18px; background: var(--surface); border: 1px solid var(--rule); border-top: 0; color: var(--soft); }
-  @media (prefers-reduced-motion: no-preference) { .find-results:not([hidden]), .find-empty:not([hidden]) { animation: drop .2s ease; } }
-  @keyframes drop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-  .sugg { font-size: var(--t-small); color: var(--soft); margin: 12px 0 0; }
-  .sugg-btn { font: inherit; color: var(--ink); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 5px; }
-  .sugg-btn:hover { color: var(--accent); text-decoration-color: var(--accent); }
-
-  .catalog { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 0 44px; margin-top: 72px; }
-  .filter-inner { position: sticky; top: 24px; }
-  .filter .kicker { padding-top: 10px; border-top: 2px solid var(--ink); margin-bottom: 14px; }
-  .filter-list { display: flex; flex-direction: column; }
-  .f-btn { font: inherit; display: flex; justify-content: space-between; gap: 12px; text-align: start; color: var(--soft); background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 0; cursor: pointer; font-size: .95rem; }
-  .f-btn .nums { color: var(--muted); font-size: var(--t-small); }
-  .f-btn:hover { color: var(--ink); }
-  .f-btn[aria-pressed='true'] { color: var(--ink); font-weight: 500; }
-  .f-btn[aria-pressed='true'] .nums { color: var(--accent); }
-  .list-col :global(.index li[hidden]) { display: none; }
-
-  .method { margin-top: 96px; display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 0 44px; }
-  .method .kicker { padding-top: 10px; border-top: 2px solid var(--ink); align-self: start; }
-  .m-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; border-top: 1px solid var(--ink); padding-top: 14px; }
-  .m-list li { display: flex; flex-direction: column; gap: 6px; }
-  .m-list .nums { color: var(--accent); font-weight: 500; font-size: var(--t-small); }
-  .m-list p { font-size: .95rem; color: var(--soft); margin: 0; }
-  .m-list strong { color: var(--ink); font-weight: 500; }
-  .m-list a { color: var(--accent); }
-
-  @media (max-width: 900px) {
-    .opening { grid-template-columns: 1fr; padding-block: 32px 28px; }
-    .o-meta { margin-bottom: 32px; }
-    .opening h1, .o-side { grid-column: 1; }
-    .o-side { margin-top: 22px; padding-bottom: 0; }
-    .catalog, .method { grid-template-columns: 1fr; margin-top: 48px; }
-    .filter-inner { position: static; }
-    .filter-list { flex-direction: row; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-    .f-btn { border: 1px solid var(--rule); border-radius: 99px; padding: 6px 14px; gap: 8px; }
-    .f-btn[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-    .f-btn[aria-pressed='true'] .nums { color: var(--bg); }
-    .m-list { grid-template-columns: 1fr; }
-    .method .kicker { margin-bottom: 0; border-top: 0; }
-    .find-hint { display: none; }
+  .hero { padding-bottom: 150px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: center; padding-top: 40px; }
+  .hero-copy { min-width: 0; }
+  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); line-height: 1.1; margin-top: 14px; color: #fff; }
+  .ask { position: relative; display: inline-flex; align-items: center; max-width: 100%; margin-top: 14px; background: #fff; color: var(--em); border-radius: 99px; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .6); }
+  .ask select { appearance: none; font: inherit; font-weight: 600; font-size: clamp(1.15rem, 3.4vw, 1.9rem); color: inherit; background: transparent; border: 0; border-radius: 99px; padding: 12px 26px; padding-inline-end: 58px; max-width: 100%; text-overflow: ellipsis; cursor: pointer; }
+  .ask select:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+  .ask svg { position: absolute; inset-inline-end: 22px; pointer-events: none; }
+  .hero .lede { color: var(--on-deep-soft); margin-top: 22px; }
+  .chips { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 16px; border-radius: 99px; border: 1px solid rgba(255, 255, 255, .2); color: #e0f3ec; font-size: .9rem; transition: background-color .2s; }
+  .chips a::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--t); box-shadow: 0 0 0 2px rgba(255, 255, 255, .5); }
+  .chips a:hover { background: rgba(255, 255, 255, .1); }
+  .hero .machine .sentence { font-size: clamp(1.15rem, 2.2vw, 1.4rem); }
+  .shelf { margin-top: -84px; position: relative; z-index: 2; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .steps li { padding: 24px; display: flex; flex-direction: column; gap: 6px; }
+  .steps .n { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: var(--deep); color: var(--mint); font-weight: 600; margin-bottom: 6px; }
+  .steps p { color: var(--soft); font-size: .95rem; margin: 0; }
+  .steps a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+  .demo { margin-top: auto; padding: 12px 14px; border-radius: 12px; background: var(--well); font-size: .95rem; }
+  .demo u { text-decoration: none; color: var(--accent); font-weight: 600; border-bottom: 2px solid currentColor; }
+  .demo b { font-weight: 600; }
+  .steps li > .demo { margin-top: 14px; }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 36px; padding-top: 24px; }
+    .steps { grid-template-columns: 1fr; }
   }
 </style>
 
 <script>
-  import { CALCULATORS } from '../data/calculators';
-  const norm = (s: string) =>
-    s.toLowerCase()
-      .replace(/[ً-ْـ]/g, '')
-      .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي')
-      .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
-      .trim();
-  const items = CALCULATORS.map((c) => ({ c, hay: norm([c.question, c.short, c.blurb, ...c.terms].join(' ')) }));
-  const input = document.querySelector<HTMLInputElement>('#q')!;
-  const list = document.querySelector<HTMLUListElement>('#search-results')!;
-  const empty = document.querySelector<HTMLElement>('.find-empty')!;
-  let active = -1;
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcGratuity } from '../lib/calc/gratuity';
+  import { gratuityView } from '../lib/views';
+  import { localTodayISO } from '../lib/calc/core';
 
-  function setActive(i: number) {
-    const links = Array.from(list.querySelectorAll<HTMLAnchorElement>('a'));
-    active = links.length ? (i + links.length) % links.length : -1;
-    links.forEach((a, j) => a.setAttribute('aria-selected', j === active ? 'true' : 'false'));
-  }
-  function run() {
-    const q = norm(input.value);
-    if (!q) { list.hidden = true; empty.hidden = true; input.setAttribute('aria-expanded', 'false'); return; }
-    const words = q.split(/\s+/).map((w) => w.replace(/^ال/, '')).filter(Boolean);
-    const hits = items.filter((it) => words.every((w) => it.hay.includes(w)));
-    list.replaceChildren(...hits.map(({ c }) => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = `/${c.slug}/`;
-      a.setAttribute('role', 'option');
-      const t = document.createElement('span'); t.textContent = c.question;
-      const k = document.createElement('span'); k.textContent = c.short; k.className = 'k';
-      a.append(t, k); li.append(a); return li;
-    }));
-    list.hidden = hits.length === 0;
-    empty.hidden = hits.length !== 0;
-    input.setAttribute('aria-expanded', String(hits.length > 0));
-    setActive(0);
-  }
-  input.addEventListener('input', run);
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
-    else if (e.key === 'Enter') { const a = list.querySelectorAll('a')[Math.max(0, active)]; if (a) location.href = a.getAttribute('href')!; }
-    else if (e.key === 'Escape') { input.value = ''; run(); }
+  const ask = document.querySelector<HTMLSelectElement>('#ask')!;
+  ask.addEventListener('change', () => (location.href = ask.value));
+
+  const root = document.querySelector<HTMLElement>('[data-calc="home-eos"]')!;
+  const end = root.querySelector<HTMLInputElement>('#f-endDate')!;
+  end.value = localTodayISO();
+  end.dataset.default = end.value;
+  const bar = (k: string) => root.querySelector<HTMLElement>(`[data-bar="${k}"]`)!;
+  mountCalculator(root, {
+    paramPrefix: 'home_',
+    compute: (f) => {
+      const result = calcGratuity({ basicSalary: num(f.basicSalary), startDate: f.startDate, endDate: f.endDate });
+      return { result, view: result.ok ? gratuityView(result.value) : null };
+    },
+    extras: (g) => {
+      const y = Math.min(g.serviceYears, 30);
+      const a = Math.min(y, 5), b = Math.max(0, y - 5), t = Math.max(a + b, 1);
+      bar('a').style.width = `${(a / t) * 100}%`;
+      bar('b').style.width = `${(b / t) * 100}%`;
+    },
   });
-  document.querySelectorAll<HTMLButtonElement>('.sugg-btn').forEach((b) => b.addEventListener('click', () => { input.value = b.dataset.s!; run(); input.focus(); }));
-
-  // category filter on the index
-  const rows = Array.from(document.querySelectorAll<HTMLLIElement>('#calc-list li'));
-  document.querySelectorAll<HTMLButtonElement>('.f-btn').forEach((b) =>
-    b.addEventListener('click', () => {
-      const f = b.dataset.f!;
-      document.querySelectorAll('.f-btn').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      rows.forEach((r) => (r.hidden = f !== 'all' && !(r.dataset.cats || '').split(' ').includes(f)));
-    }),
-  );
 </script>

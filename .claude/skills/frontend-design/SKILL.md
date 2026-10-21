@@ -3,6 +3,8 @@ name: frontend-design
 description: Design rules for the «حاسِب» site — type scale, 8px spacing grid, brand colours, component patterns, and an explicit ban on the generic AI-website look. Read before building or changing any page, section or component in this repo.
 ---
 
+> **Current direction (Oct 2026): «أريد أن أعرف…».** Deep-emerald stage (#06291f, glow #13785b, dot grid) with the nav floating over it; a white "machine" card (radius 28) that overlaps the stage and holds the sentence; the answer in a dark display with mint counter digits, one cell per digit (`odo()` in lib/format.ts — always keeps a screen-reader copy). Calculators shown as coloured tiles (`tone` in data/calculators.ts, white text must pass 4.5:1). All copy is Modern Standard Arabic (فصحى), never Gulf dialect. Where older rules below conflict with this, this wins.
+
 # حاسِب — design skill
 
 Direction: **Arabic Editorial Calculator.** A digital magazine about numbers, not a SaaS landing page.

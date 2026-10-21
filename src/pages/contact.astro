@@ -6,10 +6,11 @@ const hasEmail = Boolean(SITE.contactEmail);
 if (!hasForm && !hasEmail) console.warn('[hasib] Contact page: set PUBLIC_CONTACT_FORM_ENDPOINT and/or PUBLIC_CONTACT_EMAIL.');
 ---
 <Base title="اتصل بنا" description="راسل فريق حاسِب لاقتراح حاسبة جديدة أو الإبلاغ عن خطأ في معادلة." path="/contact/">
-  <article class="doc">
+  <Fragment slot="stage">
+    <p class="kick">تواصل</p>
     <h1>اتصل بنا</h1>
     <p class="lede">وجدت خطأ في معادلة؟ تريد حاسبة جديدة؟ اكتب لنا.</p>
-
+  </Fragment>
     {hasForm ? (
       <form id="contact" class="cform" action={SITE.contactFormEndpoint} method="POST" novalidate data-endpoint={SITE.contactFormEndpoint}>
         <div class="f"><label for="c-name">اسمك</label><input id="c-name" name="name" required maxlength="80" autocomplete="name" aria-describedby="c-name-err" /><span class="field-error" id="c-name-err" hidden></span></div>
@@ -27,7 +28,7 @@ if (!hasForm && !hasEmail) console.warn('[hasib] Contact page: set PUBLIC_CONTAC
 
     {hasEmail && <p>أو راسلنا مباشرة على: <span class="num mail">{SITE.contactEmail}</span></p>}
     <p class="hint">لا نشارك بياناتك مع أحد، ونستخدمها للرد على رسالتك فقط. التفاصيل في <a href="/privacy/">سياسة الخصوصية</a>.</p>
-  </article>
+  
 </Base>
 
 <style>
