@@ -6,6 +6,7 @@ import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcVat } from '../lib/calc/vat';
 import { vatView, errorView } from '../lib/views';
+import { vatEquation } from '../lib/exhibits';
 
 const d = { mode: 'add' as const, ratePercent: '5', amount: 1000 };
 const r = calcVat({ mode: d.mode, ratePercent: 5, amount: d.amount });
@@ -14,8 +15,8 @@ const v = r.ok ? r.value : null;
 ---
 <CalcLayout slug="vat" lede="اختر هل تريد إضافة الضريبة إلى السعر أو استخراجها من سعر شامل، ثم اكتب المبلغ.">
   <div data-calc="vat">
-    <div class="card calc-card">
-    <p class="card-label">اكتب أرقامك في الجملة</p>
+    <div class="sentence-wrap">
+    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات حساب الضريبة">
       أريد <Pills name="mode" legend="نوع الحساب" selected={d.mode} options={[{ value: 'add', label: 'إضافة' }, { value: 'extract', label: 'استخراج' }]} />
       ضريبة <Pills name="ratePercent" legend="نسبة الضريبة" selected={d.ratePercent} options={[{ value: '5', label: '5%' }, { value: '15', label: '15%' }, { value: '10', label: '10%' }]} />
@@ -30,12 +31,8 @@ const v = r.ok ? r.value : null;
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="split-title">
-      <h2 id="split-title">من أين يتكوّن الإجمالي</h2>
-      <div class="bar" role="img" aria-label="نسبة المبلغ الأساسي إلى الضريبة">
-        <span class="a" data-x="base" style={`width:${v && v.total ? (v.base / v.total) * 100 : 100}%`}></span>
-        <span class="b" data-x="tax" style={`width:${v && v.total ? (v.tax / v.total) * 100 : 0}%`}></span>
-      </div>
-      <div class="legend"><span class="a"><i></i>المبلغ الأساسي</span><span class="b"><i></i>الضريبة</span></div>
+      <h2 id="split-title" class="exhibit-title"><b>02</b> المعادلة بأرقامك</h2>
+      <div data-x="eq" set:html={vatEquation(v)} />
     </section>
   </div>
 
@@ -66,6 +63,7 @@ const v = r.ok ? r.value : null;
   import { mountCalculator, num } from '../scripts/runtime';
   import { calcVat } from '../lib/calc/vat';
   import { vatView } from '../lib/views';
+  import { vatEquation } from '../lib/exhibits';
   const root = document.querySelector<HTMLElement>('[data-calc="vat"]')!;
   const x = (k: string) => root.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
   mountCalculator(root, {
@@ -74,10 +72,6 @@ const v = r.ok ? r.value : null;
       const result = calcVat({ mode, ratePercent: num(f.ratePercent), amount: num(f.amount) });
       return { result, view: result.ok ? vatView(result.value, mode) : null };
     },
-    extras: (v) => {
-      const t = v.total || 1;
-      x('base').style.width = `${v.total ? (v.base / t) * 100 : 100}%`;
-      x('tax').style.width = `${v.total ? (v.tax / t) * 100 : 0}%`;
-    },
+    extras: (v) => { x('eq').innerHTML = vatEquation(v); },
   });
 </script>

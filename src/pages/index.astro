@@ -1,193 +1,129 @@
 ---
 import Base from '../layouts/Base.astro';
-import Icon from '../components/Icon.astro';
-import CalcCard from '../components/CalcCard.astro';
+import CalcIndex from '../components/CalcIndex.astro';
 import { CALCULATORS, CATEGORIES, inCategory } from '../data/calculators';
 import { SITE } from '../config/site';
+import { arDate } from '../lib/format';
 
-const suggestions = ['نهاية الخدمة', 'ضريبة 5%', 'قسط سيارة', 'زكاة', 'خصم', 'وزني', 'عمري'];
-const featured = ['end-of-service', 'loan', 'vat', 'zakat'];
+const suggestions = ['نهاية الخدمة', 'ضريبة 5%', 'قسط سيارة', 'زكاة', 'خصم', 'وزني'];
 ---
-<Base title={`${SITE.name}: حاسبات عربية مجانية وواضحة`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" bare>
-  <section class="hero">
-    <div class="hero-grid" aria-hidden="true"></div>
-    <div class="container hero-inner">
-      <div class="hero-copy">
-        <p class="pill"><span class="dot"></span> {CALCULATORS.length} حاسبات مجانية · بدون تسجيل</p>
-        <h1>احسب أي شيء<br /><span class="grad">بثواني، وبدقة رسمية</span></h1>
-        <p class="lede">نهاية الخدمة، القسط، الضريبة، الزكاة… اكتب أرقامك في جملة، والنتيجة تظهر فوراً مع طريقة حسابها ومصدرها.</p>
-        <div class="search" role="search" id="search">
-          <div class="search-box">
-            <Icon name="search" size={22} />
-            <label for="q" class="sr-only">ابحث عن حاسبة</label>
-            <input id="q" type="search" placeholder="ماذا تريد أن تحسب؟ مثلاً: نهاية الخدمة" autocomplete="off" aria-controls="search-results" />
-            <a class="go-btn" href="/end-of-service/">ابدأ</a>
-          </div>
-          <ul id="search-results" class="results card" hidden aria-live="polite"></ul>
-          <p class="empty card" hidden>لا توجد حاسبة بهذا الاسم بعد. <a href="/contact/">اقترح حاسبة</a>.</p>
-          <div class="sugg" aria-label="اقتراحات">
-            {suggestions.map((s) => <button type="button" class="chip" data-s={s}>{s}</button>)}
-          </div>
+<Base title={`${SITE.name}: ماذا تريد أن تحسب اليوم؟`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" bare>
+  <section class="container opening" aria-labelledby="h">
+    <div class="o-meta">
+      <p class="kicker"><b>{String(CALCULATORS.length).padStart(2, '0')}</b> حاسبات · العدد الحالي</p>
+      <p class="kicker">آخر مراجعة للمعادلات · {arDate(SITE.lastReviewed)}</p>
+    </div>
+    <h1 id="h">ماذا تريد<br />أن تحسب <span class="today">اليوم؟</span></h1>
+    <div class="o-side">
+      <p>اكتب أرقامك داخل جملة، والإجابة تظهر فوراً مع معادلتها ومصدرها الرسمي. بدون تسجيل، وأرقامك لا تغادر جهازك.</p>
+    </div>
+  </section>
+
+  <section class="container finder" role="search" aria-label="ابحث عن حاسبة">
+    <div class="ruler" aria-hidden="true"></div>
+    <div class="find-row">
+      <label for="q" class="find-label">ابحث</label>
+      <input id="q" type="search" placeholder="نهاية الخدمة، ضريبة، قسط سيارة…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list" />
+      <span class="find-hint" aria-hidden="true">Enter ↵</span>
+    </div>
+    <div class="find-pop">
+      <ul id="search-results" class="find-results" role="listbox" hidden></ul>
+      <p class="find-empty" hidden>لا توجد حاسبة بهذا الاسم بعد. <a href="/contact/">اقترح حاسبة</a>.</p>
+    </div>
+    <p class="sugg">جرّب: {suggestions.map((s, i) => <>{i > 0 && <span aria-hidden="true"> · </span>}<button type="button" class="sugg-btn" data-s={s}>{s}</button></>)}</p>
+  </section>
+
+  <section class="container catalog" id="index" aria-labelledby="idx-title">
+    <aside class="filter" aria-label="التصنيفات">
+      <div class="filter-inner">
+        <h2 id="idx-title" class="kicker">الفهرس</h2>
+        <div class="filter-list" role="group" aria-label="اعرض حسب التصنيف">
+          <button type="button" class="f-btn" data-f="all" aria-pressed="true"><span>الكل</span><span class="nums">{CALCULATORS.length}</span></button>
+          {CATEGORIES.map((c) => (
+            <button type="button" class="f-btn" data-f={c.key} aria-pressed="false"><span>{c.name}</span><span class="nums">{inCategory(c.key).length}</span></button>
+          ))}
         </div>
       </div>
-
-      <div class="hero-demo" aria-hidden="true">
-        <div class="demo-card">
-          <div class="demo-head"><span class="tile"><Icon name="end-of-service" size={20} /></span><span>مكافأة نهاية الخدمة</span><span class="live"><i></i>مباشر</span></div>
-          <p class="demo-sentence">راتبي الأساسي <b>8,000</b> درهم، وخدمت <b>7.6</b> سنة</p>
-          <div class="demo-result">
-            <span class="demo-label">مكافأتك تقريباً</span>
-            <span class="demo-num">49,106<small>.85</small></span>
-            <span class="demo-unit">درهم إماراتي</span>
-          </div>
-          <div class="demo-bar"><span style="width:65%"></span><span style="width:35%"></span></div>
-          <div class="demo-legend"><span><i class="a"></i>21 يوماً × 5 سنوات</span><span><i class="b"></i>30 يوماً × 2.6 سنة</span></div>
-        </div>
-        <div class="float f1"><Icon name="check" size={16} /> وفق المادة 51 من قانون العمل</div>
-        <div class="float f2"><Icon name="lock" size={16} /> أرقامك لا تغادر جهازك</div>
-      </div>
+    </aside>
+    <div class="list-col">
+      <CalcIndex items={CALCULATORS} id="calc-list" />
     </div>
   </section>
 
-  <section class="container strip" aria-label="مزايا حاسِب">
-    <div><b>{CALCULATORS.length}</b><span>حاسبات جاهزة</span></div>
-    <div><b>100%</b><span>مجانية بالكامل</span></div>
-    <div><b>0</b><span>تسجيل أو بيانات</span></div>
-    <div><b>فوري</b><span>بدون زر «احسب»</span></div>
-  </section>
-
-  <section class="container section" aria-labelledby="feat-title">
-    <div class="sec-head">
-      <h2 id="feat-title">ابدأ من هنا</h2>
-      <p>أسئلة الراتب والمال التي تهم المقيمين في الإمارات والخليج.</p>
-    </div>
-    <div class="grid-cards">{featured.map((s) => <CalcCard c={CALCULATORS.find((c) => c.slug === s)!} />)}</div>
-  </section>
-
-  <section class="container section" aria-labelledby="cats-title" id="all">
-    <div class="sec-head">
-      <h2 id="cats-title">كل الحاسبات حسب الموضوع</h2>
-    </div>
-    <div class="cat-grid">
-      {CATEGORIES.map((cat) => (
-        <div class="card cat-card" data-cat={cat.key}>
-          <a class="cat-head" href={`/category/${cat.key}/`}>
-            <span class="tile"><Icon name={cat.key} size={22} /></span>
-            <span><span class="cat-name">{cat.name}</span><span class="cat-count">{inCategory(cat.key).length} حاسبات</span></span>
-          </a>
-          <p class="cat-intro">{cat.intro}</p>
-          <ul class="side-list">{inCategory(cat.key).map((c) => <li><CalcCard c={c} compact /></li>)}</ul>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="container section" aria-labelledby="why-title">
-    <div class="sec-head center">
-      <h2 id="why-title">لماذا حاسِب؟</h2>
-      <p>حاسبات تشرح نفسها، حتى تثق بالرقم قبل أن تقرر.</p>
-    </div>
-    <div class="why">
-      <div class="card why-card"><span class="tile"><Icon name="zap" /></span><h3>نتيجة فورية</h3><p>لا أزرار ولا انتظار. غيّر أي رقم في الجملة وتتحدث النتيجة مباشرة.</p></div>
-      <div class="card why-card"><span class="tile"><Icon name="book" /></span><h3>المعادلة أمامك</h3><p>كل نتيجة معها طريقة حسابها خطوة بخطوة تحت «كيف حسبناها؟».</p></div>
-      <div class="card why-card"><span class="tile"><Icon name="check" /></span><h3>مصادر رسمية</h3><p>القوانين والنسب من جهات حكومية ومراجع معتمدة، مع تاريخ آخر مراجعة.</p></div>
-      <div class="card why-card"><span class="tile"><Icon name="lock" /></span><h3>خصوصيتك محفوظة</h3><p>الحساب يتم داخل متصفحك، وأرقامك لا تُرسل إلى أي خادم.</p></div>
-    </div>
-  </section>
-
-  <section class="container section">
-    <div class="cta">
-      <div>
-        <h2>لم تجد الحاسبة التي تحتاجها؟</h2>
-        <p>اقترحها علينا، ونضيف الحاسبات الأكثر طلباً.</p>
-      </div>
-      <a class="btn primary" href="/contact/">اقترح حاسبة</a>
-    </div>
+  <section class="container method" aria-labelledby="m-title">
+    <h2 id="m-title" class="kicker">المنهجية</h2>
+    <ol class="m-list">
+      <li><span class="nums">01</span><p><strong>معادلات ثابتة.</strong> كل رقم يأتي من معادلة مكتوبة في صفحته تحت «كيف حسبناها؟»، وتتحقق منها اختبارات آلية.</p></li>
+      <li><span class="nums">02</span><p><strong>مصادر رسمية.</strong> القوانين والنسب من جهات حكومية ومراجع معتمدة، مع رابطها وتاريخ آخر مراجعة.</p></li>
+      <li><span class="nums">03</span><p><strong>حدود واضحة.</strong> كل صفحة تقول متى لا تنطبق النتيجة، بدل رقم قطعي مضلل. <a href="/about/">اقرأ المنهجية</a>.</p></li>
+    </ol>
   </section>
 </Base>
 
 <style>
-  .hero { position: relative; overflow: hidden; background: radial-gradient(900px 500px at 85% 0%, #1f8f84 0%, transparent 60%), radial-gradient(700px 500px at 0% 100%, #24477a 0%, transparent 60%), #0c1a24; color: #fff; }
-  .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 44px 44px; mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); }
-  .hero-inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 48px; align-items: center; padding-block: 72px 88px; }
-  .hero h1 { color: #fff; font-size: clamp(2.2rem, 5.4vw, 3.6rem); font-weight: 700; line-height: 1.25; margin: 0 0 16px; }
-  .grad { background: linear-gradient(90deg, #7ee3d4, #9cc2ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero .lede { color: #c3d3d6; font-size: 1.15rem; max-width: 52ch; }
-  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: .86rem; font-weight: 500; color: #d9f3ef; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: 99px; padding: 6px 14px; margin-bottom: 20px; }
-  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #5ee0c8; box-shadow: 0 0 0 4px rgba(94,224,200,.2); }
-  .search { width: 100%; max-width: 600px; margin-top: 28px; position: relative; }
-  .search-box { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 16px; padding: 6px 6px 6px 6px; padding-inline-start: 18px; box-shadow: 0 20px 50px -12px rgba(0,0,0,.5); color: #6b7c80; }
-  .search-box input { flex: 1; min-width: 0; font: inherit; font-size: 1.08rem; color: #142124; background: transparent; border: 0; padding: 12px 0; min-height: 52px; }
-  .search-box input:focus { outline: none; }
-  .search-box:focus-within { box-shadow: 0 20px 50px -12px rgba(0,0,0,.5), 0 0 0 4px rgba(94,224,200,.45); }
-  .go-btn { background: linear-gradient(135deg, #23756d, #1d5f8a); color: #fff; text-decoration: none; font-weight: 600; padding: 12px 24px; border-radius: 12px; white-space: nowrap; }
-  .go-btn:hover { color: #fff; filter: brightness(1.1); }
-  .sugg { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-  .chip { font: inherit; font-size: .86rem; font-weight: 500; color: #e4f1f2; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: 99px; padding: 6px 14px; min-height: 36px; cursor: pointer; transition: background .2s; }
-  .chip:hover { background: rgba(255,255,255,.18); }
-  .results { list-style: none; margin: 10px 0 0; padding: 6px; text-align: start; box-shadow: var(--shadow-lg); color: var(--ink); position: absolute; inset-inline: 0; z-index: 5; }
-  .results :global(a) { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 12px; text-decoration: none; font-weight: 500; }
-  .results :global(a:hover), .results :global(a:focus-visible) { background: var(--accent-bg); color: var(--accent-strong); }
-  .results :global(.k) { font-size: .82rem; color: var(--soft); font-weight: 400; }
-  .empty { margin-top: 10px; padding: 14px; color: var(--soft); }
+  .opening { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 28px; padding-block: 56px 40px; align-items: end; }
+  .o-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 10px; margin-bottom: 48px; }
+  .opening h1 { grid-column: 1 / span 8; font-size: var(--t-display); font-weight: 500; line-height: 1.08; letter-spacing: -.02em; }
+  .today { color: var(--accent); }
+  .o-side { grid-column: 10 / span 3; padding-bottom: 14px; }
+  .o-side p { color: var(--soft); font-size: 1rem; line-height: 1.8; margin: 0; border-top: 1px solid var(--rule); padding-top: 12px; }
 
-  .hero-demo { position: relative; }
-  .demo-card { background: rgba(255,255,255,.97); color: #142124; border-radius: 24px; padding: 24px; box-shadow: 0 40px 80px -20px rgba(0,0,0,.6); transform: rotate(-2deg); }
-  .demo-head { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: .95rem; }
-  .demo-head .tile { width: 38px; height: 38px; border-radius: 11px; background: #e3f1ee; color: #23756d; }
-  .live { margin-inline-start: auto; display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 500; color: #23756d; background: #e3f1ee; padding: 3px 10px; border-radius: 99px; }
-  .live i { width: 7px; height: 7px; border-radius: 50%; background: #23a08f; animation: pulse 1.6s infinite; }
-  @keyframes pulse { 50% { opacity: .3; } }
-  .demo-sentence { font-size: 1.05rem; margin: 16px 0 14px; color: #3c4b4f; }
-  .demo-sentence b { color: #23756d; background: #e6f2f0; padding: 2px 8px; border-radius: 8px; font-weight: 600; }
-  .demo-result { display: flex; flex-direction: column; background: linear-gradient(135deg, #eef7f5, #eaf1fb); border-radius: 16px; padding: 16px 18px; }
-  .demo-label { font-size: .85rem; color: #55656a; }
-  .demo-num { direction: ltr; text-align: right; font-size: 2.8rem; font-weight: 600; color: #1b5f58; line-height: 1.2; font-variant-numeric: tabular-nums; }
-  .demo-num small { font-size: 1.4rem; color: #5b8f88; }
-  .demo-unit { font-size: .82rem; color: #55656a; }
-  .demo-bar { display: flex; height: 10px; border-radius: 99px; overflow: hidden; margin-top: 16px; background: #e3e9ea; }
-  .demo-bar span:first-child { background: #23756d; } .demo-bar span:last-child { background: #7fb9e8; }
-  .demo-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: .78rem; color: #55656a; }
-  .demo-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-inline-end: 5px; vertical-align: middle; }
-  .demo-legend .a { background: #23756d; } .demo-legend .b { background: #7fb9e8; }
-  .float { position: absolute; display: inline-flex; align-items: center; gap: 8px; background: #fff; color: #142124; font-size: .82rem; font-weight: 500; padding: 9px 14px; border-radius: 12px; box-shadow: 0 14px 30px -10px rgba(0,0,0,.45); white-space: nowrap; }
-  .float :global(.icon) { color: #23756d; }
-  .f1 { top: -22px; inset-inline-start: -28px; transform: rotate(2deg); }
-  .f2 { bottom: -22px; inset-inline-end: -16px; transform: rotate(-1deg); }
+  .finder { position: relative; padding-bottom: 8px; }
+  .find-row { display: flex; align-items: baseline; gap: 18px; border-bottom: 2px solid var(--ink); padding-block: 14px 6px; }
+  .find-row:focus-within { border-bottom-color: var(--accent); }
+  .find-label { font-size: var(--t-micro); font-weight: 500; letter-spacing: .06em; color: var(--accent); flex: none; }
+  .find-row input { flex: 1; min-width: 0; font: inherit; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 300; color: var(--ink); background: transparent; border: 0; padding: 6px 0; min-height: 56px; }
+  .find-row input::placeholder { color: var(--muted); }
+  .find-row input:focus { outline: none; }
+  .find-row input::-webkit-search-cancel-button { display: none; }
+  .find-hint { font-size: var(--t-micro); color: var(--muted); flex: none; }
+  .find-pop { position: absolute; inset-inline: max(22px, env(safe-area-inset-left, 0px)); z-index: 10; }
+  .find-results { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--rule); border-top: 0; }
+  .find-results :global(a) { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 18px; text-decoration: none; border-bottom: 1px solid var(--line); font-size: 1.1rem; }
+  .find-results :global(a[aria-selected='true']), .find-results :global(a:hover) { background: var(--accent-bg); color: var(--ink); }
+  .find-results :global(.k) { font-size: var(--t-micro); color: var(--muted); }
+  .find-empty { margin: 0; padding: 14px 18px; background: var(--surface); border: 1px solid var(--rule); border-top: 0; color: var(--soft); }
+  @media (prefers-reduced-motion: no-preference) { .find-results:not([hidden]), .find-empty:not([hidden]) { animation: drop .2s ease; } }
+  @keyframes drop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .sugg { font-size: var(--t-small); color: var(--soft); margin: 12px 0 0; }
+  .sugg-btn { font: inherit; color: var(--ink); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 5px; }
+  .sugg-btn:hover { color: var(--accent); text-decoration-color: var(--accent); }
 
-  .strip { position: relative; z-index: 2; margin-top: -40px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow-lg); }
-  .strip div { display: flex; flex-direction: column; align-items: center; padding: 20px 12px; text-align: center; }
-  .strip div + div { border-inline-start: 1px solid var(--line); }
-  .strip b { font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1.3; }
-  .strip span { font-size: .88rem; color: var(--soft); }
+  .catalog { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 0 44px; margin-top: 72px; }
+  .filter-inner { position: sticky; top: 24px; }
+  .filter .kicker { padding-top: 10px; border-top: 2px solid var(--ink); margin-bottom: 14px; }
+  .filter-list { display: flex; flex-direction: column; }
+  .f-btn { font: inherit; display: flex; justify-content: space-between; gap: 12px; text-align: start; color: var(--soft); background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 0; cursor: pointer; font-size: .95rem; }
+  .f-btn .nums { color: var(--muted); font-size: var(--t-small); }
+  .f-btn:hover { color: var(--ink); }
+  .f-btn[aria-pressed='true'] { color: var(--ink); font-weight: 500; }
+  .f-btn[aria-pressed='true'] .nums { color: var(--accent); }
+  .list-col :global(.index li[hidden]) { display: none; }
 
-  .section { padding-top: 56px; }
-  .sec-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 20px; }
-  .sec-head h2 { font-size: 1.5rem; margin: 0; }
-  .sec-head p { color: var(--soft); margin: 0; }
-  .sec-head.center { text-align: center; align-items: center; }
+  .method { margin-top: 96px; display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 0 44px; }
+  .method .kicker { padding-top: 10px; border-top: 2px solid var(--ink); align-self: start; }
+  .m-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; border-top: 1px solid var(--ink); padding-top: 14px; }
+  .m-list li { display: flex; flex-direction: column; gap: 6px; }
+  .m-list .nums { color: var(--accent); font-weight: 500; font-size: var(--t-small); }
+  .m-list p { font-size: .95rem; color: var(--soft); margin: 0; }
+  .m-list strong { color: var(--ink); font-weight: 500; }
+  .m-list a { color: var(--accent); }
 
-  .cat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .cat-card { padding: 22px; }
-  .cat-head { display: flex; align-items: center; gap: 14px; text-decoration: none; }
-  .cat-name { display: block; font-weight: 600; font-size: 1.12rem; }
-  .cat-count { display: block; font-size: .82rem; color: var(--soft); }
-  .cat-head:hover .cat-name { color: var(--accent); }
-  .cat-intro { color: var(--soft); font-size: .9rem; margin: 12px 0 8px; }
-
-  .why { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-  .why-card { padding: 24px; }
-  .why-card .tile { margin-bottom: 14px; }
-  .why-card h3 { font-weight: 600; font-size: 1.05rem; }
-  .why-card p { color: var(--soft); font-size: .92rem; margin: 0; }
-
-  .cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; background: var(--accent); color: var(--accent-ink); border-radius: var(--radius-lg); padding: 32px 36px; }
-  .cta h2 { color: inherit; margin: 0 0 4px; }
-  .cta p { margin: 0; opacity: .92; }
-  .cta .btn.primary { background: var(--surface); color: var(--accent-strong); border-color: var(--surface); font-size: 1rem; padding: 12px 26px; }
-
-  @media (max-width: 980px) { .cat-grid { grid-template-columns: 1fr; } .why { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero-inner { grid-template-columns: 1fr; padding-block: 48px 80px; } .hero-demo { max-width: 460px; margin-inline: auto; width: 100%; } .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .strip div:nth-child(3) { border-inline-start: 0; } .strip div:nth-child(n+3) { border-top: 1px solid var(--line); } }
-  @media (max-width: 560px) { .why { grid-template-columns: 1fr; } .f1 { inset-inline-start: 0; } .f2 { inset-inline-end: 0; } .demo-card { transform: none; } .go-btn { padding-inline: 16px; } .cta { padding: 24px; } }
+  @media (max-width: 900px) {
+    .opening { grid-template-columns: 1fr; padding-block: 32px 28px; }
+    .o-meta { margin-bottom: 32px; }
+    .opening h1, .o-side { grid-column: 1; }
+    .o-side { margin-top: 22px; padding-bottom: 0; }
+    .catalog, .method { grid-template-columns: 1fr; margin-top: 48px; }
+    .filter-inner { position: static; }
+    .filter-list { flex-direction: row; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .f-btn { border: 1px solid var(--rule); border-radius: 99px; padding: 6px 14px; gap: 8px; }
+    .f-btn[aria-pressed='true'] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .f-btn[aria-pressed='true'] .nums { color: var(--bg); }
+    .m-list { grid-template-columns: 1fr; }
+    .method .kicker { margin-bottom: 0; border-top: 0; }
+    .find-hint { display: none; }
+  }
 </style>
 
 <script>
@@ -198,28 +134,52 @@ const featured = ['end-of-service', 'loan', 'vat', 'zakat'];
       .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي')
       .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
       .trim();
-  const items = CALCULATORS.map((c) => ({ c, hay: norm([c.question, c.short, ...c.terms].join(' ')) }));
+  const items = CALCULATORS.map((c) => ({ c, hay: norm([c.question, c.short, c.blurb, ...c.terms].join(' ')) }));
   const input = document.querySelector<HTMLInputElement>('#q')!;
   const list = document.querySelector<HTMLUListElement>('#search-results')!;
-  const empty = document.querySelector<HTMLElement>('.empty')!;
+  const empty = document.querySelector<HTMLElement>('.find-empty')!;
+  let active = -1;
+
+  function setActive(i: number) {
+    const links = Array.from(list.querySelectorAll<HTMLAnchorElement>('a'));
+    active = links.length ? (i + links.length) % links.length : -1;
+    links.forEach((a, j) => a.setAttribute('aria-selected', j === active ? 'true' : 'false'));
+  }
   function run() {
     const q = norm(input.value);
-    if (!q) { list.hidden = true; empty.hidden = true; return; }
+    if (!q) { list.hidden = true; empty.hidden = true; input.setAttribute('aria-expanded', 'false'); return; }
     const words = q.split(/\s+/).map((w) => w.replace(/^ال/, '')).filter(Boolean);
     const hits = items.filter((it) => words.every((w) => it.hay.includes(w)));
     list.replaceChildren(...hits.map(({ c }) => {
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.href = `/${c.slug}/`;
+      a.setAttribute('role', 'option');
       const t = document.createElement('span'); t.textContent = c.question;
       const k = document.createElement('span'); k.textContent = c.short; k.className = 'k';
       a.append(t, k); li.append(a); return li;
     }));
     list.hidden = hits.length === 0;
     empty.hidden = hits.length !== 0;
+    input.setAttribute('aria-expanded', String(hits.length > 0));
+    setActive(0);
   }
   input.addEventListener('input', run);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const a = list.querySelector('a'); if (a) location.href = a.getAttribute('href')!; } });
-  document.querySelectorAll<HTMLButtonElement>('.chip').forEach((b) => b.addEventListener('click', () => { input.value = b.dataset.s!; run(); input.focus(); }));
-  if (location.hash === '#search') input.focus();
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+    else if (e.key === 'Enter') { const a = list.querySelectorAll('a')[Math.max(0, active)]; if (a) location.href = a.getAttribute('href')!; }
+    else if (e.key === 'Escape') { input.value = ''; run(); }
+  });
+  document.querySelectorAll<HTMLButtonElement>('.sugg-btn').forEach((b) => b.addEventListener('click', () => { input.value = b.dataset.s!; run(); input.focus(); }));
+
+  // category filter on the index
+  const rows = Array.from(document.querySelectorAll<HTMLLIElement>('#calc-list li'));
+  document.querySelectorAll<HTMLButtonElement>('.f-btn').forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = b.dataset.f!;
+      document.querySelectorAll('.f-btn').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      rows.forEach((r) => (r.hidden = f !== 'all' && !(r.dataset.cats || '').split(' ').includes(f)));
+    }),
+  );
 </script>

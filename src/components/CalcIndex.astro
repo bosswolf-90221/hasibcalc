@@ -1,0 +1,21 @@
+---
+// Editorial index: one calculator per line — number, question, short line, category, arrow.
+import { CALCULATORS, CATEGORIES, type CalculatorMeta } from '../data/calculators';
+export interface Props { items: CalculatorMeta[]; compact?: boolean; id?: string }
+const { items, compact = false, id } = Astro.props;
+const no = (c: CalculatorMeta) => String(CALCULATORS.indexOf(c) + 1).padStart(2, '0');
+const catName = (c: CalculatorMeta) => CATEGORIES.find((x) => x.key === c.categories[0])!.name;
+---
+<ol class={`index ${compact ? 'compact' : ''}`} id={id}>
+  {items.map((c) => (
+    <li data-cats={c.categories.join(' ')}>
+      <a href={`/${c.slug}/`}>
+        <span class="no">{no(c)}</span>
+        <span class="q">{c.question}</span>
+        <span class="d">{c.blurb}</span>
+        <span class="c">{catName(c)}</span>
+        <span class="arr" aria-hidden="true">←</span>
+      </a>
+    </li>
+  ))}
+</ol>

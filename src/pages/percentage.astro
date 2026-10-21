@@ -11,29 +11,29 @@ const b = whatPercent(40, 250);
 const c = percentChange(250, 300);
 ---
 <CalcLayout slug="percentage" lede="ثلاثة أسئلة مختلفة تُخلط كثيراً. لكل سؤال جملته ونتيجته، فاختر السؤال الذي يطابق حالتك.">
-  <section class="pq card calc-card" data-calc="pct-of" aria-labelledby="q1">
-    <h2 id="q1" class="q">نسبة من رقم</h2>
+  <section class="pq sentence-wrap" data-calc="pct-of" aria-labelledby="q1">
+    <h2 id="q1" class="step"><b>01</b> نسبة من رقم</h2>
     <form class="sentence" onsubmit="return false">كم يساوي <NumIn name="p1_percent" label="النسبة المئوية" value={40} width={3} />% من <NumIn name="p1_base" label="الرقم" value={250} width={6} />؟</form>
     <FieldErrors names={['p1_percent', 'p1_base']} />
-    <ResultCard uid="r1" view={pctOfView(a, '40', '250')}>
+    <ResultCard small uid="r1" view={pctOfView(a, '40', '250')}>
       <p class="formula" slot="formula"><code>النتيجة = الرقم × النسبة ÷ 100</code></p>
     </ResultCard>
   </section>
 
-  <section class="pq card calc-card" data-calc="what-pct" aria-labelledby="q2">
-    <h2 id="q2" class="q">كم يمثل رقم من آخر</h2>
+  <section class="pq sentence-wrap" data-calc="what-pct" aria-labelledby="q2">
+    <h2 id="q2" class="step"><b>02</b> كم يمثل رقم من آخر</h2>
     <form class="sentence" onsubmit="return false">كم يمثل <NumIn name="p2_part" label="الجزء" value={40} width={5} /> من <NumIn name="p2_whole" label="الكل" value={250} width={6} />؟</form>
     <FieldErrors names={['p2_part', 'p2_whole']} />
-    <ResultCard uid="r2" view={whatPctView(b, '40', '250')}>
+    <ResultCard small uid="r2" view={whatPctView(b, '40', '250')}>
       <p class="formula" slot="formula"><code>النسبة = الجزء ÷ الكل × 100</code></p>
     </ResultCard>
   </section>
 
-  <section class="pq card calc-card" data-calc="change" aria-labelledby="q3">
-    <h2 id="q3" class="q">نسبة الزيادة أو النقص</h2>
+  <section class="pq sentence-wrap" data-calc="change" aria-labelledby="q3">
+    <h2 id="q3" class="step"><b>03</b> نسبة الزيادة أو النقص</h2>
     <form class="sentence" onsubmit="return false">تغيّرت القيمة من <NumIn name="p3_from" label="القيمة الأصلية" value={250} width={6} /> إلى <NumIn name="p3_to" label="القيمة الجديدة" value={300} width={6} /></form>
     <FieldErrors names={['p3_from', 'p3_to']} />
-    <ResultCard uid="r3" view={changeView(c, '250', '300')}>
+    <ResultCard small uid="r3" view={changeView(c, '250', '300')}>
       <p class="formula" slot="formula"><code>التغير = (الجديدة − الأصلية) ÷ |الأصلية| × 100</code></p>
     </ResultCard>
   </section>
@@ -56,10 +56,9 @@ const c = percentChange(250, 300);
 </CalcLayout>
 
 <style>
-  .pq + .pq { margin-top: 20px; }
-  .q { font-size: .95rem; font-weight: 600; color: var(--accent); margin-bottom: 0; }
-  .pq :global(.result) { margin-top: 18px; padding-block: 20px 14px; box-shadow: none; }
-  .pq :global(.r-value) { font-size: clamp(2.2rem, 8vw, 3.2rem); }
+  .pq + .pq { margin-top: 64px; }
+  .pq :global(.result.small .r-value .v) { font-size: clamp(2.8rem, 9vw, 5rem); }
+  .pq :global(.result.small) { margin-top: 22px; }
 </style>
 
 <script>

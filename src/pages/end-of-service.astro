@@ -8,21 +8,20 @@ import { calcGratuity } from '../lib/calc/gratuity';
 import { gratuityView, errorView } from '../lib/views';
 import { toISODate } from '../lib/calc/core';
 import { money } from '../lib/format';
+import { serviceTimeline } from '../lib/exhibits';
 
 const today = toISODate(new Date());
 const d = { basicSalary: 8000, startDate: '2019-03-01', endDate: today, unpaidAbsenceDays: 0 };
 const r = calcGratuity(d);
 const view = r.ok ? gratuityView(r.value) : errorView(r, 'مكافأة نهاية خدمتك')!;
 const g = r.ok ? r.value : null;
-const t1 = g?.tier1Years ?? 0;
-const total = g ? Math.max(g.serviceYears, 5) : 5;
 const example = calcGratuity({ basicSalary: 6000, startDate: '2017-01-01', endDate: '2023-12-31' });
 const ex = example.ok ? example.value : null;
 ---
 <CalcLayout slug="end-of-service" lede="لموظفي القطاع الخاص غير المواطنين في الإمارات بدوام كامل، وفق المادة 51 من قانون العمل الاتحادي. اكتب راتبك الأساسي وتاريخي العمل.">
   <div data-calc="end-of-service">
-    <div class="card calc-card">
-    <p class="card-label">اكتب أرقامك في الجملة</p>
+    <div class="sentence-wrap">
+    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات مكافأة نهاية الخدمة">
       راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
       بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
@@ -43,15 +42,9 @@ const ex = example.ok ? example.value : null;
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="tiers-title">
-      <h2 id="tiers-title">شرائح الاستحقاق في مدة خدمتك</h2>
-      <div class="bar" role="img" data-x="tierbar" aria-label="نسبة السنوات المحتسبة بـ21 يوماً وبـ30 يوماً">
-        <span class="a" data-x="t1" style={`width:${(t1 / total) * 100}%`}></span>
-        <span class="b" data-x="t2" style={`width:${g ? (g.tier2Years / total) * 100 : 0}%`}></span>
-      </div>
-      <div class="legend">
-        <span class="a"><i></i>21 يوماً عن كل سنة (حتى 5 سنوات): <b class="num" data-x="t1y">{g ? g.tier1Years.toFixed(2) : '0'}</b> سنة</span>
-        <span class="b"><i></i>30 يوماً عن كل سنة بعدها: <b class="num" data-x="t2y">{g ? g.tier2Years.toFixed(2) : '0'}</b> سنة</span>
-      </div>
+      <h2 id="tiers-title" class="exhibit-title"><b>02</b> سنوات خدمتك على المسطرة</h2>
+      <div data-x="timeline" set:html={serviceTimeline(g)} />
+      <div class="legend"><span class="a"><i></i>أجر 21 يوماً عن كل سنة حتى السنة الخامسة</span><span class="b"><i></i>أجر 30 يوماً عن كل سنة بعدها</span><span>الخط المتقطع: إكمال سنة الاستحقاق</span></div>
     </section>
   </div>
 
@@ -102,6 +95,7 @@ const ex = example.ok ? example.value : null;
   import { calcGratuity } from '../lib/calc/gratuity';
   import { gratuityView } from '../lib/views';
   import { localTodayISO } from '../lib/calc/core';
+  import { serviceTimeline } from '../lib/exhibits';
 
   const root = document.querySelector<HTMLElement>('[data-calc="end-of-service"]')!;
   const end = root.querySelector<HTMLInputElement>('#f-endDate')!;
@@ -115,12 +109,6 @@ const ex = example.ok ? example.value : null;
       const result = calcGratuity({ basicSalary: num(f.basicSalary), startDate: f.startDate, endDate: f.endDate, unpaidAbsenceDays: num(f.unpaidAbsenceDays) ?? 0 });
       return { result, view: result.ok ? gratuityView(result.value) : null };
     },
-    extras: (g) => {
-      const total = Math.max(g.serviceYears, 5);
-      x('t1').style.width = `${(g.tier1Years / total) * 100}%`;
-      x('t2').style.width = `${(g.tier2Years / total) * 100}%`;
-      x('t1y').textContent = g.tier1Years.toFixed(2);
-      x('t2y').textContent = g.tier2Years.toFixed(2);
-    },
+    extras: (g) => { x('timeline').innerHTML = serviceTimeline(g); },
   });
 </script>

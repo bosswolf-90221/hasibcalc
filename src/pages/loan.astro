@@ -7,19 +7,19 @@ import ResultCard from '../components/ResultCard.astro';
 import { calcLoan } from '../lib/calc/loan';
 import { loanView, errorView } from '../lib/views';
 import { money } from '../lib/format';
+import { loanSchedule } from '../lib/exhibits';
 
 const d = { principal: 100000, annualRatePercent: 4.5, months: 48, method: 'reducing' as const };
 const r = calcLoan(d);
 const view = r.ok ? loanView(r.value, d.method) : errorView(r, 'قسطك الشهري')!;
 const years = r.ok ? r.value.years : [];
-const maxY = Math.max(1, ...years.map((y) => y.principal + y.interest));
 const cmpFlat = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, method: 'flat' });
 const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, method: 'reducing' });
 ---
 <CalcLayout slug="loan" lede="للقرض الشخصي وتمويل السيارة والعقار. اكتب المبلغ والفائدة والمدة، واختر نوع الفائدة كما يذكره البنك.">
   <div data-calc="loan">
-    <div class="card calc-card">
-    <p class="card-label">اكتب أرقامك في الجملة</p>
+    <div class="sentence-wrap">
+    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
     <form class="sentence" onsubmit="return false" aria-label="بيانات القرض">
       أريد قرضاً بقيمة <NumIn name="principal" label="مبلغ القرض" value={d.principal} width={7} />
       بفائدة سنوية <NumIn name="annualRatePercent" label="نسبة الفائدة السنوية" value={d.annualRatePercent} width={3} />%
@@ -39,17 +39,8 @@ const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, me
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="sched-title">
-      <h2 id="sched-title">كم تدفع من الأصل ومن الفائدة كل سنة</h2>
-      <div class="sched" data-x="sched">
-        {years.map((y) => (
-          <div class="sched-row">
-            <span class="yr">السنة {y.year}</span>
-            <span class="bar" style={`width:${((y.principal + y.interest) / maxY) * 100}%`}><span class="a" style={`width:${(y.principal / (y.principal + y.interest)) * 100}%`}></span><span class="b" style={`width:${(y.interest / (y.principal + y.interest)) * 100}%`}></span></span>
-            <span class="vals num">{money(y.principal)} + {money(y.interest)}</span>
-          </div>
-        ))}
-      </div>
-      <div class="legend"><span class="a"><i></i>من أصل القرض</span><span class="b"><i></i>فوائد</span></div>
+      <h2 id="sched-title" class="exhibit-title"><b>02</b> جدول السداد سنة بسنة</h2>
+      <div data-x="sched" set:html={loanSchedule(years)} />
     </section>
   </div>
 
@@ -76,20 +67,12 @@ const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, me
   </Fragment>
 </CalcLayout>
 
-<style is:global>
-  .sched { display: flex; flex-direction: column; gap: 10px; }
-  .sched-row { display: grid; grid-template-columns: 4.5rem 1fr auto; align-items: center; gap: 12px; font-size: .88rem; }
-  .sched-row .yr { color: var(--soft); }
-  .sched-row .bar { height: 10px; }
-  .sched-row .vals { color: var(--soft); font-size: .8rem; }
-  @media (max-width: 560px) { .sched-row { grid-template-columns: 4rem 1fr; } .sched-row .vals { grid-column: 2; } }
-</style>
 
 <script>
   import { mountCalculator, num } from '../scripts/runtime';
   import { calcLoan } from '../lib/calc/loan';
   import { loanView } from '../lib/views';
-  import { money } from '../lib/format';
+  import { loanSchedule } from '../lib/exhibits';
   const root = document.querySelector<HTMLElement>('[data-calc="loan"]')!;
   const sched = root.querySelector<HTMLElement>('[data-x="sched"]')!;
   mountCalculator(root, {
@@ -98,34 +81,6 @@ const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, me
       const result = calcLoan({ principal: num(f.principal), annualRatePercent: num(f.annualRatePercent), months: num(f.months), method });
       return { result, view: result.ok ? loanView(result.value, method) : null };
     },
-    extras: (r) => {
-      const shown = r.years.length > 30 ? r.years.filter((_, i) => i % Math.ceil(r.years.length / 30) === 0) : r.years;
-      const max = Math.max(1, ...shown.map((y) => y.principal + y.interest));
-      sched.replaceChildren(
-        ...shown.map((y) => {
-          const row = document.createElement('div');
-          row.className = 'sched-row';
-          const yr = document.createElement('span');
-          yr.className = 'yr';
-          yr.textContent = `السنة ${y.year}`;
-          const bar = document.createElement('span');
-          bar.className = 'bar';
-          const sum = y.principal + y.interest || 1;
-          bar.style.width = `${(sum / max) * 100}%`;
-          const a = document.createElement('span');
-          a.className = 'a';
-          a.style.width = `${(y.principal / sum) * 100}%`;
-          const b = document.createElement('span');
-          b.className = 'b';
-          b.style.width = `${(y.interest / sum) * 100}%`;
-          bar.append(a, b);
-          const vals = document.createElement('span');
-          vals.className = 'vals num';
-          vals.textContent = `${money(y.principal)} + ${money(y.interest)}`;
-          row.append(yr, bar, vals);
-          return row;
-        }),
-      );
-    },
+    extras: (r) => { sched.innerHTML = loanSchedule(r.years); },
   });
 </script>
