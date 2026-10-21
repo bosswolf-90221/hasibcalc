@@ -15,6 +15,9 @@
   --warn: #9a5b13;
   --warn-bg: #fbf0e1;
 
+  /* 8px spacing grid (4px only for hairline-level nudges) */
+  --s-half: 4px; --s-1: 8px; --s-2: 16px; --s-3: 24px; --s-4: 32px; --s-5: 40px; --s-6: 48px; --s-7: 56px; --s-8: 64px; --s-10: 80px; --s-12: 96px;
+
   --font: 'Readex Pro', 'Segoe UI', Tahoma, system-ui, sans-serif;
   --container: 1200px;
   --measure: 66ch;

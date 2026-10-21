@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
 import { loadEnv } from 'vite';
 
 const env = loadEnv(process.env.NODE_ENV || 'production', process.cwd(), 'PUBLIC_');
@@ -9,6 +10,7 @@ if (site.includes('example.com')) {
 
 export default defineConfig({
   site,
+  integrations: [react()],
   trailingSlash: 'always',
   build: { format: 'directory', inlineStylesheets: 'auto' },
   compressHTML: true,

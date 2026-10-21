@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import CalcIndex from '../components/CalcIndex.astro';
+import Reveal from '../components/motion/Reveal.tsx';
 import { CALCULATORS, CATEGORIES, inCategory } from '../data/calculators';
 import { SITE } from '../config/site';
 import { arDate } from '../lib/format';
@@ -52,11 +53,13 @@ const suggestions = ['نهاية الخدمة', 'ضريبة 5%', 'قسط سيا�
 
   <section class="container method" aria-labelledby="m-title">
     <h2 id="m-title" class="kicker">المنهجية</h2>
+    <Reveal client:idle selector="li">
     <ol class="m-list">
       <li><span class="nums">01</span><p><strong>معادلات ثابتة.</strong> كل رقم يأتي من معادلة مكتوبة في صفحته تحت «كيف حسبناها؟»، وتتحقق منها اختبارات آلية.</p></li>
       <li><span class="nums">02</span><p><strong>مصادر رسمية.</strong> القوانين والنسب من جهات حكومية ومراجع معتمدة، مع رابطها وتاريخ آخر مراجعة.</p></li>
       <li><span class="nums">03</span><p><strong>حدود واضحة.</strong> كل صفحة تقول متى لا تنطبق النتيجة، بدل رقم قطعي مضلل. <a href="/about/">اقرأ المنهجية</a>.</p></li>
     </ol>
+    </Reveal>
   </section>
 </Base>
 

@@ -2,6 +2,7 @@
 import Base from './Base.astro';
 import AdSlot from '../components/AdSlot.astro';
 import CalcIndex from '../components/CalcIndex.astro';
+import Reveal from '../components/motion/Reveal.tsx';
 import { bySlug, CALCULATORS, CATEGORIES } from '../data/calculators';
 import { SITE } from '../config/site';
 import { arDate } from '../lib/format';
@@ -79,7 +80,7 @@ const jsonLd = [
         </article>
         <section class="related" id="related">
           <div class="related-head"><h2>حاسبات قريبة</h2><a href="/#index">كل الحاسبات</a></div>
-          <CalcIndex items={c.related.map(bySlug)} compact />
+          <Reveal client:idle selector="li"><CalcIndex items={c.related.map(bySlug)} compact /></Reveal>
         </section>
       </div>
     </div>
