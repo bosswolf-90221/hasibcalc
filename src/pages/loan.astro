@@ -1,4 +1,5 @@
 ---
+import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import Pills from '../components/Pills.astro';
@@ -57,11 +58,10 @@ const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, me
     </ul>
     <h2>متى لا تنطبق هذه النتيجة؟</h2>
     <p>عند وجود فترة سماح، أو فائدة متغيرة تتبع مؤشراً مثل إيبور، أو دفعة أخيرة كبيرة، أو تمويل إسلامي بهامش ربح بصيغة مختلفة. اطلب من البنك جدول السداد الرسمي ومعدل التكلفة السنوي.</p>
-    <div class="faq">
-      <h2>أسئلة شائعة</h2>
-      <details><summary>ماذا لو كانت الفائدة صفراً؟</summary><p>القسط يساوي المبلغ مقسوماً على عدد الأشهر، والحاسبة تتعامل مع هذه الحالة مباشرة.</p></details>
-      <details><summary>هل يقل القسط إذا سددت مبكراً؟</summary><p>السداد المبكر يقلل الرصيد والفوائد في المتناقصة، وقد يفرض البنك رسوماً عليه. تحقق من عقدك.</p></details>
-    </div>
+    <Faq title="أسئلة شائعة" items={[
+      { q: "ماذا لو كانت الفائدة صفراً؟", a: "القسط يساوي المبلغ مقسوماً على عدد الأشهر، والحاسبة تتعامل مع هذه الحالة مباشرة." },
+      { q: "هل يقل القسط إذا سددت مبكراً؟", a: "السداد المبكر يقلل الرصيد والفوائد في المتناقصة، وقد يفرض البنك رسوماً عليه. تحقق من عقدك." },
+    ]} />
     <h2>المصادر</h2>
     <ul class="sources"><li><a href="https://www.centralbank.ae/" rel="noopener" target="_blank">مصرف الإمارات العربية المتحدة المركزي</a>: لمعرفة حقوق المستهلك المالي وأنظمة الإقراض.</li></ul>
   </Fragment>

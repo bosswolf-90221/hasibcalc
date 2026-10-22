@@ -465,3 +465,10 @@ select.in.sel { appearance: none; cursor: pointer; padding-inline: 12px 30px; fo
 .guide-list b { font-size: 1.1rem; font-weight: 600; line-height: 1.5; }
 .guide-list span { color: var(--soft); font-size: .92rem; }
 @media (max-width: 560px) { .guide { padding: 22px 18px; } }
+
+/* data tables inside articles */
+.article .data-table { border-collapse: collapse; width: 100%; white-space: nowrap; font-size: .92rem; margin: 6px 0 14px; }
+.article .data-table th { font-size: .8rem; font-weight: 600; color: var(--soft); background: var(--well); padding: 10px 12px; text-align: start; }
+.article .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.article .data-table tbody tr:hover td { background: var(--accent-bg); }
+.article .table-hint { font-size: .85rem; color: var(--soft); }

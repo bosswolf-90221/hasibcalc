@@ -1,4 +1,5 @@
 ---
+import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import DateIn from '../components/DateIn.astro';
 import NumIn from '../components/NumIn.astro';
@@ -50,11 +51,10 @@ const view = r.ok ? pregnancyView(r.value) : errorView(r, 'موعد الولاد
     </ul>
     <h2>متى لا تنطبق هذه النتيجة؟</h2>
     <p>عند عدم انتظام الدورة، أو الحمل بعد أطفال الأنابيب (يُحسب من تاريخ نقل الأجنة)، أو إذا حددت الطبيبة موعداً مختلفاً بالأشعة. في هذه الحالات اعتمدي موعد الطبيبة.</p>
-    <div class="faq">
-      <h2>أسئلة شائعة</h2>
-      <details><summary>لماذا يُحسب الحمل قبل حدوثه بأسبوعين؟</summary><p>لأن العد يبدأ من أول يوم في آخر دورة، والإخصاب يحدث عادة بعد نحو أسبوعين من ذلك اليوم. لذلك يكون «الأسبوع 4» فعلياً بعد أسبوعين من الإخصاب.</p></details>
-      <details><summary>هل الولادة في الأسبوع 38 مبكرة؟</summary><p>الولادة من بداية الأسبوع 37 إلى نهاية الأسبوع 41 تُعد ضمن المدة الطبيعية.</p></details>
-    </div>
+    <Faq title="أسئلة شائعة" items={[
+      { q: "لماذا يُحسب الحمل قبل حدوثه بأسبوعين؟", a: "لأن العد يبدأ من أول يوم في آخر دورة، والإخصاب يحدث عادة بعد نحو أسبوعين من ذلك اليوم. لذلك يكون «الأسبوع 4» فعلياً بعد أسبوعين من الإخصاب." },
+      { q: "هل الولادة في الأسبوع 38 مبكرة؟", a: "الولادة من بداية الأسبوع 37 إلى نهاية الأسبوع 41 تُعد ضمن المدة الطبيعية." },
+    ]} />
     <h2>المصادر</h2>
     <ul class="sources">
       <li><a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/05/methods-for-estimating-the-due-date" rel="noopener" target="_blank">الكلية الأمريكية لأطباء النساء والتوليد: طرق تقدير موعد الولادة</a></li>

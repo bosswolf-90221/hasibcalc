@@ -1,4 +1,5 @@
 ---
+import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import DateIn from '../components/DateIn.astro';
 import Pills from '../components/Pills.astro';
@@ -50,11 +51,10 @@ const view = r.ok ? dateSpanView(r.value, false) : errorView(r, 'عدد الأي
       <li>نسيان 29 فبراير في السنة الكبيسة.</li>
       <li>احتساب العطل الرسمية كأيام عمل. هذه الحاسبة لا تعرف العطل الرسمية، فاخصمها بنفسك.</li>
     </ul>
-    <div class="faq">
-      <h2>أسئلة شائعة</h2>
-      <details><summary>كيف أعرف كم يوماً باقٍ على مناسبة؟</summary><p>اجعل تاريخ البداية اليوم، وتاريخ النهاية يوم المناسبة، واختر «بدون اليوم الأخير».</p></details>
-      <details><summary>هل يمكن أن يكون تاريخ النهاية قبل البداية؟</summary><p>نعم، نحسب المدة بين التاريخين وننبهك أن الترتيب معكوس.</p></details>
-    </div>
+    <Faq title="أسئلة شائعة" items={[
+      { q: "كيف أعرف كم يوماً باقٍ على مناسبة؟", a: "اجعل تاريخ البداية اليوم، وتاريخ النهاية يوم المناسبة، واختر «بدون اليوم الأخير»." },
+      { q: "هل يمكن أن يكون تاريخ النهاية قبل البداية؟", a: "نعم، نحسب المدة بين التاريخين وننبهك أن الترتيب معكوس." },
+    ]} />
   </Fragment>
 </CalcLayout>
 

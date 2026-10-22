@@ -1,4 +1,5 @@
 ---
+import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import FieldErrors from '../components/FieldErrors.astro';
@@ -48,10 +49,9 @@ const v = r.ok ? r.value : null;
     </ul>
     <h2>متى لا تنطبق؟</h2>
     <p>عندما يكون الخصم مبلغاً ثابتاً وليس نسبة، مثل «50 درهماً على مشتريات فوق 300»، أو عندما يُطبَّق الخصم الإضافي على السعر الأصلي بحسب شروط العرض.</p>
-    <div class="faq">
-      <h2>أسئلة شائعة</h2>
-      <details><summary>كيف أعرف نسبة الخصم من السعرين؟</summary><p>(السعر الأصلي − السعر الجديد) ÷ السعر الأصلي × 100. أو استخدم <a href="/percentage/">حاسبة نسبة التغير</a>.</p></details>
-    </div>
+    <Faq title="أسئلة شائعة" items={[
+      { q: "كيف أعرف نسبة الخصم من السعرين؟", a: "(السعر الأصلي − السعر الجديد) ÷ السعر الأصلي × 100. أو استخدم <a href=\"/percentage/\">حاسبة نسبة التغير</a>." },
+    ]} />
   </Fragment>
 </CalcLayout>
 
