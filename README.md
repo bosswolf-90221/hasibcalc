@@ -78,6 +78,8 @@ scripts/           فحوص ما بعد البناء واختبارات المت
 
 ## النشر
 
+**الحالي:** المستودع `bosswolf-90221/hasibcalc` مربوط بـ Netlify. أي دفع إلى الفرع `main` يبني الموقع (`npm run build`) وينشره على hasibcalc.com تلقائياً، والإعدادات في `netlify.toml`.
+
 الموقع ثابت بالكامل: ارفع محتوى `dist/` على أي استضافة.
 
 **Netlify (الأسهل):** اربط المستودع، وإعدادات البناء جاهزة في `netlify.toml`، وأضف متغيرات البيئة من Site settings ← Environment variables. أو ابنِ محلياً واسحب مجلد `dist/` إلى app.netlify.com/drop.
