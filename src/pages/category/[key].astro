@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import CalcIndex from '../../components/CalcIndex.astro';
+import { CATEGORIES, inCategory, CALCULATORS } from '../../data/calculators';
+
+export function getStaticPaths() {
+  return CATEGORIES.map((c) => ({ params: { key: c.key } }));
+}
+const cat = CATEGORIES.find((c) => c.key === Astro.params.key)!;
+const items = inCategory(cat.key);
+const outside = CALCULATORS.filter((c) => !c.categories.includes(cat.key));
+---
+<Base title={`حاسبات ${cat.name}`} description={cat.description} path={`/category/${cat.key}/`} bare>
+  <div class="stage calc-stage">
+    <div class="container calc-title">
+      <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">{cat.name}</li></ol></nav>
+      <p class="kick">{items.length} حاسبات</p>
+      <h1>{cat.name}</h1>
+      <p class="lede">{cat.intro}</p>
+    </div>
+  </div>
+  <div class="container">
+    <section class="shelf-cat" aria-label={`حاسبات ${cat.name}`}><CalcIndex items={items} /></section>
+    <section class="sec" aria-labelledby="o-h">
+      <div class="sec-head"><h2 id="o-h">من تصنيفات أخرى</h2><p>{CATEGORIES.filter((c) => c.key !== cat.key).map((c, i) => <>{i > 0 && ' · '}<a href={`/category/${c.key}/`}>{c.name}</a></>)}</p></div>
+      <CalcIndex items={outside} compact />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .shelf-cat { margin-top: -88px; position: relative; z-index: 2; }
+  .sec-head a { color: var(--accent); }
+</style>

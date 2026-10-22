@@ -1,0 +1,33 @@
+---
+// Calculators as coloured tiles (default) or as compact rows with a coloured mark.
+import { CATEGORIES, type CalculatorMeta } from '../data/calculators';
+import { odo } from '../lib/format';
+export interface Props { items: CalculatorMeta[]; compact?: boolean; id?: string; headingLevel?: 2 | 3 }
+const { items, compact = false, id } = Astro.props;
+const catName = (c: CalculatorMeta) => CATEGORIES.find((x) => x.key === c.categories[0])!.name;
+const GLYPH: Record<string, string> = { 'end-of-service': '51', vat: '5%', loan: '48', percentage: '%', discount: '−', age: '31', bmi: '24', zakat: '2.5' };
+---
+{compact ? (
+  <ul class="mini" id={id}>
+    {items.map((c) => (
+      <li data-cats={c.categories.join(' ')}>
+        <a href={`/${c.slug}/`}>
+          <span class="ic nums" style={`background:${c.tone}`} aria-hidden="true">{GLYPH[c.slug] ?? '#'}</span>
+          <span><b>{c.short}</b><small>{c.blurb}</small></span>
+        </a>
+      </li>
+    ))}
+  </ul>
+) : (
+  <ul class="tiles" id={id} role="list" style="list-style:none;margin:0;padding:0">
+    {items.map((c) => (
+      <li data-cats={c.categories.join(' ')} style="display:grid">
+        <a class="tile" href={`/${c.slug}/`} style={`--t:${c.tone}`}>
+          <small>{catName(c)}</small>
+          <h3>{c.question}</h3>
+          <span class="foot"><span class="odo" set:html={odo(c.sample)} /><span class="go" aria-hidden="true">←</span></span>
+        </a>
+      </li>
+    ))}
+  </ul>
+)}

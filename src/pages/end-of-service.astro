@@ -1,0 +1,114 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import DateIn from '../components/DateIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcGratuity } from '../lib/calc/gratuity';
+import { gratuityView, errorView } from '../lib/views';
+import { toISODate } from '../lib/calc/core';
+import { money } from '../lib/format';
+import { serviceTimeline } from '../lib/exhibits';
+
+const today = toISODate(new Date());
+const d = { basicSalary: 8000, startDate: '2019-03-01', endDate: today, unpaidAbsenceDays: 0 };
+const r = calcGratuity(d);
+const view = r.ok ? gratuityView(r.value) : errorView(r, 'مكافأة نهاية خدمتك')!;
+const g = r.ok ? r.value : null;
+const example = calcGratuity({ basicSalary: 6000, startDate: '2017-01-01', endDate: '2023-12-31' });
+const ex = example.ok ? example.value : null;
+---
+<CalcLayout slug="end-of-service" lede="لموظفي القطاع الخاص غير المواطنين في الإمارات بدوام كامل، وفق المادة 51 من قانون العمل الاتحادي. اكتب راتبك الأساسي وتاريخي العمل.">
+  <div data-calc="end-of-service">
+    <div class="sentence-wrap">
+    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
+    <form class="sentence" onsubmit="return false" aria-label="بيانات مكافأة نهاية الخدمة">
+      راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
+      بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+      وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />
+      وغبت بدون أجر <NumIn name="unpaidAbsenceDays" label="أيام الغياب بدون أجر" value={d.unpaidAbsenceDays} width={3} /> يوماً.
+    </form>
+    <FieldErrors names={['basicSalary', 'startDate', 'endDate', 'unpaidAbsenceDays']} />
+    <p class="hint">الراتب الأساسي فقط كما في عقدك، بدون بدل السكن والمواصلات وغيرها.</p>
+    </div>
+
+    <ResultCard view={view} sensitive notes={[
+      'الأجر اليومي محسوب على أساس الراتب الأساسي ÷ 30، وهي الطريقة الشائعة. بعض الجهات تقسم على 365 بعد ضرب الراتب في 12، والفرق نحو 1.4%.',
+      'أيام الغياب بدون أجر لا تُحسب من مدة الخدمة.',
+      'يجوز لصاحب العمل خصم ما يكون مستحقاً له على العامل من المكافأة.',
+      'لا تشمل الحسبة بدل الإجازات غير المستخدمة أو الأجور المتأخرة أو تذكرة العودة.',
+    ]}>
+      <p class="formula" slot="formula"><code>المكافأة = (سنوات حتى 5 × 21 + السنوات بعدها × 30) × الأساسي ÷ 30</code>، بحد أعلى <code>24 × الأساسي</code>.</p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="tiers-title">
+      <h2 id="tiers-title" class="exhibit-title"><b>02</b> سنوات خدمتك على المسطرة</h2>
+      <div data-x="timeline" set:html={serviceTimeline(g)} />
+      <div class="legend"><span class="a"><i></i>أجر 21 يوماً عن كل سنة حتى السنة الخامسة</span><span class="b"><i></i>أجر 30 يوماً عن كل سنة بعدها</span><span>الخط المتقطع: إكمال سنة الاستحقاق</span></div>
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف تُحسب مكافأة نهاية الخدمة في الإمارات؟</h2>
+    <p>تنص المادة 51 من المرسوم بقانون اتحادي رقم 33 لسنة 2021 على أن العامل غير المواطن بدوام كامل يستحق المكافأة بعد إكمال سنة خدمة متصلة، وتُحسب على <strong>آخر راتب أساسي</strong>:</p>
+    <ul>
+      <li>أجر 21 يوماً عن كل سنة من السنوات الخمس الأولى.</li>
+      <li>أجر 30 يوماً عن كل سنة بعد ذلك.</li>
+      <li>تُستحق المكافأة عن كسور السنة بنسبة ما قضاه العامل منها، بشرط إكمال سنة.</li>
+      <li>لا تدخل أيام الغياب بدون أجر في مدة الخدمة.</li>
+      <li>لا يزيد مجموع المكافأة على أجر سنتين.</li>
+    </ul>
+
+    <h2>مثال محسوب</h2>
+    <div class="example">
+      <p>موظف راتبه الأساسي 6,000 درهم، عمل من 1 يناير 2017 إلى 31 ديسمبر 2023، أي 7 سنوات تقريباً.</p>
+      <p>الأجر اليومي 200 درهم. أول 5 سنوات: 5 × 21 × 200 = 21,000. السنتان التاليتان: 2 × 30 × 200 = 12,000 تقريباً. المجموع نحو <strong class="num">{money(ex?.total)}</strong> درهم، لأن الحاسبة تحسب الأيام الفعلية بما فيها السنوات الكبيسة.</p>
+    </div>
+
+    <h2>أخطاء شائعة</h2>
+    <ul>
+      <li><strong>الحساب على الراتب الإجمالي.</strong> البدلات لا تدخل، والأساس هو الراتب الأساسي.</li>
+      <li><strong>اعتبار 365 يوماً سنة كاملة دائماً.</strong> في السنة الكبيسة تحتاج 366 يوماً لتكمل سنة.</li>
+      <li><strong>نسيان الحد الأعلى.</strong> بعد خدمة طويلة جداً تتوقف المكافأة عند أجر سنتين.</li>
+    </ul>
+
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>المواطنون الإماراتيون في القطاع الخاص يخضعون لأنظمة المعاشات والتأمينات الاجتماعية. والعاملون بدوام جزئي تُحسب مكافأتهم بنسبة ساعات عملهم إلى ساعات الدوام الكامل (المادة 30 من قرار مجلس الوزراء رقم 1 لسنة 2022). وموظفو المناطق الحرة مثل مركز دبي المالي العالمي وسوق أبوظبي العالمي لهم أنظمة خاصة، والقطاع الحكومي له قوانينه.</p>
+
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>هل تنقص المكافأة إذا استقلت؟</summary><p>المادة 51 في قانون 2021 تربط المكافأة بمدة الخدمة والأجر الأساسي، ولا تحدد خفضاً بحسب سبب انتهاء العقد كما كان في القانون السابق. للحالات الخاصة راجع وزارة الموارد البشرية والتوطين.</p></details>
+      <details><summary>متى يجب أن تُدفع المكافأة؟</summary><p>تُدفع مستحقات نهاية الخدمة خلال 14 يوماً من تاريخ انتهاء العقد، بحسب بوابة حكومة الإمارات.</p></details>
+      <details><summary>تغيّر راتبي الأساسي خلال الخدمة، أي راتب أستخدم؟</summary><p>للعامل غير المواطن تُحسب المكافأة على آخر راتب أساسي تقاضاه.</p></details>
+    </div>
+
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://beta.government.ae/en/information-and-services/jobs/end-of-service-benefits-for-employees-in-the-private-sector" rel="noopener" target="_blank">بوابة حكومة الإمارات: مكافأة نهاية الخدمة لموظفي القطاع الخاص</a></li>
+      <li><a href="https://www.mohre.gov.ae/" rel="noopener" target="_blank">وزارة الموارد البشرية والتوطين</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcGratuity } from '../lib/calc/gratuity';
+  import { gratuityView } from '../lib/views';
+  import { localTodayISO } from '../lib/calc/core';
+  import { serviceTimeline } from '../lib/exhibits';
+
+  const root = document.querySelector<HTMLElement>('[data-calc="end-of-service"]')!;
+  const end = root.querySelector<HTMLInputElement>('#f-endDate')!;
+  if (!new URLSearchParams(location.search).has('endDate')) {
+    end.value = localTodayISO();
+    end.dataset.default = end.value;
+  }
+  const x = (k: string) => root.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcGratuity({ basicSalary: num(f.basicSalary), startDate: f.startDate, endDate: f.endDate, unpaidAbsenceDays: num(f.unpaidAbsenceDays) ?? 0 });
+      return { result, view: result.ok ? gratuityView(result.value) : null };
+    },
+    extras: (g) => { x('timeline').innerHTML = serviceTimeline(g); },
+  });
+</script>

@@ -1,0 +1,10 @@
+---
+export interface Props { name: string; legend: string; options: { value: string; label: string }[]; selected: string }
+const { name, legend, options, selected } = Astro.props;
+---
+<fieldset class="pills" data-field={name} data-default={selected} role="radiogroup">
+  <legend>{legend}</legend>
+  {options.map((o) => (
+    <label><input type="radio" name={name} value={o.value} checked={o.value === selected} /><span>{o.label}</span></label>
+  ))}
+</fieldset>

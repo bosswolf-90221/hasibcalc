@@ -1,0 +1,75 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import Pills from '../components/Pills.astro';
+import SelIn from '../components/SelIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcCalories, ACTIVITY } from '../lib/calc/calories';
+import { caloriesView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { activityTable } from '../lib/exhibits-extra';
+
+const d = { sex: 'male' as const, age: 30, weightKg: 80, heightCm: 178, activity: 'moderate' as const };
+const r = calcCalories(d);
+const view = r.ok ? caloriesView(r.value) : errorView(r, 'سعراتك اليومية')!;
+---
+<CalcLayout slug="calories" lede="للبالغين من 18 سنة فأكثر. اكتب بياناتك ومستوى نشاطك، ونحسب السعرات التي يحتاجها جسمك يومياً ليحافظ على وزنه.">
+  <div data-calc="calories">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات السعرات">
+        أنا <Pills name="sex" legend="الجنس" selected="male" options={[{ value: 'male', label: 'رجل' }, { value: 'female', label: 'امرأة' }]} />
+        عمري <NumIn name="age" label="العمر بالسنوات" value={d.age} width={2} /> سنة، ووزني <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} width={3} /> كجم،
+        وطولي <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} width={3} /> سم، ونشاطي
+        <SelIn name="activity" label="مستوى النشاط" value={d.activity} options={ACTIVITY.map((a) => ({ value: a.key, label: a.label }))} />.
+      </form>
+      <FieldErrors names={['age', 'weightKg', 'heightCm', 'activity']} />
+      <p class="hint">{ACTIVITY.map((a) => `${a.label}: ${a.hint}`).join(' · ')}</p>
+    </div>
+    <ResultCard view={view} notes={['الأرقام تقديرية، وقد يختلف احتياجك الفعلي بنحو 10% بحسب كتلة العضلات والوراثة.', 'لا ننصح بأقل من معدل الأيض الأساسي دون إشراف مختص. الحامل والمرضعة ومن لديه حالة صحية يراجع الطبيب أو أخصائي التغذية.']}>
+      <p class="formula" slot="formula"><code>الأيض الأساسي = 10 × الوزن + 6.25 × الطول − 5 × العمر + 5</code> للرجل، و<code>− 161</code> بدل <code>+ 5</code> للمرأة. ثم <code>الاحتياج اليومي = الأيض الأساسي × معامل النشاط</code>.</p>
+    </ResultCard>
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> احتياجك في كل مستوى نشاط</h2>
+      <div data-x="table" set:html={activityTable(r.ok ? r.value : null, d.activity)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف تُحسب السعرات اليومية؟</h2>
+    <p>نحسب أولاً <strong>معدل الأيض الأساسي</strong>، وهو ما يحرقه جسمك وأنت في راحة تامة للتنفس ونبض القلب وحرارة الجسم. نستخدم معادلة ميفلين سان جيور (1990)، وهي من أدق المعادلات للبالغين. ثم نضربه في معامل يمثل حركتك اليومية ورياضتك.</p>
+    <div class="example">
+      <p>رجل عمره 30 سنة، وزنه 80 كجم وطوله 178 سم: الأيض الأساسي = 800 + 1,112.5 − 150 + 5 = <strong>1,767.5 سعرة</strong>. بنشاط متوسط (× 1.55) يحتاج نحو <strong>2,740 سعرة</strong> يومياً ليحافظ على وزنه.</p>
+    </div>
+    <h2>ماذا عن إنقاص الوزن؟</h2>
+    <p>نصف كيلو من الدهون يعادل نحو 3,500 سعرة، لذلك فإن عجزاً معتدلاً بنحو 500 سعرة يومياً يقابل نحو نصف كيلو أسبوعياً. العجز الكبير يصعب الاستمرار عليه وقد يضر، والأفضل تحديد الهدف مع مختص.</p>
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>لمن هم دون 18 سنة، وللحامل والمرضعة، وللرياضيين المحترفين ذوي الكتلة العضلية العالية، ولمن لديه حالة صحية تؤثر على الأيض. في هذه الحالات راجع الطبيب أو أخصائي التغذية.</p>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>أي مستوى نشاط أختار؟</summary><p>اختر المستوى الأقل إذا ترددت بين اثنين، فأغلب الناس يبالغون في تقدير نشاطهم.</p></details>
+      <details><summary>لماذا تختلف النتيجة عن ساعتي الذكية؟</summary><p>الساعة تقيس حركتك الفعلية، والحاسبة تعتمد متوسطاً لكل مستوى نشاط. كلاهما تقدير.</p></details>
+    </div>
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" rel="noopener" target="_blank">Mifflin MD, St Jeor ST وآخرون (1990): معادلة جديدة لمعدل الأيض الأساسي</a></li>
+      <li><a href="https://www.who.int/news-room/fact-sheets/detail/healthy-diet" rel="noopener" target="_blank">منظمة الصحة العالمية: النظام الغذائي الصحي</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcCalories, type Activity, type Sex } from '../lib/calc/calories';
+  import { caloriesView } from '../lib/views-extra';
+  import { activityTable } from '../lib/exhibits-extra';
+  const root = document.querySelector<HTMLElement>('[data-calc="calories"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcCalories({ sex: f.sex as Sex, age: num(f.age), weightKg: num(f.weightKg), heightCm: num(f.heightCm), activity: f.activity as Activity });
+      return { result, view: result.ok ? caloriesView(result.value) : null };
+    },
+    extras: (c, f) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = activityTable(c, f.activity); },
+  });
+</script>

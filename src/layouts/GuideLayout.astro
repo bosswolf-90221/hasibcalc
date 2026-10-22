@@ -1,0 +1,50 @@
+---
+import Base from './Base.astro';
+import CalcIndex from '../components/CalcIndex.astro';
+import { guideBySlug, GUIDES } from '../data/guides';
+import { bySlug } from '../data/calculators';
+import { SITE } from '../config/site';
+import { arDate } from '../lib/format';
+
+export interface Props { slug: string }
+const g = guideBySlug(Astro.props.slug);
+const c = bySlug(g.calc);
+const path = `/guides/${g.slug}/`;
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'Article', headline: g.title, description: g.description, datePublished: g.date, dateModified: g.date, inLanguage: 'ar', mainEntityOfPage: SITE.url + path, author: { '@type': 'Organization', name: SITE.name, url: SITE.url + '/' }, publisher: { '@type': 'Organization', name: SITE.name } },
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+    { '@type': 'ListItem', position: 2, name: 'أدلة', item: SITE.url + '/guides/' },
+    { '@type': 'ListItem', position: 3, name: g.title, item: SITE.url + path },
+  ] },
+];
+const others = GUIDES.filter((x) => x.slug !== g.slug).slice(0, 3);
+---
+<Base title={g.title} description={g.description} path={path} jsonLd={jsonLd} bare>
+  <div class="stage calc-stage">
+    <div class="container calc-title">
+      <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/guides/">أدلة</a></li><li aria-current="page">{g.kicker}</li></ol></nav>
+      <p class="kick">{g.kicker} · {g.minutes} دقائق قراءة</p>
+      <h1>{g.title}</h1>
+      <p class="lede">{g.description}</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="calc-grid">
+      <article class="article card guide">
+        <slot />
+        <p class="reviewed">نُشر في {arDate(g.date)}. المعلومات للتوعية العامة، وراجع الجهة المختصة قبل أي قرار.</p>
+      </article>
+      <aside class="calc-side" aria-label="الحاسبة المرتبطة">
+        <div class="card side-card">
+          <h2>احسبها الآن</h2>
+          <CalcIndex items={[c]} />
+        </div>
+        <div class="card side-card">
+          <h2>أدلة أخرى</h2>
+          <ul class="trust toc">{others.map((o) => <li><a href={`/guides/${o.slug}/`}>{o.title}</a></li>)}</ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>

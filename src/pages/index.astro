@@ -1,0 +1,155 @@
+---
+import Base from '../layouts/Base.astro';
+import CalcIndex from '../components/CalcIndex.astro';
+import NumIn from '../components/NumIn.astro';
+import DateIn from '../components/DateIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import Reveal from '../components/motion/Reveal.tsx';
+import { CALCULATORS, bySlug } from '../data/calculators';
+import { SITE } from '../config/site';
+import { GUIDES } from '../data/guides';
+import { calcGratuity } from '../lib/calc/gratuity';
+import { gratuityView, errorView } from '../lib/views';
+import { toISODate } from '../lib/calc/core';
+
+const today = toISODate(new Date());
+const d = { basicSalary: 8000, startDate: '2019-03-01', endDate: today };
+const r = calcGratuity(d);
+const view = r.ok ? gratuityView(r.value) : errorView(r, 'مكافأة نهاية خدمتك')!;
+const split = (g: typeof r) => {
+  if (!g.ok) return [0, 0];
+  const y = Math.min(g.value.serviceYears, 30);
+  const a = Math.min(y, 5), b = Math.max(0, y - 5);
+  return [a, b];
+};
+const [sa, sb] = split(r);
+const shelf = ['loan', 'vat', 'zakat', 'bmi'].map(bySlug);
+const more = CALCULATORS.filter((c) => !['loan', 'vat', 'zakat', 'bmi'].includes(c.slug));
+const chips = ['end-of-service', 'hijri', 'loan', 'vat', 'pregnancy', 'calories'].map(bySlug);
+---
+<Base title={`${SITE.name}: أريد أن أعرف… حاسبات عربية مجانية`} description="حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم." path="/" bare>
+  <section class="stage hero" aria-labelledby="h">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="kick">حاسبات عربية مجانية</p>
+        <h1 id="h">أريد أن أعرف<span class="sr-only">: حاسبات عربية تجيب عن أسئلتك الحسابية</span></h1>
+        <label class="ask">
+          <span class="sr-only">اختر سؤالك</span>
+          <select id="ask" aria-label="اختر سؤالك">
+            {CALCULATORS.map((c) => <option value={`/${c.slug}/`} selected={c.slug === 'end-of-service'}>{c.question}</option>)}
+          </select>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </label>
+        <p class="lede">اختر سؤالك، واكتب أرقامك في جملة. تظهر الإجابة فوراً مع طريقة الحساب ومصدرها الرسمي، بلا تسجيل، ولا تغادر أرقامك جهازك.</p>
+        <ul class="chips" aria-label="أسئلة شائعة">
+          {chips.map((c) => <li><a href={`/${c.slug}/`} style={`--t:${c.tone}`}>{c.short}</a></li>)}
+        </ul>
+      </div>
+
+      <div class="machine" data-calc="home-eos">
+        <div class="machine-top"><span>جرّبها الآن: نهاية الخدمة</span><b>تحسب وأنت تكتب</b></div>
+        <form class="sentence" onsubmit="return false" aria-label="جرّب حاسبة نهاية الخدمة">
+          راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
+          بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+          وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />
+        </form>
+        <FieldErrors names={['basicSalary', 'startDate', 'endDate']} />
+        <ResultCard view={view} mini uid="h" more="/end-of-service/">
+          <Fragment slot="display">
+            <div class="dbar" aria-hidden="true"><span data-bar="a" style={`width:${(sa / Math.max(sa + sb, 1)) * 100}%`}></span><span data-bar="b" style={`width:${(sb / Math.max(sa + sb, 1)) * 100}%`}></span></div>
+            <div class="dlegend" aria-hidden="true"><span><i></i>أول 5 سنوات · 21 يوم/سنة</span><span><i></i>بعدها · 30 يوم/سنة</span></div>
+          </Fragment>
+        </ResultCard>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <section class="shelf" id="index" aria-labelledby="idx-h">
+      <h2 id="idx-h" class="sr-only">كل الحاسبات</h2>
+      <CalcIndex items={shelf} />
+    </section>
+
+    <section class="sec" aria-labelledby="more-h">
+      <div class="sec-head"><h2 id="more-h">حاسبات أخرى</h2><p>كل حاسبة لها صفحة بشرح ومثال محسوب وأسئلة شائعة.</p></div>
+      <Reveal client:idle selector="li"><CalcIndex items={more} compact /></Reveal>
+    </section>
+
+    <section class="sec" aria-labelledby="guides-h">
+      <div class="sec-head"><h2 id="guides-h">أدلة مختصرة</h2><p>شرح بأمثلة محسوبة لأكثر الأسئلة تكراراً. <a href="/guides/" style="color:var(--accent)">كل الأدلة</a></p></div>
+      <Reveal client:idle selector="li"><ul class="guide-list">{GUIDES.slice(0, 3).map((g) => <li><a href={`/guides/${g.slug}/`}><small>{g.kicker}</small><b>{g.title}</b><span>{g.description}</span></a></li>)}</ul></Reveal>
+    </section>
+
+    <section class="sec" aria-labelledby="how-h">
+      <div class="sec-head"><h2 id="how-h">احسب بجملة لا باستمارة</h2><p>ثلاث خطوات، بلا تسجيل ولا تحميل.</p></div>
+      <Reveal client:idle selector="li">
+        <ol class="steps">
+          <li class="card"><span class="n">1</span><h3>اختر سؤالك</h3><p>من «أريد أن أعرف…» في الأعلى، أو من البحث.</p><div class="demo">أريد أن أعرف <u>كم قسطي الشهري؟</u></div></li>
+          <li class="card"><span class="n">2</span><h3>اكتب أرقامك داخل الجملة</h3><p>الأرقام نفسها هي الخانات.</p><div class="demo">قرض بقيمة <u class="num">100,000</u> لمدة <u class="num">48</u> شهراً</div></li>
+          <li class="card"><span class="n">3</span><h3>احصل على الإجابة وطريقتها</h3><p>تظهر النتيجة فوراً، ومعها المعادلة والمصدر. <a href="/about/">كيف نحسب</a></p><div class="demo">قسطك: <b class="num">2,280.35</b> درهم</div></li>
+        </ol>
+      </Reveal>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .hero { padding-bottom: 150px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: center; padding-top: 40px; }
+  .hero-copy { min-width: 0; }
+  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); line-height: 1.1; margin-top: 14px; color: #fff; }
+  .ask { position: relative; display: inline-flex; align-items: center; max-width: 100%; margin-top: 14px; background: #fff; color: var(--em); border-radius: 99px; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .6); }
+  .ask select { appearance: none; font: inherit; font-weight: 600; font-size: clamp(1.15rem, 3.4vw, 1.9rem); color: inherit; background: transparent; border: 0; border-radius: 99px; padding: 12px 26px; padding-inline-end: 58px; max-width: 100%; text-overflow: ellipsis; cursor: pointer; }
+  .ask select:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+  .ask svg { position: absolute; inset-inline-end: 22px; pointer-events: none; }
+  .hero .lede { color: var(--on-deep-soft); margin-top: 22px; }
+  .chips { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 16px; border-radius: 99px; border: 1px solid rgba(255, 255, 255, .2); color: #e0f3ec; font-size: .9rem; transition: background-color .2s; }
+  .chips a::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--t); box-shadow: 0 0 0 2px rgba(255, 255, 255, .5); }
+  .chips a:hover { background: rgba(255, 255, 255, .1); }
+  .hero .machine .sentence { font-size: clamp(1.15rem, 2.2vw, 1.4rem); }
+  .shelf { margin-top: -84px; position: relative; z-index: 2; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .steps li { padding: 24px; display: flex; flex-direction: column; gap: 6px; }
+  .steps .n { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: var(--deep); color: var(--mint); font-weight: 600; margin-bottom: 6px; }
+  .steps p { color: var(--soft); font-size: .95rem; margin: 0; }
+  .steps a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+  .demo { margin-top: auto; padding: 12px 14px; border-radius: 12px; background: var(--well); font-size: .95rem; }
+  .demo u { text-decoration: none; color: var(--accent); font-weight: 600; border-bottom: 2px solid currentColor; }
+  .demo b { font-weight: 600; }
+  .steps li > .demo { margin-top: 14px; }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 36px; padding-top: 24px; }
+    .steps { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcGratuity } from '../lib/calc/gratuity';
+  import { gratuityView } from '../lib/views';
+  import { localTodayISO } from '../lib/calc/core';
+
+  const ask = document.querySelector<HTMLSelectElement>('#ask')!;
+  ask.addEventListener('change', () => (location.href = ask.value));
+
+  const root = document.querySelector<HTMLElement>('[data-calc="home-eos"]')!;
+  const end = root.querySelector<HTMLInputElement>('#f-endDate')!;
+  end.value = localTodayISO();
+  end.dataset.default = end.value;
+  const bar = (k: string) => root.querySelector<HTMLElement>(`[data-bar="${k}"]`)!;
+  mountCalculator(root, {
+    paramPrefix: 'home_',
+    compute: (f) => {
+      const result = calcGratuity({ basicSalary: num(f.basicSalary), startDate: f.startDate, endDate: f.endDate });
+      return { result, view: result.ok ? gratuityView(result.value) : null };
+    },
+    extras: (g) => {
+      const y = Math.min(g.serviceYears, 30);
+      const a = Math.min(y, 5), b = Math.max(0, y - 5), t = Math.max(a + b, 1);
+      bar('a').style.width = `${(a / t) * 100}%`;
+      bar('b').style.width = `${(b / t) * 100}%`;
+    },
+  });
+</script>

@@ -1,0 +1,103 @@
+---
+import Base from './Base.astro';
+import AdSlot from '../components/AdSlot.astro';
+import CalcIndex from '../components/CalcIndex.astro';
+import Reveal from '../components/motion/Reveal.tsx';
+import { bySlug, CALCULATORS, CATEGORIES } from '../data/calculators';
+import { SITE } from '../config/site';
+import { arDate } from '../lib/format';
+
+export interface Props { slug: string; lede: string }
+const { slug, lede } = Astro.props;
+const c = bySlug(slug);
+const cat = CATEGORIES.find((x) => x.key === c.categories[0])!;
+const path = `/${slug}/`;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+      { '@type': 'ListItem', position: 2, name: cat.name, item: `${SITE.url}/category/${cat.key}/` },
+      { '@type': 'ListItem', position: 3, name: c.short, item: SITE.url + path },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: c.seoTitle,
+    url: SITE.url + path,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'ar',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'AED' },
+  },
+];
+---
+<Base title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd} bare>
+  <div class="stage calc-stage">
+    <div class="container">
+      <div class="calc-title">
+        <nav class="crumbs" aria-label="مسار التنقل">
+          <ol><li><a href="/">الرئيسية</a></li><li><a href={`/category/${cat.key}/`}>{cat.name}</a></li><li aria-current="page">{c.short}</li></ol>
+        </nav>
+        <p class="ask-line" aria-hidden="true">أريد أن أعرف…</p>
+        <h1>{c.question}</h1>
+        <p class="lede">{lede}</p>
+        <label class="switcher"><span class="sr-only">اختر سؤالاً آخر</span>
+          <select data-switch aria-label="اختر سؤالاً آخر">
+            {CALCULATORS.map((x) => <option value={`/${x.slug}/`} selected={x.slug === slug}>{x.question}</option>)}
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="calc-grid">
+      <div class="calc-main">
+        <div class="machine" id="calc">
+          <div class="machine-top"><span>حاسبة {c.short}</span><b>تحسب وأنت تكتب</b></div>
+          <slot />
+        </div>
+        <AdSlot position="afterCalculator" />
+        <article class="article card" id="explain">
+          <slot name="article" />
+          <p class="reviewed">آخر مراجعة للمعادلة مقابل المصادر المذكورة: {arDate(SITE.lastReviewed)}.</p>
+        </article>
+        <section class="related" id="related" aria-labelledby="rel-h">
+          <div class="related-head"><h2 id="rel-h">حاسبات قريبة</h2><a href="/#index">كل الحاسبات</a></div>
+          <Reveal client:idle selector="li"><CalcIndex items={c.related.map(bySlug)} /></Reveal>
+        </section>
+      </div>
+      <aside class="calc-side" aria-label="معلومات الحاسبة">
+        <div class="card side-card">
+          <h2>لماذا تثق بالنتيجة؟</h2>
+          <ul class="trust">
+            <li>المعادلة مكتوبة تحت «كيف حسبناها؟»</li>
+            <li>المصادر الرسمية في آخر الشرح</li>
+            <li>الحساب في متصفحك، ولا تغادر أرقامك جهازك</li>
+            <li>آخر مراجعة: {arDate(SITE.lastReviewed)}</li>
+          </ul>
+        </div>
+        <div class="card side-card">
+          <h2>في هذه الصفحة</h2>
+          <ul class="trust toc">
+            <li><a href="#calc">الحاسبة</a></li>
+            <li><a href="#explain">الشرح والمثال</a></li>
+            <li><a href="#related">حاسبات قريبة</a></li>
+          </ul>
+        </div>
+        <div class="card side-card">
+          <h2>{cat.name}</h2>
+          <CalcIndex items={CALCULATORS.filter((x) => x.slug !== slug && x.categories.includes(cat.key))} compact />
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLSelectElement>('[data-switch]').forEach((s) => s.addEventListener('change', () => (location.href = s.value)));
+</script>

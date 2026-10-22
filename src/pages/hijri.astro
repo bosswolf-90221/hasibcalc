@@ -1,0 +1,96 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import DateIn from '../components/DateIn.astro';
+import NumIn from '../components/NumIn.astro';
+import SelIn from '../components/SelIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { gregorianToHijri, hijriToGregorian, toHijri, HIJRI_MONTHS } from '../lib/calc/hijri';
+import { toHijriView, toGregorianView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { calendarLeaves } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+import { arDate } from '../lib/format';
+
+const today = toISODate(new Date());
+const r1 = gregorianToHijri({ date: today });
+const v1 = r1.ok ? toHijriView(r1.value) : errorView(r1, 'التاريخ الهجري')!;
+const h = toHijri(new Date(today + 'T00:00:00Z'));
+const r2 = hijriToGregorian({ hYear: h.year + (h.month >= 9 ? 1 : 0), hMonth: 9, hDay: 1 });
+const v2 = r2.ok ? toGregorianView(r2.value) : errorView(r2, 'التاريخ الميلادي')!;
+const months = HIJRI_MONTHS.map((m, i) => ({ value: String(i + 1), label: m }));
+const exRamadan = hijriToGregorian({ hYear: 1448, hMonth: 9, hDay: 1 });
+---
+<CalcLayout slug="hijri" lede="اختر اتجاه التحويل: من الميلادي إلى الهجري، أو من الهجري إلى الميلادي. نعتمد تقويم أم القرى الرسمي في السعودية.">
+  <section class="pq" data-calc="to-hijri" aria-labelledby="q1">
+    <h2 id="q1" class="step"><b>01</b> من الميلادي إلى الهجري</h2>
+    <form class="sentence" onsubmit="return false">التاريخ الميلادي <DateIn name="date" label="التاريخ الميلادي" value={today} /> يوافق بالهجري…</form>
+    <FieldErrors names={['date']} />
+    <ResultCard small uid="r1" view={v1} notes={['بداية الشهر الهجري في تقويم أم القرى محسوبة فلكياً، وقد يختلف إعلان بداية رمضان والأعياد بالرؤية يوماً واحداً.']}>
+      <p class="formula" slot="formula">نحوّل التاريخ بتقويم <code>islamic-umalqura</code> المدمج في متصفحك، وهو مطابق لجداول أم القرى المنشورة.</p>
+    </ResultCard>
+    <div class="exhibit"><h3 class="exhibit-title"><b>02</b> ورقتا التقويم</h3><div data-x="leaves" set:html={calendarLeaves(r1.ok ? r1.value : null)} /></div>
+  </section>
+
+  <section class="pq" data-calc="to-greg" aria-labelledby="q2">
+    <h2 id="q2" class="step"><b>03</b> من الهجري إلى الميلادي</h2>
+    <form class="sentence" onsubmit="return false">اليوم <NumIn name="hDay" label="اليوم الهجري" value={1} width={2} /> من شهر <SelIn name="hMonth" label="الشهر الهجري" options={months} value="9" /> سنة <NumIn name="hYear" label="السنة الهجرية" value={r2.ok ? r2.value.hijri.year : h.year} width={4} /> هـ يوافق…</form>
+    <FieldErrors names={['hDay', 'hMonth', 'hYear']} />
+    <ResultCard small uid="r2" view={v2}>
+      <p class="formula" slot="formula">نبحث عن اليوم الميلادي الذي يقابله هذا التاريخ في تقويم أم القرى، ونرفض اليوم 30 إذا كان الشهر 29 يوماً بدل أن ننقله للشهر التالي.</p>
+    </ResultCard>
+  </section>
+
+  <Fragment slot="article">
+    <h2>كيف يُحوَّل التاريخ من الميلادي إلى الهجري؟</h2>
+    <p>السنة الهجرية قمرية، وطولها نحو 354 أو 355 يوماً، أي أقصر من السنة الميلادية بنحو 11 يوماً. لذلك لا يصلح طرح رقم ثابت أو ضرب السنة في معامل، بل يجب الرجوع إلى تقويم يحدد بداية كل شهر.</p>
+    <p>تقويم <strong>أم القرى</strong> هو التقويم الرسمي في المملكة العربية السعودية، ويحدد بدايات الأشهر بحسابات فلكية مسبقة. وهو المستخدم في هذه الحاسبة وفي أغلب التطبيقات والجهات الرسمية الخليجية.</p>
+    <h2>مثال محسوب</h2>
+    <div class="example">
+      <p>تاريخ 21 أكتوبر 2026 يوافق <strong>10 جمادى الأولى 1448 هـ</strong>. وأول رمضان 1448 هـ يوافق بحسب أم القرى <strong>{exRamadan.ok ? arDate(exRamadan.value.gregorian) : ''}</strong>.</p>
+    </div>
+    <h2>لماذا قد يختلف التاريخ بيوم؟</h2>
+    <ul>
+      <li>بداية رمضان وشوال وذي الحجة تُعلن غالباً برؤية الهلال، فقد تتقدم أو تتأخر يوماً عن أم القرى.</li>
+      <li>بعض الدول تعتمد تقاويم هجرية أخرى، مثل التقويم الهجري المدني الحسابي، فيظهر فرق يوم أو يومين.</li>
+      <li>اليوم الهجري يبدأ عند المغرب، أما التحويل هنا فيقابل اليوم الميلادي كاملاً.</li>
+    </ul>
+    <div class="faq">
+      <h2>أسئلة شائعة</h2>
+      <details><summary>كم عدد أيام الشهر الهجري؟</summary><p>إما 29 يوماً أو 30 يوماً، ويظهر عدد أيام الشهر في نتيجة الحاسبة.</p></details>
+      <details><summary>ما الفرق بين السنة الهجرية والميلادية؟</summary><p>السنة الهجرية 12 شهراً قمرياً، نحو 354 يوماً، والميلادية 365 أو 366 يوماً. لذلك تتقدم المناسبات الهجرية نحو 11 يوماً كل سنة ميلادية.</p></details>
+      <details><summary>ما المدى الذي تغطيه الحاسبة؟</summary><p>من 1924 إلى 2076 ميلادياً، أي من سنة 1343 إلى 1500 هجرياً تقريباً.</p></details>
+    </div>
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://www.ummulqura.org.sa/" rel="noopener" target="_blank">تقويم أم القرى</a></li>
+      <li><a href="https://unicode-org.github.io/icu/userguide/datetime/calendar/" rel="noopener" target="_blank">ICU: التقاويم المدعومة في المتصفحات (islamic-umalqura)</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { gregorianToHijri, hijriToGregorian } from '../lib/calc/hijri';
+  import { toHijriView, toGregorianView } from '../lib/views-extra';
+  import { calendarLeaves } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+
+  const a = document.querySelector<HTMLElement>('[data-calc="to-hijri"]')!;
+  const date = a.querySelector<HTMLInputElement>('#f-date')!;
+  if (!new URLSearchParams(location.search).has('date')) { date.value = localTodayISO(); date.dataset.default = date.value; }
+  mountCalculator(a, {
+    compute: (f) => {
+      const result = gregorianToHijri({ date: f.date });
+      return { result, view: result.ok ? toHijriView(result.value) : null };
+    },
+    extras: (c) => { a.querySelector<HTMLElement>('[data-x="leaves"]')!.innerHTML = calendarLeaves(c); },
+  });
+  const b = document.querySelector<HTMLElement>('[data-calc="to-greg"]')!;
+  mountCalculator(b, {
+    compute: (f) => {
+      const result = hijriToGregorian({ hYear: num(f.hYear), hMonth: num(f.hMonth), hDay: num(f.hDay) });
+      return { result, view: result.ok ? toGregorianView(result.value) : null };
+    },
+  });
+</script>

@@ -1,0 +1,9 @@
+---
+// A choice written inside the sentence (e.g. a month name).
+export interface Props { name: string; label: string; options: { value: string; label: string }[]; value: string }
+const { name, label, options, value } = Astro.props;
+const id = `f-${name}`;
+---
+<span class="field"><label class="sr-only" for={id}>{label}</label><select class="in sel" id={id} name={name} data-field={name} data-default={value} aria-describedby={`${id}-err`}>
+  {options.map((o) => <option value={o.value} selected={o.value === value}>{o.label}</option>)}
+</select></span>

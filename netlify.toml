@@ -1,4 +1,6 @@
-# حاسِب: نسخة جاهزة مؤقتة (بدون بناء) حتى تُرفع ملفات مشروع Astro الأصلية
 [build]
-  publish = "site"
-  command = ""
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

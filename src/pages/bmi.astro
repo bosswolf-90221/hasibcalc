@@ -1,0 +1,70 @@
+---
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcBmi } from '../lib/calc/bmi';
+import { bmiView, errorView } from '../lib/views';
+import { bmiScale } from '../lib/exhibits';
+
+const d = { weightKg: 75, heightCm: 175 };
+const r = calcBmi(d);
+const view = r.ok ? bmiView(r.value) : errorView(r, 'مؤشر كتلة جسمك')!;
+---
+<CalcLayout slug="bmi" lede="للبالغين من عمر 20 سنة فأكثر. اكتب وزنك بالكيلوغرام وطولك بالسنتيمتر.">
+  <div data-calc="bmi">
+    <div class="sentence-wrap">
+    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
+    <form class="sentence" onsubmit="return false" aria-label="الوزن والطول">
+      وزني <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} width={3} /> كجم
+      وطولي <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} width={3} /> سم.
+    </form>
+    <FieldErrors names={['weightKg', 'heightCm']} />
+    </div>
+
+    <ResultCard view={view} notes={['مؤشر كتلة الجسم أداة فحص أولي وليس تشخيصاً، ولا يفرّق بين العضلات والدهون.', 'تصنيفات البالغين لا تنطبق على الأطفال والمراهقين، ولا على الحوامل.']}>
+      <p class="formula" slot="formula"><code>BMI = الوزن بالكيلوغرام ÷ (الطول بالمتر)²</code></p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="scale-title">
+      <h2 id="scale-title" class="exhibit-title"><b>02</b> أين يقع مؤشرك على المقياس</h2>
+      <div data-x="scale" set:html={bmiScale(r.ok ? r.value.bmi : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف يُحسب مؤشر كتلة الجسم؟</h2>
+    <p>نقسم الوزن بالكيلوغرام على مربع الطول بالمتر. ثم نقارن الرقم بتصنيف البالغين المعتمد من منظمة الصحة العالمية والمراكز الأمريكية لمكافحة الأمراض.</p>
+    <ul>
+      <li>أقل من 18.5: نقص وزن.</li>
+      <li>من 18.5 إلى أقل من 25: نطاق طبيعي.</li>
+      <li>من 25 إلى أقل من 30: زيادة وزن.</li>
+      <li>30 فأكثر: سمنة.</li>
+    </ul>
+    <div class="example"><p>وزن 75 كجم وطول 175 سم: 75 ÷ (1.75 × 1.75) = 24.5، أي ضمن النطاق الطبيعي.</p></div>
+    <h2>متى لا تنطبق هذه النتيجة؟</h2>
+    <p>عند الرياضيين ذوي الكتلة العضلية العالية، والحوامل، وكبار السن، ولمن هم دون 20 سنة، إذ تُستخدم لهم منحنيات نمو بحسب العمر والجنس. لأي قرار صحي استشر طبيبك.</p>
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html" rel="noopener" target="_blank">CDC: تصنيفات مؤشر كتلة الجسم للبالغين</a></li>
+      <li><a href="https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index" rel="noopener" target="_blank">منظمة الصحة العالمية: مؤشر كتلة الجسم</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcBmi } from '../lib/calc/bmi';
+  import { bmiView } from '../lib/views';
+  import { bmiScale } from '../lib/exhibits';
+  const root = document.querySelector<HTMLElement>('[data-calc="bmi"]')!;
+  const sc = root.querySelector<HTMLElement>('[data-x="scale"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcBmi({ weightKg: num(f.weightKg), heightCm: num(f.heightCm) });
+      return { result, view: result.ok ? bmiView(result.value) : null };
+    },
+    extras: (b) => { sc.innerHTML = bmiScale(b.bmi); },
+  });
+</script>

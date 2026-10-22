@@ -1,0 +1,29 @@
+---
+import GuideLayout from '../../layouts/GuideLayout.astro';
+const rows = [150, 155, 160, 165, 170, 175, 180, 185, 190].map((h) => { const m = h / 100; return [h, (18.5 * m * m).toFixed(1), (24.9 * m * m).toFixed(1)]; });
+---
+<GuideLayout slug="ideal-weight-by-height">
+  <h2>كيف يُحدد «الوزن الطبيعي»؟</h2>
+  <p>تعتمد منظمة الصحة العالمية <strong>مؤشر كتلة الجسم</strong> للبالغين: الوزن بالكيلوغرام ÷ مربع الطول بالمتر. ويُعد المؤشر طبيعياً بين <strong>18.5 و24.9</strong>. ومنه نحسب نطاق الوزن الطبيعي لكل طول.</p>
+
+  <h2>جدول الوزن الطبيعي حسب الطول (للبالغين)</h2>
+  <table>
+    <thead><tr><th>الطول (سم)</th><th>من (كجم)</th><th>إلى (كجم)</th></tr></thead>
+    <tbody>{rows.map(([h, a, b]) => <tr><td>{h}</td><td>{a}</td><td>{b}</td></tr>)}</tbody>
+  </table>
+  <div class="cta"><p>احسب مؤشرك ونطاقك لطولك بالضبط</p><a href="/bmi/">حاسبة مؤشر كتلة الجسم ←</a></div>
+
+  <h2>كيف تحسبه بنفسك؟</h2>
+  <div class="example"><p>طولك 172 سم = 1.72 م. مربعه = 2.958. الحد الأدنى = 18.5 × 2.958 = <strong>54.7 كجم</strong>، والحد الأعلى = 24.9 × 2.958 = <strong>73.7 كجم</strong>.</p></div>
+
+  <h2>متى لا يكفي هذا الجدول؟</h2>
+  <ul>
+    <li><strong>الرياضيون:</strong> العضلات أثقل من الدهون، فقد يظهر المؤشر مرتفعاً وصاحبه بصحة جيدة.</li>
+    <li><strong>كبار السن والحوامل:</strong> لهم معايير مختلفة.</li>
+    <li><strong>من هم دون 20 سنة:</strong> تُستخدم لهم منحنيات نمو بحسب العمر والجنس.</li>
+  </ul>
+  <p>المؤشر أداة فحص أولية وليس تشخيصاً. محيط الخصر ونسبة الدهون مؤشران مكملان، والطبيب هو المرجع.</p>
+
+  <h2>المصادر</h2>
+  <ul class="sources"><li><a href="https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight" rel="noopener" target="_blank">منظمة الصحة العالمية: السمنة وزيادة الوزن</a></li></ul>
+</GuideLayout>

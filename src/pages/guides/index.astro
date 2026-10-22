@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { GUIDES } from '../../data/guides';
+---
+<Base title="أدلة حاسِب: شرح مبسط للحسابات اليومية" description="أدلة عربية مبسطة: مكافأة نهاية الخدمة، الفائدة الثابتة والمتناقصة، ضريبة القيمة المضافة في الخليج، الزكاة، مواعيد رمضان، وأسابيع الحمل." path="/guides/" bare>
+  <div class="stage calc-stage">
+    <div class="container calc-title">
+      <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">أدلة</li></ol></nav>
+      <p class="kick">{GUIDES.length} أدلة</p>
+      <h1>أدلة تشرح الرقم قبل أن تحسبه</h1>
+      <p class="lede">كل دليل يجيب عن سؤال واحد بأمثلة محسوبة، ويوصلك إلى الحاسبة المناسبة.</p>
+    </div>
+  </div>
+  <div class="container">
+    <ul class="guide-list shelf-cat" style="margin-top:-88px;position:relative;z-index:2">
+      {GUIDES.map((g) => <li><a href={`/guides/${g.slug}/`}><small>{g.kicker} · {g.minutes} دقائق</small><b>{g.title}</b><span>{g.description}</span></a></li>)}
+    </ul>
+  </div>
+</Base>

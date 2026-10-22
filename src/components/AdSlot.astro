@@ -1,0 +1,19 @@
+---
+// Ad zone, visually separated from the calculator. Renders nothing in production until AdSense is configured.
+import { ADS } from '../config/site';
+export interface Props { position: keyof typeof ADS.slots }
+const { position } = Astro.props;
+const id = ADS.slots[position];
+const dev = import.meta.env.DEV;
+---
+{ADS.enabled && id ? (
+  <aside class="ad-zone" aria-label="إعلان">
+    <span class="ad-label">إعلان</span>
+    <div class="ad-box">
+      <ins class="adsbygoogle" style="display:block;width:100%;min-height:250px" data-ad-client={ADS.client} data-ad-slot={id} data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </aside>
+) : dev ? (
+  <aside class="ad-zone dev" aria-hidden="true"><span class="ad-label">إعلان</span><div class="ad-box">موضع إعلان ({position}) — غير مفعّل في التطوير</div></aside>
+) : null}
