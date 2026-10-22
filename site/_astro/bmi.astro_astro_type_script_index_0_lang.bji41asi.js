@@ -1,0 +1,1 @@
+import{l as e,t}from"./runtime.CHd4gcro.js";import{n,u as r}from"./views.CwkMgkAw.js";import{t as i}from"./exhibits.D5eHee8Q.js";var a=document.querySelector(`[data-calc="bmi"]`),o=a.querySelector(`[data-x="scale"]`);t(a,{compute:t=>{let i=r({weightKg:e(t.weightKg),heightCm:e(t.heightCm)});return{result:i,view:i.ok?n(i.value):null}},extras:e=>{o.innerHTML=i(e.bmi)}});
