@@ -13,6 +13,7 @@ export type CalculatorMeta = {
   categories: CategoryKey[];
   terms: string[]; // search words that really describe the page
   related: string[]; // 4 slugs
+  updated?: string; // last content change (sitemap lastmod)
 };
 
 export const CALCULATORS: CalculatorMeta[] = [
@@ -28,6 +29,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['نهاية الخدمة', 'مكافأة', 'المكافأة', 'استقالة', 'قانون العمل', 'الإمارات', 'راتب أساسي', 'gratuity'],
     related: ['loan', 'zakat', 'percentage', 'vat'],
+    updated: '2026-10-22',
   },
   {
     slug: 'vat',
@@ -41,6 +43,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money', 'shopping'],
     terms: ['ضريبة', 'الضريبة', 'القيمة المضافة', 'vat', '5%', 'شامل الضريبة', 'فاتورة'],
     related: ['discount', 'percentage', 'loan', 'zakat'],
+    updated: '2026-10-22',
   },
   {
     slug: 'loan',
@@ -54,6 +57,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['قرض', 'القرض', 'قسط', 'تمويل', 'سيارة', 'فائدة', 'بنك', 'عقار'],
     related: ['end-of-service', 'percentage', 'vat', 'zakat'],
+    updated: '2026-10-22',
   },
   {
     slug: 'percentage',
@@ -80,6 +84,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['shopping'],
     terms: ['خصم', 'الخصم', 'تخفيض', 'تخفيضات', 'عروض', 'سعر', 'تسوق', 'sale'],
     related: ['percentage', 'vat', 'loan', 'age'],
+    updated: '2026-10-22',
   },
   {
     slug: 'age',
@@ -119,6 +124,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['زكاة', 'الزكاة', 'نصاب', 'ذهب', 'مدخرات', 'ربع العشر', 'رمضان'],
     related: ['end-of-service', 'loan', 'percentage', 'vat'],
+    updated: '2026-10-22',
   },
   {
     slug: 'hijri',
@@ -132,6 +138,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['dates'],
     terms: ['هجري', 'الهجري', 'ميلادي', 'تحويل التاريخ', 'تاريخ اليوم', 'أم القرى', 'التقويم', 'رمضان', 'hijri'],
     related: ['days-between', 'age', 'pregnancy', 'zakat'],
+    updated: '2026-10-21',
   },
   {
     slug: 'days-between',
@@ -145,6 +152,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['dates'],
     terms: ['أيام', 'الأيام', 'بين تاريخين', 'عدد الأيام', 'مدة', 'أيام العمل', 'كم باقي', 'عد تنازلي'],
     related: ['hijri', 'age', 'end-of-service', 'pregnancy'],
+    updated: '2026-10-21',
   },
   {
     slug: 'pregnancy',
@@ -158,6 +166,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['حمل', 'الحمل', 'ولادة', 'موعد الولادة', 'حاسبة الحمل', 'أسابيع الحمل', 'حامل', 'الدورة'],
     related: ['days-between', 'hijri', 'calories', 'bmi'],
+    updated: '2026-10-21',
   },
   {
     slug: 'calories',
@@ -171,6 +180,21 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['سعرات', 'السعرات', 'سعرة', 'حرارية', 'رجيم', 'دايت', 'تخسيس', 'calories', 'حرق'],
     related: ['bmi', 'age', 'pregnancy', 'percentage'],
+    updated: '2026-10-21',
+  },
+  {
+    slug: 'gosi',
+    question: 'كم يُخصم من راتبي للتأمينات؟',
+    short: 'التأمينات الاجتماعية',
+    blurb: 'خصم GOSI وحصة صاحب العمل، بالنظام السابق والجديد',
+    tone: '#3f6212',
+    sample: '1,075',
+    seoTitle: 'حاسبة التأمينات الاجتماعية GOSI: الخصم من الراتب 2026',
+    description: 'احسب خصم التأمينات الاجتماعية من راتبك في السعودية وحصة صاحب العمل، بالنظام السابق أو نظام التأمينات الجديد بزيادته التدريجية، للسعودي وغير السعودي.',
+    categories: ['money'],
+    terms: ['تأمينات', 'التأمينات', 'gosi', 'جوسي', 'ساند', 'خصم الراتب', 'معاش', 'التقاعد', 'السعودية', 'استقطاع'],
+    related: ['end-of-service', 'loan', 'zakat', 'percentage'],
+    updated: '2026-10-22',
   },
 ];
 
@@ -179,7 +203,7 @@ export const CATEGORIES: { key: CategoryKey; name: string; intro: string; descri
     key: 'money',
     name: 'المال والعمل',
     intro: 'أسئلة الراتب والقروض والضرائب والزكاة: ما ستأخذه، وما ستدفعه، وما عليك.',
-    description: 'حاسبات مالية عربية: مكافأة نهاية الخدمة في الإمارات، القسط الشهري للقرض، ضريبة القيمة المضافة، وزكاة المال.',
+    description: 'حاسبات مالية عربية: مكافأة نهاية الخدمة في الإمارات، التأمينات الاجتماعية GOSI، القسط الشهري للقرض، ضريبة القيمة المضافة، وزكاة المال.',
   },
   {
     key: 'shopping',

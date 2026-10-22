@@ -1,0 +1,106 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import Pills from '../components/Pills.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcGosi, pensionRate, SANED, HAZARDS } from '../lib/calc/gosi';
+import { gosiView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { gosiSchedule } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+import { int } from '../lib/format';
+
+const today = toISODate(new Date());
+const d = { nationality: 'saudi' as const, system: 'new' as const, basic: 8000, housing: 2000 };
+const r = calcGosi({ ...d, onDate: today });
+const view = r.ok ? gosiView(r.value, d.nationality, d.system) : errorView(r, 'الخصم الشهري')!;
+const newNow = pensionRate('new', today);
+const WAGES = [4000, 6000, 8000, 10000, 15000, 20000, 30000, 45000];
+---
+<CalcLayout slug="gosi" lede="للعاملين في السعودية. اختر جنسيتك ونظامك في التأمينات، واكتب الراتب الأساسي وبدل السكن، ونحسب الخصم الشهري من راتبك وحصة صاحب العمل.">
+  <div data-calc="gosi">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات التأمينات">
+        أنا <Pills name="nationality" legend="الجنسية" selected="saudi" options={[{ value: 'saudi', label: 'سعودي' }, { value: 'non-saudi', label: 'غير سعودي' }]} />
+        وسجّلت في التأمينات <Pills name="system" legend="تاريخ أول تسجيل" selected="new" options={[{ value: 'legacy', label: 'قبل 3 يوليو 2024' }, { value: 'new', label: 'بعده' }]} />،
+        راتبي الأساسي <NumIn name="basic" label="الراتب الأساسي الشهري بالريال" value={d.basic} width={6} /> ريال،
+        وبدل السكن <NumIn name="housing" label="بدل السكن الشهري بالريال" value={d.housing} width={5} /> ريال.
+      </form>
+      <FieldErrors names={['basic', 'housing']} />
+      <p class="hint">إذا كان السكن يوفّره صاحب العمل عيناً، فقيمته في التأمينات أجر شهرين أساسيين في السنة، أي سدس الأساسي شهرياً تقريباً. بدلات النقل والهاتف والعمل الإضافي لا تدخل.</p>
+    </div>
+    <ResultCard view={view} sensitive notes={['النسب من المنصة التوعوية للمؤسسة العامة للتأمينات الاجتماعية. المرجع النهائي فاتورة التأمينات الشهرية لدى صاحب العمل.', 'أجر الاشتراك لا يقل عن 1,500 ولا يزيد على 45,000 ريال شهرياً.', 'النظام الجديد يشمل من سُجّل أول مرة بعد 3 يوليو 2024 ولم تكن له مدد اشتراك سابقة. من كان مسجلاً قبله يبقى على النظام السابق.']}>
+      <p class="formula" slot="formula"><code>الخصم = (الأساسي + السكن) × (نسبة المعاشات + 0.75% ساند)</code>. وعلى صاحب العمل النسبة نفسها + <code>2%</code> للأخطار المهنية. وغير السعودي: صاحب العمل يدفع <code>2%</code> فقط.</p>
+    </ResultCard>
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> النسب حسب النظام والفترة</h2>
+      <div data-x="schedule" set:html={gosiSchedule(today, d.system, d.nationality)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف يُحسب خصم التأمينات الاجتماعية؟</h2>
+    <p>تُحسب الاشتراكات على <strong>أجر الاشتراك</strong>، وهو الراتب الأساسي مضافاً إليه بدل السكن. وللموظف السعودي ثلاثة فروع:</p>
+    <ul>
+      <li><strong>المعاشات:</strong> 9% على الموظف و9% على صاحب العمل في النظام السابق. وفي النظام الجديد تزيد النسبة نصف نقطة كل سنة لكل طرف حتى تبلغ 11% في يوليو 2028.</li>
+      <li><strong>ساند (التعطل عن العمل):</strong> {SANED}% على الموظف و{SANED}% على صاحب العمل.</li>
+      <li><strong>الأخطار المهنية:</strong> {HAZARDS}% على صاحب العمل وحده، وتشمل السعودي وغير السعودي.</li>
+    </ul>
+
+    <h2>مثال محسوب: أساسي 8,000 وسكن 2,000</h2>
+    <div class="example">
+      <p>أجر الاشتراك = 10,000 ريال.</p>
+      <p><strong>النظام السابق:</strong> يُخصم منك 9.75% = <strong>975 ريال</strong>، ويدفع صاحب العمل 11.75% = 1,175 ريال.</p>
+      <p><strong>النظام الجديد (من يوليو 2026، معاشات 10%):</strong> يُخصم منك 10.75% = <strong>1,075 ريال</strong>، ويدفع صاحب العمل 12.75% = 1,275 ريال.</p>
+      <p><strong>غير السعودي:</strong> لا يُخصم منه شيء، ويدفع صاحب العمل 2% = 200 ريال.</p>
+    </div>
+
+    <h2 id="ready-table">جدول جاهز: الخصم الشهري من راتب السعودي</h2>
+    <p class="table-hint">الصفوف: الراتب الأساسي + بدل السكن بالريال. اسحب الجدول جانباً على الجوال.</p>
+    <div class="scroll-x"><table class="data-table">
+      <thead><tr><th>أجر الاشتراك</th><th>النظام السابق (9.75%)</th><th>النظام الجديد الآن ({newNow + SANED}%)</th><th>النظام الجديد من 2028 (11.75%)</th></tr></thead>
+      <tbody>{WAGES.map((w) => <tr><td class="num">{int(w)}</td><td class="num">{int(Math.round(w * 0.0975))}</td><td class="num">{int(Math.round((w * (newNow + SANED)) / 100))}</td><td class="num">{int(Math.round(w * 0.1175))}</td></tr>)}</tbody>
+    </table></div>
+
+    <h2>أخطاء شائعة</h2>
+    <ul>
+      <li><strong>الحساب على الراتب الإجمالي.</strong> بدلات النقل والهاتف والعمل الإضافي لا تدخل في أجر الاشتراك.</li>
+      <li><strong>تطبيق النسب الجديدة على كل الموظفين.</strong> الزيادة التدريجية للمسجلين الجدد فقط.</li>
+      <li><strong>نسيان الحد الأعلى.</strong> من يزيد أجره على 45,000 ريال تُحسب اشتراكاته على 45,000 فقط.</li>
+    </ul>
+
+    <Faq items={[
+      { q: "هل يُخصم من راتب غير السعودي للتأمينات؟", a: "لا. غير السعودي مشمول بفرع الأخطار المهنية فقط، ويدفع صاحب العمل اشتراكه كاملاً بنسبة 2%." },
+      { q: "من يشمله نظام التأمينات الجديد؟", a: "من يلتحق بالعمل لأول مرة بعد 3 يوليو 2024 ولم تكن له مدد اشتراك سابقة في نظامي التقاعد المدني أو التأمينات الاجتماعية. أما المسجلون قبل ذلك فيبقون على النظام السابق في نسب الاشتراك." },
+      { q: "متى تزيد نسبة المعاشات في النظام الجديد؟", a: "تبدأ من 9% لكل طرف، وتزيد 0.5% كل سنة اعتباراً من 1 يوليو 2025، فتصبح 9.5% ثم 10% في يوليو 2026 ثم 10.5% في يوليو 2027 ثم 11% من يوليو 2028." },
+      { q: "هل يدخل بدل السكن في حساب التأمينات؟", a: "نعم. أجر الاشتراك هو الأساسي مع بدل السكن النقدي. وإذا كان السكن عينياً فقيمته أجر شهرين أساسيين في السنة." },
+    ]} />
+
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://awareness.gosi.gov.sa/businessJourney.html" rel="noopener" target="_blank">المؤسسة العامة للتأمينات الاجتماعية: المنصة التوعوية بالنظام الجديد</a></li>
+      <li><a href="https://www.gosi.gov.sa/" rel="noopener" target="_blank">المؤسسة العامة للتأمينات الاجتماعية</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcGosi, type GosiSystem, type Nationality } from '../lib/calc/gosi';
+  import { gosiView } from '../lib/views-extra';
+  import { gosiSchedule } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="gosi"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const nationality = (f.nationality || 'saudi') as Nationality;
+      const system = (f.system || 'new') as GosiSystem;
+      const result = calcGosi({ nationality, system, basic: num(f.basic), housing: num(f.housing) ?? 0, onDate: localTodayISO() });
+      return { result, view: result.ok ? gosiView(result.value, nationality, system) : null };
+    },
+    extras: (_g, f) => { root.querySelector<HTMLElement>('[data-x="schedule"]')!.innerHTML = gosiSchedule(localTodayISO(), f.system, f.nationality); },
+  });
+</script>

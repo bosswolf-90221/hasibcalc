@@ -96,3 +96,41 @@ describe('calories', () => {
     expect(calcCalories({ sex: 'male', age: 30, weightKg: null, heightCm: 170, activity: 'light' }).ok).toBe(false);
   });
 });
+
+import { calcGosi, pensionRate } from '../src/lib/calc/gosi';
+describe('GOSI', () => {
+  const base = { basic: 8000, housing: 2000, onDate: '2026-10-22' };
+  test('legacy Saudi: 9.75% employee, 11.75% employer', () => {
+    const g = val(calcGosi({ ...base, nationality: 'saudi', system: 'legacy' }));
+    expect(g.employee).toBeCloseTo(975, 6);
+    expect(g.employer).toBeCloseTo(1175, 6);
+  });
+  test('new-system Saudi in Oct 2026: pension 10% each', () => {
+    const g = val(calcGosi({ ...base, nationality: 'saudi', system: 'new' }));
+    expect(g.pensionRate).toBe(10);
+    expect(g.employee).toBeCloseTo(1075, 6);
+    expect(g.employer).toBeCloseTo(1275, 6);
+  });
+  test('step dates', () => {
+    expect(pensionRate('new', '2025-06-30')).toBe(9);
+    expect(pensionRate('new', '2025-07-01')).toBe(9.5);
+    expect(pensionRate('new', '2027-07-01')).toBe(10.5);
+    expect(pensionRate('new', '2030-01-01')).toBe(11);
+    expect(pensionRate('legacy', '2030-01-01')).toBe(9);
+  });
+  test('non-Saudi: employer 2% only', () => {
+    const g = val(calcGosi({ ...base, nationality: 'non-saudi', system: 'new' }));
+    expect(g.employee).toBe(0);
+    expect(g.employer).toBeCloseTo(200, 6);
+  });
+  test('wage cap and floor', () => {
+    expect(val(calcGosi({ nationality: 'saudi', system: 'legacy', basic: 60000, housing: 0, onDate: '2026-10-22' })).wage).toBe(45000);
+    const low = val(calcGosi({ nationality: 'saudi', system: 'legacy', basic: 1000, housing: 0, onDate: '2026-10-22' }));
+    expect(low.wage).toBe(1500);
+    expect(low.capped).toBe('min');
+  });
+  test('validation', () => {
+    expect(calcGosi({ nationality: 'saudi', system: 'legacy', basic: null, housing: 0, onDate: '2026-10-22' }).ok).toBe(false);
+    expect(calcGosi({ nationality: 'saudi', system: 'legacy', basic: -5, housing: 0, onDate: '2026-10-22' }).ok).toBe(false);
+  });
+});

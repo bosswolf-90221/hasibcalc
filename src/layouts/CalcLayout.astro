@@ -12,6 +12,7 @@ const { slug, lede } = Astro.props;
 const c = bySlug(slug);
 const cat = CATEGORIES.find((x) => x.key === c.categories[0])!;
 const path = `/${slug}/`;
+const reviewed = [SITE.lastReviewed, c.updated ?? ''].sort().pop()!;
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -64,7 +65,7 @@ const jsonLd = [
         <AdSlot position="afterCalculator" />
         <article class="article card" id="explain">
           <slot name="article" />
-          <p class="reviewed">آخر مراجعة للمعادلة مقابل المصادر المذكورة: {arDate(SITE.lastReviewed)}.</p>
+          <p class="reviewed">آخر مراجعة للمعادلة مقابل المصادر المذكورة: {arDate(reviewed)}.</p>
         </article>
         <section class="related" id="related" aria-labelledby="rel-h">
           <div class="related-head"><h2 id="rel-h">حاسبات قريبة</h2><a href="/#index">كل الحاسبات</a></div>
@@ -78,7 +79,7 @@ const jsonLd = [
             <li>المعادلة مكتوبة تحت «كيف حسبناها؟»</li>
             <li>المصادر الرسمية في آخر الشرح</li>
             <li>الحساب في متصفحك، ولا تغادر أرقامك جهازك</li>
-            <li>آخر مراجعة: {arDate(SITE.lastReviewed)}</li>
+            <li>آخر مراجعة: {arDate(reviewed)}</li>
           </ul>
         </div>
         <div class="card side-card">

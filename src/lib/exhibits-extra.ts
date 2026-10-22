@@ -44,3 +44,21 @@ export function activityTable(c: Calories | null, chosen: string): string {
     .join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>مستوى النشاط</th><th></th><th class="n">سعرة يومياً</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+
+import { NEW_SYSTEM_STEPS, SANED, HAZARDS } from './calc/gosi';
+import { fmt } from './format';
+/** Rates by period: legacy vs new system, current period highlighted. */
+export function gosiSchedule(onISO: string, system: string, nationality: string): string {
+  const fmtD = (iso: string) => { const [y, m] = iso.split('-').map(Number); return `${['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'][m - 1]} ${y}`; };
+  let cur = 0;
+  NEW_SYSTEM_STEPS.forEach(([from], i) => { if (onISO >= from) cur = i; });
+  const rows = NEW_SYSTEM_STEPS.map(([from, rate], i) => {
+    const hl = nationality === 'saudi' && system === 'new' && i === cur;
+    return `<tr${hl ? ' class="total"' : ''}><td>من ${fmtD(from)}</td><td class="n">${fmt(rate + SANED, 2)}%</td><td class="n">${fmt(rate + SANED + HAZARDS, 2)}%</td></tr>`;
+  }).join('');
+  const legacyHl = nationality === 'saudi' && system === 'legacy';
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>الفترة</th><th class="n">على الموظف</th><th class="n">على صاحب العمل</th></tr></thead><tbody>
+  <tr${legacyHl ? ' class="total"' : ''}><td>النظام السابق (أي وقت)</td><td class="n">9.75%</td><td class="n">11.75%</td></tr>${rows}
+  <tr${nationality !== 'saudi' ? ' class="total"' : ''}><td>غير السعوديين</td><td class="n">0%</td><td class="n">2%</td></tr></tbody></table></div>
+  <p class="leaf-day">النسب تشمل المعاشات وساند (0.75% لكل طرف)، وعلى صاحب العمل 2% للأخطار المهنية. صفوف «من…» للمسجلين أول مرة بعد 3 يوليو 2024.</p>`;
+}

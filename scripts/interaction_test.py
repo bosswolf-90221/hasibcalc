@@ -89,6 +89,13 @@ with sync_playwright() as p:
     pg.select_option('#f-activity', 'sedentary')
     check('calories: activity select recomputes', val(pg) == '2,121', val(pg))
 
+    pg.goto(B + '/gosi/')
+    check('gosi: new system Oct 2026 → 1,075.00', val(pg) == '1,075.00', val(pg))
+    pg.click('label:has(input[value="legacy"])')
+    check('gosi: legacy → 975.00', val(pg) == '975.00', val(pg))
+    pg.click('label:has(input[value="non-saudi"])')
+    check('gosi: non-Saudi → 0.00', val(pg) == '0.00', val(pg))
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)
