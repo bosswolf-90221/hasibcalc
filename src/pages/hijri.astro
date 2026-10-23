@@ -6,7 +6,8 @@ import NumIn from '../components/NumIn.astro';
 import SelIn from '../components/SelIn.astro';
 import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
-import { gregorianToHijri, hijriToGregorian, toHijri, HIJRI_MONTHS } from '../lib/calc/hijri';
+import { gregorianToHijri, hijriToGregorian, toHijri, fromHijri, HIJRI_MONTHS } from '../lib/calc/hijri';
+import { HIJRI_YEAR_NOW } from '../data/calculators';
 import { toHijriView, toGregorianView } from '../lib/views-extra';
 import { errorView } from '../lib/views';
 import { calendarLeaves } from '../lib/exhibits-extra';
@@ -21,8 +22,9 @@ const r2 = hijriToGregorian({ hYear: h.year + (h.month >= 9 ? 1 : 0), hMonth: 9,
 const v2 = r2.ok ? toGregorianView(r2.value) : errorView(r2, 'التاريخ الميلادي')!;
 const months = HIJRI_MONTHS.map((m, i) => ({ value: String(i + 1), label: m }));
 const exRamadan = hijriToGregorian({ hYear: 1448, hMonth: 9, hDay: 1 });
+const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
 ---
-<CalcLayout slug="hijri" lede="اختر اتجاه التحويل: من الميلادي إلى الهجري، أو من الهجري إلى الميلادي. نعتمد تقويم أم القرى الرسمي في السعودية.">
+<CalcLayout slug="hijri" lede={`السنة الهجرية الآن ${HIJRI_YEAR_NOW} هـ. اختر اتجاه التحويل: من الميلادي إلى الهجري، أو من الهجري إلى الميلادي، بتقويم أم القرى الرسمي في السعودية.`}>
   <section class="pq" data-calc="to-hijri" aria-labelledby="q1">
     <h2 id="q1" class="step"><b>01</b> من الميلادي إلى الهجري</h2>
     <form class="sentence" onsubmit="return false">التاريخ الميلادي <DateIn name="date" label="التاريخ الميلادي" value={today} /> يوافق بالهجري…</form>
@@ -57,6 +59,7 @@ const exRamadan = hijriToGregorian({ hYear: 1448, hMonth: 9, hDay: 1 });
       <li>اليوم الهجري يبدأ عند المغرب، أما التحويل هنا فيقابل اليوم الميلادي كاملاً.</li>
     </ul>
     <Faq title="أسئلة شائعة" items={[
+      { q: "كم السنة الهجرية الآن؟", a: `السنة الهجرية الحالية ${HIJRI_YEAR_NOW} هـ، وتبدأ سنة ${HIJRI_YEAR_NOW + 1} هـ (1 محرم) يوم ${nextNewYear ? arDate(toISODate(nextNewYear)) : ""} بحسب تقويم أم القرى. ولمعرفة التاريخ الهجري لليوم بالضبط، انظر نتيجة الحاسبة أعلاه.` },
       { q: "كم عدد أيام الشهر الهجري؟", a: "إما 29 يوماً أو 30 يوماً، ويظهر عدد أيام الشهر في نتيجة الحاسبة." },
       { q: "ما الفرق بين السنة الهجرية والميلادية؟", a: "السنة الهجرية 12 شهراً قمرياً، نحو 354 يوماً، والميلادية 365 أو 366 يوماً. لذلك تتقدم المناسبات الهجرية نحو 11 يوماً كل سنة ميلادية." },
       { q: "ما المدى الذي تغطيه الحاسبة؟", a: "من 1924 إلى 2076 ميلادياً، أي من سنة 1343 إلى 1500 هجرياً تقريباً." },

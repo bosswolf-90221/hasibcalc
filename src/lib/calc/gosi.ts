@@ -9,7 +9,7 @@ import { type CalcResult, Validator, fail, ok, parseISODate } from './core';
  */
 export type GosiSystem = 'legacy' | 'new';
 export type Nationality = 'saudi' | 'non-saudi';
-export type GosiInput = { nationality: Nationality; system: GosiSystem; basic: number | null; housing: number | null; onDate: string };
+export type GosiInput = { nationality: Nationality; system: GosiSystem; basic: number | null; housing: number | null; other?: number | null; onDate: string };
 export type Gosi = {
   wage: number; // contributory wage after min/max
   rawWage: number;
@@ -20,7 +20,8 @@ export type Gosi = {
   employee: number;
   employer: number;
   total: number;
-  netAfterDeduction: number; // basic + housing − employee share
+  gross: number; // basic + housing + other allowances
+  netAfterDeduction: number; // gross − employee share (take-home before any other deductions)
 };
 
 export const WAGE_MIN = 1500;
@@ -46,6 +47,7 @@ export function calcGosi(input: GosiInput): CalcResult<Gosi> {
   const v = new Validator();
   const basic = v.number('basic', input.basic, { label: 'الراتب الأساسي', min: 0, max: 10_000_000 });
   const housing = v.number('housing', input.housing ?? 0, { label: 'بدل السكن', min: 0, max: 10_000_000 });
+  const other = v.number('other', input.other ?? 0, { label: 'البدلات الأخرى', min: 0, max: 10_000_000 });
   if (!parseISODate(input.onDate)) v.add('onDate', 'تاريخ غير صالح');
   if (v.valid && basic + housing <= 0) v.add('basic', 'أدخل الراتب الأساسي');
   if (!v.valid) return fail(v.errors);
@@ -59,5 +61,5 @@ export function calcGosi(input: GosiInput): CalcResult<Gosi> {
   const employerRate = saudi ? p + SANED + HAZARDS : HAZARDS;
   const employee = (wage * employeeRate) / 100;
   const employer = (wage * employerRate) / 100;
-  return ok({ wage, rawWage, capped, pensionRate: p, employeeRate, employerRate, employee, employer, total: employee + employer, netAfterDeduction: rawWage - employee });
+  return ok({ wage, rawWage, capped, pensionRate: p, employeeRate, employerRate, employee, employer, total: employee + employer, gross: rawWage + other, netAfterDeduction: rawWage + other - employee });
 }

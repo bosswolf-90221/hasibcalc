@@ -108,15 +108,16 @@ export function gosiView(g: Gosi, nationality: Nationality, system: GosiSystem):
     decimals: 2,
     unit: 'ريال',
     sentence: saudi
-      ? `ويدفع صاحب العمل ${money(g.employer)} ريال، فمجموع الاشتراك ${money(g.total)} ريال شهرياً${capNote}.`
-      : `لا يُخصم شيء من راتب غير السعودي. صاحب العمل وحده يدفع 2% للأخطار المهنية: ${money(g.employer)} ريال شهرياً${capNote}.`,
+      ? `راتبك الصافي ${money(g.netAfterDeduction)} ريال. ويدفع صاحب العمل ${money(g.employer)} ريال، فمجموع الاشتراك ${money(g.total)} ريال${capNote}.`
+      : `لا يُخصم شيء من راتب غير السعودي، فراتبك الصافي ${money(g.netAfterDeduction)} ريال. صاحب العمل وحده يدفع 2% للأخطار المهنية: ${money(g.employer)} ريال شهرياً${capNote}.`,
     badge: saudi ? (system === 'new' ? `النظام الجديد · معاشات ${pctTxt(g.pensionRate)}` : 'النظام السابق · معاشات 9%') : 'غير سعودي',
     rows: [
+      ['راتبك الصافي بعد الخصم', `${money(g.netAfterDeduction)} ريال`],
+      ['إجمالي راتبك', `${money(g.gross)} ريال`],
       ['أجر الاشتراك (الأساسي + السكن)', `${money(g.wage)} ريال`],
       ['نسبة خصمك', pctTxt(+g.employeeRate.toFixed(2))],
       ['حصة صاحب العمل', `${money(g.employer)} ريال`],
       ['نسبة صاحب العمل', pctTxt(+g.employerRate.toFixed(2))],
-      ['الأساسي + السكن بعد الخصم', `${money(g.netAfterDeduction)} ريال`],
     ],
   };
 }

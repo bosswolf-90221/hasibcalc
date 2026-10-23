@@ -13,7 +13,7 @@ import { toISODate } from '../lib/calc/core';
 import { int } from '../lib/format';
 
 const today = toISODate(new Date());
-const d = { nationality: 'saudi' as const, system: 'new' as const, basic: 8000, housing: 2000 };
+const d = { nationality: 'saudi' as const, system: 'new' as const, basic: 8000, housing: 2000, other: 1000 };
 const r = calcGosi({ ...d, onDate: today });
 const view = r.ok ? gosiView(r.value, d.nationality, d.system) : errorView(r, 'الخصم الشهري')!;
 const newNow = pensionRate('new', today);
@@ -27,10 +27,11 @@ const WAGES = [4000, 6000, 8000, 10000, 15000, 20000, 30000, 45000];
         أنا <Pills name="nationality" legend="الجنسية" selected="saudi" options={[{ value: 'saudi', label: 'سعودي' }, { value: 'non-saudi', label: 'غير سعودي' }]} />
         وسجّلت في التأمينات <Pills name="system" legend="تاريخ أول تسجيل" selected="new" options={[{ value: 'legacy', label: 'قبل 3 يوليو 2024' }, { value: 'new', label: 'بعده' }]} />،
         راتبي الأساسي <NumIn name="basic" label="الراتب الأساسي الشهري بالريال" value={d.basic} width={6} /> ريال،
-        وبدل السكن <NumIn name="housing" label="بدل السكن الشهري بالريال" value={d.housing} width={5} /> ريال.
+        وبدل السكن <NumIn name="housing" label="بدل السكن الشهري بالريال" value={d.housing} width={5} /> ريال،
+        وبدلات أخرى <NumIn name="other" label="البدلات الأخرى الشهرية بالريال (نقل وغيره)" value={d.other} width={5} /> ريال.
       </form>
-      <FieldErrors names={['basic', 'housing']} />
-      <p class="hint">إذا كان السكن يوفّره صاحب العمل عيناً، فقيمته في التأمينات أجر شهرين أساسيين في السنة، أي سدس الأساسي شهرياً تقريباً. بدلات النقل والهاتف والعمل الإضافي لا تدخل.</p>
+      <FieldErrors names={['basic', 'housing', 'other']} />
+      <p class="hint">إذا كان السكن يوفّره صاحب العمل عيناً، فقيمته في التأمينات أجر شهرين أساسيين في السنة، أي سدس الأساسي شهرياً تقريباً. بدلات النقل وغيرها لا يُخصم عليها، لكنها تدخل في راتبك الصافي.</p>
     </div>
     <ResultCard view={view} sensitive notes={['النسب من المنصة التوعوية للمؤسسة العامة للتأمينات الاجتماعية. المرجع النهائي فاتورة التأمينات الشهرية لدى صاحب العمل.', 'أجر الاشتراك لا يقل عن 1,500 ولا يزيد على 45,000 ريال شهرياً.', 'النظام الجديد يشمل من سُجّل أول مرة بعد 3 يوليو 2024 ولم تكن له مدد اشتراك سابقة. من كان مسجلاً قبله يبقى على النظام السابق.']}>
       <p class="formula" slot="formula"><code>الخصم = (الأساسي + السكن) × (نسبة المعاشات + 0.75% ساند)</code>. وعلى صاحب العمل النسبة نفسها + <code>2%</code> للأخطار المهنية. وغير السعودي: صاحب العمل يدفع <code>2%</code> فقط.</p>
@@ -56,6 +57,7 @@ const WAGES = [4000, 6000, 8000, 10000, 15000, 20000, 30000, 45000];
       <p><strong>النظام السابق:</strong> يُخصم منك 9.75% = <strong>975 ريال</strong>، ويدفع صاحب العمل 11.75% = 1,175 ريال.</p>
       <p><strong>النظام الجديد (من يوليو 2026، معاشات 10%):</strong> يُخصم منك 10.75% = <strong>1,075 ريال</strong>، ويدفع صاحب العمل 12.75% = 1,275 ريال.</p>
       <p><strong>غير السعودي:</strong> لا يُخصم منه شيء، ويدفع صاحب العمل 2% = 200 ريال.</p>
+      <p><strong>الراتب الصافي:</strong> لو عنده بدلات أخرى 1,000 ريال، فإجمالي راتبه 11,000، وصافيه في النظام الجديد 11,000 − 1,075 = <strong>9,925 ريال</strong>.</p>
     </div>
 
     <h2 id="ready-table">جدول جاهز: الخصم الشهري من راتب السعودي</h2>
@@ -76,6 +78,7 @@ const WAGES = [4000, 6000, 8000, 10000, 15000, 20000, 30000, 45000];
       { q: "هل يُخصم من راتب غير السعودي للتأمينات؟", a: "لا. غير السعودي مشمول بفرع الأخطار المهنية فقط، ويدفع صاحب العمل اشتراكه كاملاً بنسبة 2%." },
       { q: "من يشمله نظام التأمينات الجديد؟", a: "من يلتحق بالعمل لأول مرة بعد 3 يوليو 2024 ولم تكن له مدد اشتراك سابقة في نظامي التقاعد المدني أو التأمينات الاجتماعية. أما المسجلون قبل ذلك فيبقون على النظام السابق في نسب الاشتراك." },
       { q: "متى تزيد نسبة المعاشات في النظام الجديد؟", a: "تبدأ من 9% لكل طرف، وتزيد 0.5% كل سنة اعتباراً من 1 يوليو 2025، فتصبح 9.5% ثم 10% في يوليو 2026 ثم 10.5% في يوليو 2027 ثم 11% من يوليو 2028." },
+      { q: "كيف أحسب راتبي الصافي بعد التأمينات؟", a: "اجمع الأساسي وبدل السكن وبقية البدلات، ثم اطرح خصم التأمينات المحسوب على الأساسي والسكن فقط. لموظف سعودي على النظام الجديد يُخصم الآن 10.75% من الأساسي والسكن." },
       { q: "هل يدخل بدل السكن في حساب التأمينات؟", a: "نعم. أجر الاشتراك هو الأساسي مع بدل السكن النقدي. وإذا كان السكن عينياً فقيمته أجر شهرين أساسيين في السنة." },
     ]} />
 
@@ -98,7 +101,7 @@ const WAGES = [4000, 6000, 8000, 10000, 15000, 20000, 30000, 45000];
     compute: (f) => {
       const nationality = (f.nationality || 'saudi') as Nationality;
       const system = (f.system || 'new') as GosiSystem;
-      const result = calcGosi({ nationality, system, basic: num(f.basic), housing: num(f.housing) ?? 0, onDate: localTodayISO() });
+      const result = calcGosi({ nationality, system, basic: num(f.basic), housing: num(f.housing) ?? 0, other: num(f.other) ?? 0, onDate: localTodayISO() });
       return { result, view: result.ok ? gosiView(result.value, nationality, system) : null };
     },
     extras: (_g, f) => { root.querySelector<HTMLElement>('[data-x="schedule"]')!.innerHTML = gosiSchedule(localTodayISO(), f.system, f.nationality); },
