@@ -1,8 +1,20 @@
 ---
 import Faq from '../../components/Faq.astro';
 import GuideLayout from '../../layouts/GuideLayout.astro';
+import { odo } from '../../lib/format';
+import { toISODate, daysBetween } from '../../lib/calc/core';
+// Countdown to 1 Ramadan 1448 (Umm al-Qura: Mon 8 Feb 2027) — rendered at build, refreshed in the browser with the visitor's date.
+const START = '2027-02-08', EID = '2027-03-09';
+const today = toISODate(new Date());
+const left = daysBetween(new Date(today + 'T00:00:00Z'), new Date(START + 'T00:00:00Z'));
 ---
 <GuideLayout slug="ramadan-1448">
+  <div class="countdown" data-start={START} data-eid={EID} role="status" aria-live="polite">
+    <p class="cd-label" data-cd="label">باقي على رمضان 1448</p>
+    <p class="cd-value"><span class="odo" data-cd="value" set:html={odo(String(Math.max(left, 0)))} /><span class="cd-unit" data-cd="unit">يوماً</span></p>
+    <p class="cd-note" data-cd="note">أول رمضان الاثنين 8 فبراير 2027 بحسب تقويم أم القرى، وقد يتأخر يوماً بحسب رؤية الهلال.</p>
+  </div>
+
   <h2>الخلاصة</h2>
   <p>بحسب تقويم <strong>أم القرى</strong>، يبدأ شهر رمضان 1448 هـ يوم <strong>الاثنين 8 فبراير 2027</strong>، ويكون الشهر 29 يوماً، فيوافق عيد الفطر يوم <strong>الثلاثاء 9 مارس 2027</strong>.</p>
   <table>
@@ -32,3 +44,30 @@ import GuideLayout from '../../layouts/GuideLayout.astro';
     { q: "هل المواعيد نفسها في الإمارات؟", a: "الإمارات تعلن بدايات الأشهر الهجرية عبر لجنة تحري الأهلة، وكثيراً ما تتوافق مع السعودية، لكن قد يختلف يوم. اعتمد الإعلان الرسمي في بلدك." },
   ]} />
 </GuideLayout>
+
+<script>
+  import { odo } from '../../lib/format';
+  import { localTodayISO, daysBetween } from '../../lib/calc/core';
+  const box = document.querySelector<HTMLElement>('.countdown');
+  if (box) {
+    const d = (iso: string) => new Date(iso + 'T00:00:00Z');
+    const today = localTodayISO();
+    const start = box.dataset.start!, eid = box.dataset.eid!;
+    const $ = (k: string) => box.querySelector<HTMLElement>(`[data-cd="${k}"]`)!;
+    const toStart = daysBetween(d(today), d(start));
+    const toEid = daysBetween(d(today), d(eid));
+    if (toStart > 0) {
+      $('value').innerHTML = odo(String(toStart));
+      $('unit').textContent = toStart === 1 ? 'يوم واحد' : toStart === 2 ? 'يومان' : toStart <= 10 ? 'أيام' : 'يوماً';
+    } else if (toEid > 0) {
+      $('label').textContent = 'رمضان مبارك. نحن في اليوم';
+      $('value').innerHTML = odo(String(1 - toStart));
+      $('unit').textContent = 'من رمضان 1448';
+      $('note').textContent = `باقي على عيد الفطر ${toEid} ${toEid <= 10 ? 'أيام' : 'يوماً'} تقريباً.`;
+    } else {
+      $('label').textContent = 'انتهى رمضان 1448، وعيدكم مبارك';
+      $('value').innerHTML = odo('0');
+      $('unit').textContent = '';
+    }
+  }
+</script>

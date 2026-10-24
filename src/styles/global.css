@@ -472,3 +472,11 @@ select.in.sel { appearance: none; cursor: pointer; padding-inline: 12px 30px; fo
 .article .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .article .data-table tbody tr:hover td { background: var(--accent-bg); }
 .article .table-hint { font-size: .85rem; color: var(--soft); }
+
+/* countdown (Ramadan guide) */
+.countdown { margin: 0 0 26px; padding: 22px 24px; border-radius: 20px; background: var(--deep); color: var(--mint); max-width: var(--measure); }
+.countdown .cd-label { margin: 0; font-size: .95rem; color: #9fc6b8; }
+.countdown .cd-value { margin: 8px 0 4px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px 12px; }
+.countdown .odo { font-size: clamp(2.6rem, 8vw, 3.8rem); line-height: 1; }
+.countdown .cd-unit { font-size: 1.05rem; color: #cfe6dd; padding-bottom: 6px; }
+.countdown .cd-note { margin: 8px 0 0; font-size: .88rem; color: #9fc6b8; }

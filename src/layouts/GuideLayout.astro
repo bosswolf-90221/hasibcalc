@@ -11,7 +11,7 @@ const g = guideBySlug(Astro.props.slug);
 const c = bySlug(g.calc);
 const path = `/guides/${g.slug}/`;
 const jsonLd = [
-  { '@context': 'https://schema.org', '@type': 'Article', headline: g.title, description: g.description, datePublished: g.date, dateModified: g.date, inLanguage: 'ar', mainEntityOfPage: SITE.url + path, author: { '@type': 'Organization', name: SITE.name, url: SITE.url + '/' }, publisher: { '@type': 'Organization', name: SITE.name } },
+  { '@context': 'https://schema.org', '@type': 'Article', headline: g.title, description: g.description, datePublished: g.date, dateModified: g.updated ?? g.date, inLanguage: 'ar', mainEntityOfPage: SITE.url + path, author: { '@type': 'Organization', name: SITE.name, url: SITE.url + '/' }, publisher: { '@type': 'Organization', name: SITE.name } },
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
     { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
     { '@type': 'ListItem', position: 2, name: 'أدلة', item: SITE.url + '/guides/' },
@@ -33,7 +33,7 @@ const others = GUIDES.filter((x) => x.slug !== g.slug).slice(0, 3);
     <div class="calc-grid">
       <article class="article card guide">
         <slot />
-        <p class="reviewed">نُشر في {arDate(g.date)}. المعلومات للتوعية العامة، وراجع الجهة المختصة قبل أي قرار.</p>
+        <p class="reviewed">نُشر في {arDate(g.date)}{g.updated ? `، وحُدّث في ${arDate(g.updated)}` : ''}. المعلومات للتوعية العامة، وراجع الجهة المختصة قبل أي قرار.</p>
       </article>
       <aside class="calc-side" aria-label="الحاسبة المرتبطة">
         <div class="card side-card">
