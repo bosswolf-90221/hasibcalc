@@ -6,3 +6,5 @@
 [build.environment]
   NODE_VERSION = "22"
   PUBLIC_SITE_URL = "https://hasibcalc.com"
+  PUBLIC_ADS_ENABLED = "true"
+  PUBLIC_ADSENSE_CLIENT_ID = "ca-pub-3721992325219610"
