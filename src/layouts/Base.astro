@@ -44,6 +44,7 @@ const ld = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.n
     <meta property="og:image" content={SITE.url + '/og.png'} />
     <meta name="twitter:card" content="summary_large_image" />
     {ANALYTICS.searchConsoleToken && <meta name="google-site-verification" content={ANALYTICS.searchConsoleToken} />}
+    <meta name="msvalidate.01" content="E0CD9B525F8D327D4B8FF7032845D07F" />
     {ADS.enabled && <meta name="google-adsense-account" content={ADS.client} />}
     {ADS.enabled && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>}
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
