@@ -20,7 +20,7 @@ const jsonLd = [
 ];
 const others = GUIDES.filter((x) => x.slug !== g.slug).slice(0, 3);
 ---
-<Base title={g.title} description={g.description} path={path} jsonLd={jsonLd} bare>
+<Base title={g.title} description={g.description} path={path} jsonLd={jsonLd} image={`/og/g-${g.slug}.png`} bare>
   <div class="stage calc-stage">
     <div class="container calc-title">
       <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/guides/">أدلة</a></li><li aria-current="page">{g.kicker}</li></ol></nav>

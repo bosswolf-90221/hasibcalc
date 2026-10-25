@@ -183,6 +183,11 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     if (act === 'copy') {
       const text = `${$('label').textContent}: ${odoText(valueEl)} ${$('unit').textContent}`.replace(/\s+/g, ' ').trim();
       copy(`${text}\n${cleanUrl()}`, 'نسخنا النتيجة');
+    } else if (act === 'whatsapp') {
+      const head = `${$('label').textContent}: ${odoText(valueEl)} ${$('unit').textContent}`.replace(/\s+/g, ' ').trim();
+      const sentence = ($('sentence').textContent ?? '').replace(/\s+/g, ' ').trim();
+      const text = `${head}\n${sentence}\n\nاحسبها أنت 👇\n${cleanUrl()}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
     } else if (act === 'share-clean') {
       copy(cleanUrl(), 'نسخنا رابط الحاسبة بدون أرقامك');
     } else if (act === 'share-values') {

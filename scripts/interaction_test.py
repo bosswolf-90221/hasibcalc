@@ -118,6 +118,20 @@ with sync_playwright() as p:
     check('pregnancy: month row shown', 'الشهر من الحمل' in pg.locator('[data-result]').inner_text())
     check('pregnancy: weeks/months table has 9 rows', pg.locator('.article .data-table tbody tr').count() == 9)
 
+    pg.goto(B + '/salary-day/')
+    pg.evaluate("window.open = (u) => { window.__wa = u; return null; }")
+    pg.click('[data-act="whatsapp"]')
+    wa_url = pg.evaluate('window.__wa') or ''
+    from urllib.parse import unquote
+    txt = unquote(wa_url)
+    check('whatsapp: wa.me link with result text and page URL', wa_url.startswith('https://wa.me/?text=') and 'باقي على الراتب' in txt and '/salary-day' in txt, txt[:160])
+
+    for g in ['white-friday-2026', 'uae-national-day-2026', 'new-year-2027']:
+        pg.goto(B + f'/guides/{g}/'); pg.wait_for_timeout(300)
+        v = pg.locator('[data-countdown] [data-cd="value"] .sr-only').first.text_content().strip()
+        check(f'countdown {g}: shows a number', v.isdigit(), v)
+    check('preview image per page', pg.locator('meta[property="og:image"]').get_attribute('content').endswith('/og/g-new-year-2027.png'))
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)

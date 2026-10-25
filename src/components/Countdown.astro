@@ -1,0 +1,28 @@
+---
+// Days-left counter for a fixed date. Rendered at build, refreshed in the browser with the visitor's local date.
+import { odo } from '../lib/format';
+import { toISODate, daysBetween } from '../lib/calc/core';
+export interface Props { target: string; label: string; note: string; today: string; done: string }
+const { target, label, note, today, done } = Astro.props;
+const left = daysBetween(new Date(toISODate(new Date()) + 'T00:00:00Z'), new Date(target + 'T00:00:00Z'));
+const unit = (n: number) => (n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n <= 10 ? 'أيام' : 'يوماً');
+---
+<div class="countdown" data-countdown={target} data-today={today} data-done={done} role="status" aria-live="polite">
+  <p class="cd-label" data-cd="label">{left > 0 ? label : left === 0 ? today : done}</p>
+  <p class="cd-value"><span class="odo" data-cd="value" set:html={odo(String(Math.max(left, 0)))} /><span class="cd-unit" data-cd="unit">{left > 0 ? unit(left) : ''}</span></p>
+  <p class="cd-note" data-cd="note">{note}</p>
+</div>
+
+<script>
+  import { odo } from '../lib/format';
+  import { localTodayISO, daysBetween } from '../lib/calc/core';
+  const unit = (n: number) => (n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n <= 10 ? 'أيام' : 'يوماً');
+  for (const box of document.querySelectorAll<HTMLElement>('[data-countdown]')) {
+    const $ = (k: string) => box.querySelector<HTMLElement>(`[data-cd="${k}"]`)!;
+    const left = daysBetween(new Date(localTodayISO() + 'T00:00:00Z'), new Date(box.dataset.countdown + 'T00:00:00Z'));
+    $('value').innerHTML = odo(String(Math.max(left, 0)));
+    $('unit').textContent = left > 0 ? unit(left) : '';
+    if (left === 0) $('label').textContent = box.dataset.today!;
+    if (left < 0) $('label').textContent = box.dataset.done!;
+  }
+</script>

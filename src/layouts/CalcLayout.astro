@@ -5,6 +5,7 @@ import CalcIndex from '../components/CalcIndex.astro';
 import Reveal from '../components/motion/Reveal.tsx';
 import { bySlug, CALCULATORS, CATEGORIES } from '../data/calculators';
 import { SITE } from '../config/site';
+import { GUIDES } from '../data/guides';
 import { arDate } from '../lib/format';
 
 export interface Props { slug: string; lede: string }
@@ -12,6 +13,7 @@ const { slug, lede } = Astro.props;
 const c = bySlug(slug);
 const cat = CATEGORIES.find((x) => x.key === c.categories[0])!;
 const path = `/${slug}/`;
+const guides = GUIDES.filter((g) => g.calc === slug);
 const reviewed = [SITE.lastReviewed, c.updated ?? ''].sort().pop()!;
 const jsonLd = [
   {
@@ -36,7 +38,7 @@ const jsonLd = [
   },
 ];
 ---
-<Base title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd} bare>
+<Base title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd} image={`/og/${c.slug}.png`} bare>
   <div class="stage calc-stage">
     <div class="container">
       <div class="calc-title">
@@ -82,6 +84,12 @@ const jsonLd = [
             <li>آخر مراجعة: {arDate(reviewed)}</li>
           </ul>
         </div>
+        {guides.length > 0 && (
+          <div class="card side-card">
+            <h2>أدلة مرتبطة</h2>
+            <ul class="trust toc">{guides.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul>
+          </div>
+        )}
         <div class="card side-card">
           <h2>في هذه الصفحة</h2>
           <ul class="trust toc">

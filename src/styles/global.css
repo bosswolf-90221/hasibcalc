@@ -159,6 +159,8 @@ fieldset.pills { min-inline-size: auto; }
 .btn { font: inherit; font-size: .86rem; font-weight: 500; color: var(--soft); background: var(--well); border: 0; border-radius: 12px; padding: 10px 12px; min-height: 42px; cursor: pointer; transition: background-color .2s, color .2s; }
 .btn:hover { background: var(--accent-bg); color: var(--accent); }
 .btn.primary { background: var(--deep); color: var(--mint); padding-inline: 24px; }
+.btn.wa { grid-column: 1 / -1; font-size: .95rem; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #157a43; color: #fff; }
+.btn.wa:hover { background: #0f6236; color: #fff; }
 .btn.primary:hover { background: var(--em); color: #fff; }
 .toast { font-size: .86rem; color: var(--accent); font-weight: 500; text-align: center; }
 .toast:empty { display: none; }
