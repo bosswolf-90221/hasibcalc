@@ -24,7 +24,7 @@ const { view, notes = [], shareable = true, sensitive = false, uid = 'r', small 
     <button class="btn" type="button" data-act="copy">انسخ النتيجة</button>
     {shareable && !mini && <button class="btn" type="button" data-act="share-clean">انسخ رابط الحاسبة</button>}
     {shareable && !mini && <button class="btn" type="button" data-act="share-values" data-sensitive={sensitive ? 'true' : undefined}>انسخ الرابط مع أرقامي</button>}
-    <button class="btn" type="button" data-act="reset">إعادة تعيين</button>
+    <button class="btn" type="button" data-act="reset">تصفير</button>
     {more && <a class="btn primary" href={more}>التفاصيل والشرح ←</a>}
     <span class="toast" role="status" data-r="toast"></span>
   </div>

@@ -24,8 +24,11 @@ with sync_playwright() as p:
     pg.wait_for_timeout(300)
     check('loan: invalid term shows field error', pg.locator('#f-months-err').is_visible() and pg.get_attribute('#f-months', 'aria-invalid') == 'true')
     check('loan: no NaN on screen', 'NaN' not in pg.content())
-    pg.click('[data-act="reset"]')
-    check('loan: reset restores defaults', pg.input_value('#f-months') == '48')
+    pg.click('[data-act="reset"]'); pg.wait_for_timeout(300)
+    check('loan: reset clears the numbers', pg.input_value('#f-months') == '' and pg.input_value('#f-principal') == '')
+    check('loan: reset shows 0 and no red errors', val(pg) == '0.00' and not pg.locator('#f-months-err').is_visible() and not pg.locator('[data-r="error"]').is_visible(), val(pg))
+    pg.fill('#f-principal', '50000'); pg.fill('#f-annualRatePercent', '4.5'); pg.fill('#f-months', '48'); pg.wait_for_timeout(400)
+    check('loan: typing after reset computes again', val(pg) != '0.00', val(pg))
 
     pg.goto(B + '/end-of-service/?basicSalary=10000&startDate=2015-01-01&endDate=2024-12-31&unpaidAbsenceDays=0')
     check('eos: inputs filled from URL', pg.input_value('#f-basicSalary') == '10000')

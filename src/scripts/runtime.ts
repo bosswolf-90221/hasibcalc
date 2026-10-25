@@ -117,14 +117,34 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     }, 900);
   }
 
+  // A typed field left empty is not an error: show a calm blank result instead of red messages.
+  const isEmpty = (name: string) => {
+    const n = CSS.escape(name);
+    const el = root.querySelector<HTMLElement>(`[data-field="${n}"], [data-field$="_${n}"]`);
+    return el instanceof HTMLInputElement && el.type !== 'date' && el.value.trim() === '';
+  };
+  function showBlank() {
+    showErrors([]);
+    result.dataset.state = 'ok';
+    $('error').hidden = true;
+    $('badge').hidden = true;
+    $('sentence').textContent = 'اكتب أرقامك في الخانات لتظهر النتيجة.';
+    $('rows').replaceChildren();
+    cancelAnimationFrame(raf);
+    shown = 0;
+    valueEl.innerHTML = odo(fmt(0, Number(valueEl.dataset.decimals ?? 0)));
+  }
+
   function update() {
     const f = read();
     const { result: r, view } = opts.compute(f);
     if (!r.ok) {
-      showErrors(r.errors);
+      const real = r.errors.filter((e) => !isEmpty(e.field));
+      if (real.length === 0) return showBlank();
+      showErrors(real);
       result.dataset.state = 'error';
       const err = $('error');
-      err.textContent = r.errors[0]?.message ?? 'تحقق من المدخلات';
+      err.textContent = real[0]?.message ?? 'تحقق من المدخلات';
       err.hidden = false;
       return;
     }
@@ -196,9 +216,11 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       for (const k of Object.keys(f)) if (f[k] !== '') q.set(prefix + k, f[k]);
       copy(`${cleanUrl()}?${q.toString()}`, btn.dataset.sensitive ? 'نسخنا الرابط، وفيه أرقامك المالية' : 'نسخنا الرابط مع أرقامك');
     } else if (act === 'reset') {
-      for (const el of fieldEls()) write(el.dataset.field!, el.dataset.default ?? '');
+      // Clear the typed numbers; dates, lists and choices keep their values.
+      for (const el of fieldEls()) if (el instanceof HTMLInputElement && el.type !== 'date') el.value = '';
       update();
-      toast('رجعنا للقيم الافتراضية');
+      root.querySelector<HTMLInputElement>('[data-field] input:not([type=date]):not([type=radio]), input[data-field]:not([type=date])')?.focus();
+      toast('صفّرنا الخانات');
     } else if (act === 'clear-url') {
       history.replaceState(null, '', location.pathname);
       $('from-url').hidden = true;
