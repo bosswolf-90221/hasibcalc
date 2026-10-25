@@ -82,3 +82,15 @@ export function ovulationTable(o: Ovulation | null): string {
     .join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>بداية الدورة</th><th>أيام الخصوبة</th><th>التبويض المتوقع</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+
+import type { Leave } from './calc/annual-leave';
+/** Leave earned in each service year, with the running total. */
+export function leaveTable(l: Leave | null): string {
+  if (!l) return '';
+  let sum = 0;
+  const f = (n: number) => (Math.round(n * 10) / 10).toLocaleString('en-US', { maximumFractionDigits: 1 });
+  const rows = l.years
+    .map((y) => { sum += y.earned; return `<tr><td>السنة ${y.n}${y.partial ? ' (جزئية)' : ''}</td><td>${arDate(y.from)} – ${arDate(y.to)}</td><td class="nums">${f(y.earned)}</td><td class="nums">${f(sum)}</td></tr>`; })
+    .join('');
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>سنة الخدمة</th><th>الفترة</th><th>أيام مستحقة</th><th>المجموع</th></tr></thead><tbody>${rows}<tr class="total"><td colspan="2">الرصيد بعد خصم ${f(l.taken)} يوم مأخوذ</td><td></td><td class="nums">${f(l.remaining)}</td></tr></tbody></table></div>`;
+}

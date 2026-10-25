@@ -117,3 +117,40 @@ describe('ovulation', () => {
     expect(calcOvulation({ lmpDate: '2026-10-01', cycleDays: 28, periodDays: 12, onDate: '2026-10-25' }).ok).toBe(false);
   });
 });
+
+import { calcLeave } from '../src/lib/calc/annual-leave';
+describe('annual leave', () => {
+  const base = { salary: 6000, startDate: '2024-03-01', annualDays: 30, takenDays: 40, divisor: '30' as const };
+  test('2 years 8 months: 80 days, 40 left, 8,000 AED', () => {
+    const l = val(calcLeave({ ...base, endDate: '2026-10-31' }));
+    expect([l.fullYears, l.months, l.extraDays]).toEqual([2, 32, 0]);
+    expect(l.entitled).toBe(80);
+    expect(l.remaining).toBe(40);
+    expect(l.amount).toBe(8000);
+    expect(l.years).toHaveLength(3);
+    expect(l.years[2]).toMatchObject({ earned: 20, partial: true });
+  });
+  test('365 divisor', () => {
+    const l = val(calcLeave({ ...base, endDate: '2026-10-31', divisor: '365' }));
+    expect(l.amount).toBeCloseTo(40 * 6000 * 12 / 365, 1);
+  });
+  test('first year: 2 days per complete month; none before 6 months', () => {
+    expect(val(calcLeave({ ...base, takenDays: 0, startDate: '2026-01-01', endDate: '2026-09-30' })).entitled).toBe(18);
+    const s = val(calcLeave({ ...base, takenDays: 0, startDate: '2026-06-01', endDate: '2026-10-25' }));
+    expect(s.eligible).toBe(false);
+    expect(s.amount).toBe(0);
+  });
+  test('exactly one year gives 30 days; a longer contract gives more', () => {
+    expect(val(calcLeave({ ...base, takenDays: 0, startDate: '2025-01-01', endDate: '2025-12-31' })).entitled).toBe(30);
+    expect(val(calcLeave({ ...base, takenDays: 0, annualDays: 45, startDate: '2025-01-01', endDate: '2025-12-31' })).entitled).toBe(45);
+  });
+  test('taking more than the balance leaves nothing', () => {
+    const l = val(calcLeave({ ...base, takenDays: 100, endDate: '2026-10-31' }));
+    expect(l.remaining).toBe(0);
+    expect(l.overdrawn).toBe(20);
+  });
+  test('validation', () => {
+    expect(calcLeave({ ...base, annualDays: 20, endDate: '2026-10-31' }).ok).toBe(false);
+    expect(calcLeave({ ...base, endDate: '2023-01-01' }).ok).toBe(false);
+  });
+});

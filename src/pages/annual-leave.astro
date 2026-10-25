@@ -1,0 +1,106 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import DateIn from '../components/DateIn.astro';
+import SelIn from '../components/SelIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcLeave } from '../lib/calc/annual-leave';
+import { leaveView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { leaveTable } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+import { money } from '../lib/format';
+
+const today = toISODate(new Date());
+const d = { salary: 6000, startDate: '2024-03-01', endDate: today, annualDays: 30, takenDays: 40, divisor: '30' as const };
+const r = calcLeave(d);
+const view = r.ok ? leaveView(r.value) : errorView(r, 'بدل الإجازة غير المستخدمة')!;
+const ex = calcLeave({ ...d, endDate: '2026-10-31' });
+const ex365 = calcLeave({ ...d, endDate: '2026-10-31', divisor: '365' });
+const e = ex.ok ? ex.value : null;
+const e365 = ex365.ok ? ex365.value : null;
+const DIVS = [{ value: '30', label: '÷ 30' }, { value: '365', label: '× 12 ÷ 365' }];
+---
+<CalcLayout slug="annual-leave" lede="لموظفي القطاع الخاص في الإمارات وفق المادة 29 من قانون العمل. اكتب راتبك الأساسي وتاريخي العمل وما أخذته من إجازات، ونحسب رصيدك وقيمة بدله عند ترك العمل.">
+  <div data-calc="annual-leave">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات الإجازة السنوية">
+        راتبي الأساسي <NumIn name="salary" label="الراتب الأساسي الشهري بالدرهم" value={d.salary} width={6} /> درهم،
+        بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+        وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />،
+        وإجازتي <NumIn name="annualDays" label="أيام الإجازة السنوية في العقد" value={d.annualDays} width={2} /> يوماً في السنة،
+        وأخذت منها طوال خدمتي <NumIn name="takenDays" label="مجموع أيام الإجازة التي أخذتها" value={d.takenDays} width={3} /> يوماً،
+        وأجر اليوم = الراتب <SelIn name="divisor" label="طريقة حساب أجر اليوم" options={DIVS} value={d.divisor} />.
+      </form>
+      <FieldErrors names={['salary', 'startDate', 'endDate', 'annualDays', 'takenDays']} />
+      <p class="hint">الراتب الأساسي كما في عقدك المسجّل لدى وزارة الموارد البشرية والتوطين. إذا كان العقد يذكر راتباً واحداً بدون بدلات فاكتبه كاملاً. القانون يعطي 30 يوماً على الأقل؛ ارفع الرقم إذا كان عقدك يعطيك أكثر.</p>
+    </div>
+
+    <ResultCard view={view} sensitive notes={[
+      'الحساب على الحد الأدنى في القانون. إذا كان عقدك أو نظام شركتك أفضل لك فالأفضل هو المعمول به.',
+      'الأيام المرحّلة من سنوات سابقة داخلة في الحساب تلقائياً، لأننا نطرح كل ما أخذته طوال الخدمة.',
+      'البدل على الراتب الأساسي بحسب القانون، وبعض الشركات تحسبه على الراتب الكامل؛ اكتب الرقم الذي ينص عليه عقدك.',
+      'لا يشمل موظفي الحكومة ولا المناطق الحرة المالية (مركز دبي المالي العالمي وسوق أبوظبي العالمي) ولا العمالة المنزلية، فلهم قوانين خاصة.',
+    ]}>
+      <p class="formula" slot="formula"><code>البدل = (الأيام المستحقة − الأيام المأخوذة) × أجر اليوم</code>، والأيام المستحقة: <code>30 يوماً عن كل سنة + نسبة من السنة الأخيرة</code>، أو <code>يومان عن كل شهر</code> إذا كانت الخدمة بين 6 أشهر وسنة.</p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> إجازتك سنة بسنة</h2>
+      <div data-x="table" set:html={leaveTable(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كم يوماً إجازة سنوية في الإمارات؟</h2>
+    <p>تنص المادة 29 من المرسوم بقانون اتحادي رقم 33 لسنة 2021 على إجازة سنوية مدفوعة الأجر لموظفي القطاع الخاص:</p>
+    <ul>
+      <li><strong>أقل من 6 أشهر خدمة:</strong> لا إجازة سنوية.</li>
+      <li><strong>من 6 أشهر إلى سنة:</strong> يومان عن كل شهر.</li>
+      <li><strong>بعد سنة كاملة:</strong> 30 يوماً في السنة.</li>
+      <li><strong>السنة الأخيرة غير المكتملة:</strong> يستحق العامل إجازة عن الجزء الذي قضاه منها، أي يومين ونصف عن كل شهر تقريباً.</li>
+      <li>العطل الرسمية التي تقع داخل الإجازة تُحسب منها، إلا إذا كان العقد أو نظام الشركة أفضل للعامل.</li>
+    </ul>
+
+    <h2>كيف يُحسب بدل الإجازة عند ترك العمل؟</h2>
+    <p>عند انتهاء الخدمة يستحق العامل بدلاً نقدياً عن كل أيام الإجازة التي لم يستخدمها مهما بلغ عددها، ويُحسب على <strong>الراتب الأساسي</strong>. والقانون لا يحدد طريقة حساب أجر اليوم، والشائع طريقتان: الأساسي ÷ 30، أو الأساسي × 12 ÷ 365.</p>
+    <div class="example">
+      <p>موظف راتبه الأساسي 6,000 درهم، عمل من 1 مارس 2024 إلى 31 أكتوبر 2026، أي سنتين و8 أشهر، وأخذ 40 يوماً إجازة.</p>
+      <p>الأيام المستحقة: 30 + 30 + (8 × 2.5) = {e?.entitled} يوماً. الرصيد: {e?.remaining} يوماً. أجر اليوم 200 درهم، فالبدل <strong class="num">{money(e?.amount)}</strong> درهم. وبطريقة 365 يكون أجر اليوم {money(e365?.dailyWage)} درهم والبدل {money(e365?.amount)} درهم.</p>
+    </div>
+
+    <h2>ماذا لو كان عقدي مختلفاً عن القانون؟</h2>
+    <p>القانون يضع <strong>الحد الأدنى</strong> لحقوق العامل. يجوز للعقد أن يعطي أكثر، كإجازة 35 أو 45 يوماً، ولا يجوز أن يعطي أقل. وإذا كان العقد يذكر راتباً واحداً دون تقسيمه إلى أساسي وبدلات، فهذا الرقم هو الأجر المنصوص عليه في العقد. ويمكنك مراجعة عقدك المسجّل من تطبيق وزارة الموارد البشرية والتوطين أو عبر الهوية الرقمية.</p>
+    <p>لحساب مكافأة نهاية الخدمة مع البدل استخدم <a href="/end-of-service/">حاسبة نهاية الخدمة</a>.</p>
+
+    <Faq title="أسئلة شائعة" items={[
+      { q: "هل يُحسب بدل الإجازة على الراتب الأساسي أم الكامل؟", a: "عند ترك العمل يُحسب على الراتب الأساسي بحسب القانون، إلا إذا كان العقد أو نظام الشركة يحسبه على الراتب الكامل." },
+      { q: "كم يوماً إجازة لمن عمل أقل من سنة؟", a: "إذا أكمل 6 أشهر يستحق يومين عن كل شهر، فمن عمل 9 أشهر يستحق 18 يوماً. وقبل 6 أشهر لا يستحق إجازة سنوية." },
+      { q: "هل أخسر الأيام التي لم أستخدمها؟", a: "لا. عند انتهاء الخدمة تُصرف لك كل الأيام غير المستخدمة. أما ترحيلها أثناء العمل فيكون بموافقة صاحب العمل وبحسب نظام الشركة." },
+      { q: "هل العطل الرسمية تُحسب من الإجازة؟", a: "نعم إذا وقعت داخل فترة الإجازة، إلا إذا كان العقد أو نظام الشركة أفضل للعامل." },
+    ]} />
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://u.ae/en/information-and-services/jobs/employment-in-the-private-sector/types-of-leaves-and-entitlements-in-the-private-sector/annual-leave" rel="noopener" target="_blank">البوابة الرسمية لحكومة الإمارات: الإجازة السنوية في القطاع الخاص</a></li>
+      <li><a href="https://www.khaleejtimes.com/uae/legal/encashing-paid-leaves-as-per-new-uae-labour-law-all-you-need-to-know" rel="noopener" target="_blank">خليج تايمز: بدل الإجازات في قانون العمل الجديد</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcLeave } from '../lib/calc/annual-leave';
+  import { leaveView } from '../lib/views-extra';
+  import { leaveTable } from '../lib/exhibits-extra';
+  const root = document.querySelector<HTMLElement>('[data-calc="annual-leave"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcLeave({ salary: num(f.salary), startDate: f.startDate, endDate: f.endDate, annualDays: num(f.annualDays), takenDays: num(f.takenDays), divisor: f.divisor === '365' ? '365' : '30' });
+      return { result, view: result.ok ? leaveView(result.value) : null };
+    },
+    extras: (o) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = leaveTable(o); },
+  });
+</script>

@@ -152,6 +152,14 @@ with sync_playwright() as p:
     t = unquote(pg.evaluate('window.__wa') or '')
     check('whatsapp on a private result shares the question only', 'متى موعد التبويض' in t and 'يوم التبويض المتوقع' not in t, t[:120])
 
+    pg.goto(B + '/annual-leave/?salary=6000&startDate=2024-03-01&endDate=2026-10-31&annualDays=30&takenDays=40&divisor=30'); pg.wait_for_timeout(500)
+    check('annual-leave: 8,000 for 40 days left', val(pg).replace(',', '').startswith('8000'), val(pg))
+    check('annual-leave: 3 service years + total row', pg.locator('[data-x="table"] tbody tr').count() == 4)
+    pg.select_option('#f-divisor', '365'); pg.wait_for_timeout(300)
+    check('annual-leave: 365 divisor changes the amount', val(pg).replace(',', '').startswith('7890'), val(pg))
+    pg.fill('#f-annualDays', '20'); pg.wait_for_timeout(300)
+    check('annual-leave: under 30 days flagged', pg.locator('#f-annualDays-err').is_visible())
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)

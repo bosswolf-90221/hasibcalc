@@ -185,3 +185,30 @@ export function ovulationView(o: Ovulation): View {
     ],
   };
 }
+
+import type { Leave } from './calc/annual-leave';
+import { money as moneyFmt } from './format';
+const leaveDays = (n: number) => (Number.isInteger(n) ? days(n) : `${fmt1(n)} يوم`);
+const fmt1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString('en-US', { maximumFractionDigits: 1 });
+export function leaveView(l: Leave): View {
+  const service = `${l.fullYears ? years(l.fullYears) : ''}${l.fullYears && l.months % 12 ? ' و' : ''}${l.months % 12 ? months(l.months % 12) : ''}${l.extraDays ? `${l.months ? ' و' : ''}${days(l.extraDays)}` : ''}` || days(0);
+  return {
+    label: 'بدل الإجازة غير المستخدمة',
+    value: l.amount,
+    decimals: 2,
+    unit: 'درهم',
+    sentence: !l.eligible
+      ? 'مدة خدمتك أقل من 6 أشهر، فلا تستحق إجازة سنوية بعد.'
+      : l.overdrawn > 0
+        ? `أخذت ${leaveDays(l.overdrawn)} أكثر من رصيدك، فلا يبقى لك بدل.`
+        : `رصيدك ${leaveDays(l.remaining)} من أصل ${leaveDays(l.entitled)} استحققتها خلال خدمتك.`,
+    badge: `رصيد ${fmt1(l.remaining)} يوم`,
+    rows: [
+      ['مدة الخدمة', service],
+      ['الأيام المستحقة', leaveDays(l.entitled)],
+      ['الأيام المأخوذة', leaveDays(l.taken)],
+      ['الرصيد المتبقي', leaveDays(l.remaining)],
+      ['أجر اليوم', `${moneyFmt(l.dailyWage)} درهم`],
+    ],
+  };
+}
