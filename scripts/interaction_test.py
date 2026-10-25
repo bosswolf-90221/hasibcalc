@@ -96,6 +96,28 @@ with sync_playwright() as p:
     pg.click('label:has(input[value="non-saudi"])')
     check('gosi: non-Saudi → 0.00', val(pg) == '0.00', val(pg))
 
+    pg.goto(B + '/hijri-age/')
+    check('hijri-age: 1995-01-01 → 32 Hijri years', val(pg, '[data-calc="from-greg"]') == '32', val(pg, '[data-calc="from-greg"]'))
+    check('hijri-age: Hijri birth date shown', '29 رجب 1415' in pg.locator('[data-calc="from-greg"] [data-result]').inner_text())
+    check('hijri-age: Hijri input 29/7/1415 → 32', val(pg, '[data-calc="from-hijri"]') == '32', val(pg, '[data-calc="from-hijri"]'))
+    pg.select_option('#f-hMonth', '8'); pg.fill('#f-hDay', '30'); pg.wait_for_timeout(300)
+    check('hijri-age: 30th of a 29-day month flagged', pg.locator('#f-hDay-err').is_visible())
+    pg.fill('#f-birthDate', '1960-03-15'); pg.wait_for_timeout(500)
+    check('hijri-age: trio updates', pg.locator('[data-x="y"]').text_content().strip() == val(pg, '[data-calc="from-greg"]'))
+
+    pg.goto(B + '/salary-day/')
+    v0 = val(pg)
+    check('salary-day: default renders a whole number of days', v0.isdigit(), v0)
+    check('salary-day: 12 upcoming paydays listed', pg.locator('[data-x="table"] tbody tr').count() == 12)
+    pg.fill('#f-payDay', '40'); pg.wait_for_timeout(300)
+    check('salary-day: invalid day flagged', pg.locator('#f-payDay-err').is_visible())
+    pg.fill('#f-payDay', '31'); pg.click('label:has(input[value="after"])'); pg.wait_for_timeout(400)
+    check('salary-day: rule change recomputes, no NaN', 'NaN' not in pg.content() and val(pg).isdigit())
+
+    pg.goto(B + '/pregnancy/')
+    check('pregnancy: month row shown', 'الشهر من الحمل' in pg.locator('[data-result]').inner_text())
+    check('pregnancy: weeks/months table has 9 rows', pg.locator('.article .data-table tbody tr').count() == 9)
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)

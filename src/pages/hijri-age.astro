@@ -1,0 +1,110 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import DateIn from '../components/DateIn.astro';
+import NumIn from '../components/NumIn.astro';
+import SelIn from '../components/SelIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { HIJRI_MONTHS } from '../lib/calc/hijri';
+import { hijriAgeFromGregorian, hijriAgeFromHijri } from '../lib/calc/hijri-age';
+import { hijriAgeView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { toISODate } from '../lib/calc/core';
+import { HIJRI_YEAR_NOW } from '../data/calculators';
+
+const today = toISODate(new Date());
+const d = { birthDate: '1995-01-01', hDay: 29, hMonth: '7', hYear: 1415 };
+const r1 = hijriAgeFromGregorian({ birthDate: d.birthDate, onDate: today });
+const v1 = r1.ok ? hijriAgeView(r1.value) : errorView(r1, 'عمرك بالتقويم الهجري')!;
+const r2 = hijriAgeFromHijri({ hDay: d.hDay, hMonth: Number(d.hMonth), hYear: d.hYear, onDate: today });
+const v2 = r2.ok ? hijriAgeView(r2.value) : errorView(r2, 'عمرك بالتقويم الهجري')!;
+const a = r1.ok ? r1.value : null;
+const months = HIJRI_MONTHS.map((m, i) => ({ value: String(i + 1), label: m }));
+---
+<CalcLayout slug="hijri-age" lede={`اكتب تاريخ ميلادك بالميلادي أو بالهجري، ونحسب عمرك بالسنين والأشهر والأيام الهجرية حتى اليوم، بتقويم أم القرى. السنة الهجرية الآن ${HIJRI_YEAR_NOW} هـ.`}>
+  <section class="pq" data-calc="from-greg" aria-labelledby="q1">
+    <h2 id="q1" class="step"><b>01</b> أعرف تاريخ ميلادي بالميلادي</h2>
+    <form class="sentence" onsubmit="return false">ولدت في <DateIn name="birthDate" label="تاريخ الميلاد بالميلادي" value={d.birthDate} max={today} />.</form>
+    <FieldErrors names={['birthDate']} />
+    <ResultCard uid="r1" view={v1} notes={['بداية الأشهر الهجرية محسوبة بتقويم أم القرى، وقد يختلف التاريخ يوماً واحداً عمّا في بعض الوثائق القديمة.']}>
+      <p class="formula" slot="formula">نحوّل تاريخ ميلادك إلى الهجري، ثم نعدّ السنوات الهجرية الكاملة حتى آخر عيد ميلاد هجري، فالأشهر الهجرية الكاملة، فالأيام الباقية.</p>
+    </ResultCard>
+    <section class="exhibit" aria-labelledby="trio-title"><h3 id="trio-title" class="exhibit-title"><b>02</b> عمرك الهجري مفصّلاً</h3><div class="trio">
+      <div><span class="n num" data-x="y">{a?.years ?? '—'}</span><span class="l">سنة هجرية</span></div>
+      <div><span class="n num" data-x="m">{a?.months ?? '—'}</span><span class="l">شهر</span></div>
+      <div><span class="n num" data-x="d">{a?.days ?? '—'}</span><span class="l">يوم</span></div>
+    </div></section>
+  </section>
+
+  <section class="pq" data-calc="from-hijri" aria-labelledby="q2">
+    <h2 id="q2" class="step"><b>03</b> أعرف تاريخ ميلادي بالهجري</h2>
+    <form class="sentence" onsubmit="return false">ولدت يوم <NumIn name="hDay" label="يوم الميلاد الهجري" value={d.hDay} width={2} /> من شهر <SelIn name="hMonth" label="شهر الميلاد الهجري" options={months} value={d.hMonth} /> سنة <NumIn name="hYear" label="سنة الميلاد الهجرية" value={d.hYear} width={4} /> هـ.</form>
+    <FieldErrors names={['hDay', 'hMonth', 'hYear']} />
+    <ResultCard small uid="r2" view={v2} />
+  </section>
+
+  <Fragment slot="article">
+    <h2>لماذا يختلف عمري بالهجري عن عمري بالميلادي؟</h2>
+    <p>السنة الهجرية قمرية، وطولها نحو 354 يوماً، أي أقصر من السنة الميلادية بنحو 11 يوماً. لذلك يمر عيد ميلادك الهجري أسرع، ويزيد عمرك الهجري سنة كاملة كل 33 سنة ميلادية تقريباً. من عمره 33 سنة ميلادية يكون عمره نحو 34 سنة هجرية.</p>
+    <div class="example">
+      <p>من وُلد في 1 يناير 1995 يوافق ميلاده <strong>29 رجب 1415 هـ</strong>. في 25 أكتوبر 2026 (14 جمادى الأولى 1448 هـ) يكون عمره بالهجري <strong>32 سنة و9 أشهر و15 يوماً</strong>، بينما عمره بالميلادي 31 سنة و9 أشهر.</p>
+    </div>
+    <h2>كيف نحسب العمر الهجري بدقة؟</h2>
+    <ul>
+      <li>نحوّل تاريخ الميلاد إلى الهجري بتقويم أم القرى، وهو التقويم الرسمي في السعودية.</li>
+      <li>نعدّ السنوات الهجرية الكاملة حتى آخر عيد ميلاد هجري، ثم الأشهر الهجرية الكاملة، ثم الأيام.</li>
+      <li>لا نضرب العمر الميلادي في معامل ثابت، لأن الأشهر الهجرية 29 أو 30 يوماً، والتقريب يخطئ بأيام.</li>
+      <li>من وُلد يوم 30 من شهر هجري، نعتبر عيد ميلاده يوم 29 في الأشهر التي ليس فيها يوم 30.</li>
+    </ul>
+    <h2>للتقدير السريع</h2>
+    <p>العمر الهجري ≈ العمر الميلادي × 1.03. فمن عمره 40 سنة ميلادية يكون نحو 41 سنة وشهرين هجرياً. هذا تقدير فقط، والحاسبة أعلاه تعطيك العمر الدقيق.</p>
+    <Faq title="أسئلة شائعة" items={[
+      { q: "كيف أعرف تاريخ ميلادي بالهجري؟", a: "اكتب تاريخ ميلادك الميلادي في الحاسبة الأولى، وسيظهر تاريخ ميلادك الهجري في النتيجة. ويمكنك أيضاً استخدام صفحة تحويل التاريخ لأي تاريخ آخر." },
+      { q: "كم سنة هجرية في 30 سنة ميلادية؟", a: "نحو 30 سنة و11 شهراً هجرياً، لأن السنة الهجرية أقصر بنحو 11 يوماً، فيتجمع الفرق إلى قرابة سنة كل 33 سنة." },
+      { q: "لماذا يختلف تاريخي الهجري بيوم عن الوثيقة الرسمية؟", a: "بعض الوثائق القديمة سُجلت بحسب رؤية الهلال أو بتقويم آخر، بينما تعتمد الحاسبة تقويم أم القرى. اعتمد التاريخ المكتوب في وثيقتك إذا كان مختلفاً، واكتبه في الحاسبة الثانية." },
+      { q: "متى عيد ميلادي الهجري القادم؟", a: "يظهر في نتيجة الحاسبة مع التاريخ الميلادي الذي يوافقه، وهو يتقدم نحو 11 يوماً كل سنة ميلادية." },
+    ]} />
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://www.ummulqura.org.sa/" rel="noopener" target="_blank">تقويم أم القرى</a></li>
+      <li><a href="/hijri/">تحويل التاريخ من الميلادي إلى الهجري وبالعكس</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<style>
+  .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .trio div { display: flex; flex-direction: column; align-items: center; padding: 16px 8px; border-radius: 16px; background: var(--deep); }
+  .trio .n { font-size: clamp(2.2rem, 7vw, 3.4rem); font-weight: 600; color: var(--mint); line-height: 1; }
+  .trio .l { font-size: .85rem; color: #9fc6b8; margin-top: 8px; }
+</style>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { hijriAgeFromGregorian, hijriAgeFromHijri } from '../lib/calc/hijri-age';
+  import { hijriAgeView } from '../lib/views-extra';
+  import { localTodayISO } from '../lib/calc/core';
+
+  const a = document.querySelector<HTMLElement>('[data-calc="from-greg"]')!;
+  const x = (k: string) => a.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
+  a.querySelector<HTMLInputElement>('#f-birthDate')!.max = localTodayISO();
+  mountCalculator(a, {
+    compute: (f) => {
+      const result = hijriAgeFromGregorian({ birthDate: f.birthDate, onDate: localTodayISO() });
+      return { result, view: result.ok ? hijriAgeView(result.value) : null };
+    },
+    extras: (r) => {
+      x('y').textContent = String(r.years);
+      x('m').textContent = String(r.months);
+      x('d').textContent = String(r.days);
+    },
+  });
+  const b = document.querySelector<HTMLElement>('[data-calc="from-hijri"]')!;
+  mountCalculator(b, {
+    compute: (f) => {
+      const result = hijriAgeFromHijri({ hDay: num(f.hDay), hMonth: num(f.hMonth), hYear: num(f.hYear), onDate: localTodayISO() });
+      return { result, view: result.ok ? hijriAgeView(result.value) : null };
+    },
+  });
+</script>

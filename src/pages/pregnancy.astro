@@ -5,7 +5,7 @@ import DateIn from '../components/DateIn.astro';
 import NumIn from '../components/NumIn.astro';
 import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
-import { calcPregnancy } from '../lib/calc/pregnancy';
+import { calcPregnancy, MONTH_WEEKS } from '../lib/calc/pregnancy';
 import { pregnancyView } from '../lib/views-extra';
 import { errorView } from '../lib/views';
 import { pregnancyRuler } from '../lib/exhibits-extra';
@@ -16,6 +16,8 @@ const today = toISODate(now);
 const lmp = toISODate(new Date(now.getTime() - 70 * 86_400_000));
 const r = calcPregnancy({ lmpDate: lmp, cycleDays: 28, onDate: today });
 const view = r.ok ? pregnancyView(r.value) : errorView(r, 'موعد الولادة المتوقع')!;
+const ORD = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع'];
+const tri = (to: number) => (to <= 13 ? 'الأول' : to <= 27 ? 'الثاني' : 'الثالث');
 ---
 <CalcLayout slug="pregnancy" lede="اكتبي تاريخ أول يوم من آخر دورة شهرية وطول دورتك المعتاد، ونحسب موعد الولادة المتوقع وعمر الحمل اليوم.">
   <div data-calc="pregnancy">
@@ -49,11 +51,21 @@ const view = r.ok ? pregnancyView(r.value) : errorView(r, 'موعد الولاد
       <li><strong>الثلث الثاني:</strong> من الأسبوع 14 إلى نهاية الأسبوع 27.</li>
       <li><strong>الثلث الثالث:</strong> من الأسبوع 28 حتى الولادة.</li>
     </ul>
+    <h2>جدول الحمل بالأسابيع والأشهر</h2>
+    <p>يُقاس الحمل طبياً بالأسابيع، لكن كثيرين يسألون عنه بالأشهر. هذا الجدول يقابل كل شهر من أشهر الحمل التسعة بأسابيعه، بحسب التقسيم الشائع:</p>
+    <div class="scroll-x"><table class="data-table">
+      <thead><tr><th>الشهر</th><th>الأسابيع</th><th>الثلث</th></tr></thead>
+      <tbody>{MONTH_WEEKS.map(([from, to], i) => <tr><td>الشهر {ORD[i]}</td><td class="num">{from}–{to}</td><td>{tri(to)}</td></tr>)}</tbody>
+    </table></div>
+    <p>الأشهر هنا تقريبية، لأن تسعة أشهر ميلادية أقصر قليلاً من 40 أسبوعاً. لذلك يمتد الشهر التاسع إلى نهاية الأسبوع 40، وموعد الولادة الدقيق تعطيك إياه الحاسبة أعلاه.</p>
     <h2>متى لا تنطبق هذه النتيجة؟</h2>
     <p>عند عدم انتظام الدورة، أو الحمل بعد أطفال الأنابيب (يُحسب من تاريخ نقل الأجنة)، أو إذا حددت الطبيبة موعداً مختلفاً بالأشعة. في هذه الحالات اعتمدي موعد الطبيبة.</p>
     <Faq title="أسئلة شائعة" items={[
       { q: "لماذا يُحسب الحمل قبل حدوثه بأسبوعين؟", a: "لأن العد يبدأ من أول يوم في آخر دورة، والإخصاب يحدث عادة بعد نحو أسبوعين من ذلك اليوم. لذلك يكون «الأسبوع 4» فعلياً بعد أسبوعين من الإخصاب." },
       { q: "هل الولادة في الأسبوع 38 مبكرة؟", a: "الولادة من بداية الأسبوع 37 إلى نهاية الأسبوع 41 تُعد ضمن المدة الطبيعية." },
+      { q: "الأسبوع 12 من الحمل كم شهر؟", a: "الأسبوع 12 في الشهر الثالث، وهو من آخر أسابيع الثلث الأول الذي ينتهي بنهاية الأسبوع 13." },
+      { q: "20 أسبوعاً كم شهراً من الحمل؟", a: "الأسبوع 20 في الشهر الخامس، أي منتصف الحمل تقريباً، في الثلث الثاني." },
+      { q: "الشهر التاسع من الحمل كم أسبوعاً؟", a: "الشهر التاسع من الأسبوع 36 إلى الأسبوع 40. والولادة من بداية الأسبوع 37 تُعد في موعدها." },
     ]} />
     <h2>المصادر</h2>
     <ul class="sources">

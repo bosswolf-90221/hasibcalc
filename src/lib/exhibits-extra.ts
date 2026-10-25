@@ -62,3 +62,13 @@ export function gosiSchedule(onISO: string, system: string, nationality: string)
   <tr${nationality !== 'saudi' ? ' class="total"' : ''}><td>غير السعوديين</td><td class="n">0%</td><td class="n">2%</td></tr></tbody></table></div>
   <p class="leaf-day">النسب تشمل المعاشات وساند (0.75% لكل طرف)، وعلى صاحب العمل 2% للأخطار المهنية. صفوف «من…» للمسجلين أول مرة بعد 3 يوليو 2024.</p>`;
 }
+
+import type { PaydayResult } from './calc/payday';
+/** The next 12 salary days, marking those moved off the weekend. */
+export function paydayTable(p: PaydayResult | null): string {
+  if (!p) return '';
+  const rows = p.upcoming
+    .map((d, i) => `<tr${i === 0 ? ' class="total"' : ''}><td>${arDate(d.actual)}</td><td>${d.weekday}</td><td>${d.shifted ? `نُقل من ${arDate(d.nominal)}` : 'في موعده'}</td></tr>`)
+    .join('');
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>تاريخ الراتب</th><th>اليوم</th><th>ملاحظة</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}

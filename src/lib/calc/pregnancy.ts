@@ -45,3 +45,11 @@ export function calcPregnancy(input: PregnancyInput): CalcResult<Pregnancy> {
     secondTrimesterEnds: at(28 * 7 - 1),
   });
 }
+
+/** Pregnancy months by the common week ranges: 1–4, 5–8, 9–13, 14–17, 18–22, 23–27, 28–31, 32–35, 36–40. */
+export const MONTH_WEEKS: [number, number][] = [[1, 4], [5, 8], [9, 13], [14, 17], [18, 22], [23, 27], [28, 31], [32, 35], [36, 40]];
+/** Month of pregnancy (1–9) for a pregnancy week counted from 1. */
+export function pregnancyMonth(week: number): number {
+  const i = MONTH_WEEKS.findIndex(([, to]) => week <= to);
+  return i === -1 ? 9 : i + 1;
+}

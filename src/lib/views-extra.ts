@@ -4,7 +4,8 @@ import { HIJRI_MONTHS, type Conversion } from './calc/hijri';
 import type { DateSpan } from './calc/dates';
 import type { Pregnancy } from './calc/pregnancy';
 import type { Calories } from './calc/calories';
-import { arDate, days, int, months } from './format';
+import { arDate, days, int, months, years } from './format';
+import { pregnancyMonth } from './calc/pregnancy';
 
 const G_MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 export const hijriText = (c: Conversion) => `${c.hijri.day} ${HIJRI_MONTHS[c.hijri.month - 1]} ${c.hijri.year} هـ`;
@@ -73,6 +74,7 @@ export function pregnancyView(p: Pregnancy): View {
     badge: `الأسبوع ${p.weeks + 1} من الحمل`,
     rows: [
       ['عمر الحمل', `${int(p.weeks)} أسبوعاً و${days(p.days)}`],
+      ['الشهر من الحمل', `الشهر ${['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن','التاسع'][pregnancyMonth(p.weeks + 1) - 1]}`],
       ['الإخصاب التقريبي', arDate(p.conception)],
       ['نهاية الثلث الأول', arDate(p.firstTrimesterEnds)],
       ['نهاية الثلث الثاني', arDate(p.secondTrimesterEnds)],
@@ -118,6 +120,48 @@ export function gosiView(g: Gosi, nationality: Nationality, system: GosiSystem):
       ['نسبة خصمك', pctTxt(+g.employeeRate.toFixed(2))],
       ['حصة صاحب العمل', `${money(g.employer)} ريال`],
       ['نسبة صاحب العمل', pctTxt(+g.employerRate.toFixed(2))],
+    ],
+  };
+}
+
+import type { HijriAge } from './calc/hijri-age';
+const hText = (h: { year: number; month: number; day: number }) => `${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ`;
+export function hijriAgeView(a: HijriAge): View {
+  return {
+    label: 'عمرك بالتقويم الهجري',
+    value: a.years,
+    decimals: 0,
+    unit: 'سنة هجرية',
+    sentence: `و${months(a.months)} و${days(a.days)}. وعمرك بالميلادي ${years(a.gregorianYears)} و${months(a.gregorianMonths)}.`,
+    badge: a.isBirthday ? 'اليوم عيد ميلادك الهجري' : `باقي ${days(a.daysToNextBirthday)} على عيد ميلادك الهجري`,
+    rows: [
+      ['تاريخ ميلادك بالهجري', hText(a.birthHijri)],
+      ['تاريخ ميلادك بالميلادي', arDate(a.birthGregorian)],
+      ['عمرك بالميلادي', `${years(a.gregorianYears)} و${months(a.gregorianMonths)}`],
+      [`عيد ميلادك الهجري القادم (${a.nextBirthdayHijriYear} هـ)`, arDate(a.nextBirthday)],
+      ['الأيام التي عشتها', int(a.totalDays)],
+    ],
+  };
+}
+
+import type { PaydayResult } from './calc/payday';
+import { plural } from './format';
+const weeksTxt = (n: number) => plural(n, { one: 'أسبوع واحد', two: 'أسبوعان', few: 'أسابيع', many: 'أسبوعاً' });
+export function paydayView(p: PaydayResult, payDay: number): View {
+  const n = p.next;
+  const moved = n.shifted ? ` نُقل من يوم ${payDay} لأنه يوافق عطلة نهاية الأسبوع.` : '';
+  const after = p.upcoming[1];
+  return {
+    label: p.isToday ? 'راتبك اليوم' : 'باقي على الراتب',
+    value: p.daysLeft,
+    decimals: 0,
+    unit: p.isToday ? 'يوم الراتب' : p.daysLeft <= 2 ? 'يوم' : p.daysLeft <= 10 ? 'أيام' : 'يوماً',
+    sentence: p.isToday ? `اليوم ${n.weekday} ${arDate(n.actual)} هو يوم راتبك.${moved}` : `راتبك القادم يوم ${n.weekday} ${arDate(n.actual)}.${moved}`,
+    badge: n.weekday,
+    rows: [
+      ['موعد الراتب القادم', `${n.weekday} ${arDate(n.actual)}`],
+      ['الباقي بالأسابيع', p.daysLeft >= 7 ? `${weeksTxt(Math.floor(p.daysLeft / 7))}${p.daysLeft % 7 ? ` و${days(p.daysLeft % 7)}` : ''}` : days(p.daysLeft)],
+      ['الراتب الذي يليه', after ? `${after.weekday} ${arDate(after.actual)}` : '—'],
     ],
   };
 }
