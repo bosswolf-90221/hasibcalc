@@ -1,49 +1,19 @@
 ---
 import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
-import NumIn from '../components/NumIn.astro';
-import Pills from '../components/Pills.astro';
-import FieldErrors from '../components/FieldErrors.astro';
-import ResultCard from '../components/ResultCard.astro';
-import { calcPayday } from '../lib/calc/payday';
-import { paydayView } from '../lib/views-extra';
-import { errorView } from '../lib/views';
-import { paydayTable } from '../lib/exhibits-extra';
-import { toISODate } from '../lib/calc/core';
-
-const today = toISODate(new Date());
-const d = { payDay: 27, weekend: 'fri-sat' as const, rule: 'before' as const };
-const r = calcPayday({ ...d, onDate: today });
-const view = r.ok ? paydayView(r.value, d.payDay) : errorView(r, 'باقي على الراتب')!;
+import SalaryDayCalc from '../components/SalaryDayCalc.astro';
 ---
 <CalcLayout slug="salary-day" lede="اكتب يوم نزول راتبك في الشهر، ونحسب كم يوماً باقي عليه من تاريخ اليوم في جهازك. وإذا وافق يوم الراتب عطلة نهاية الأسبوع، ننقله إلى يوم العمل الذي تختاره.">
-  <div data-calc="salary-day">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتب يوم راتبك في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="موعد الراتب">
-        راتبي ينزل يوم <NumIn name="payDay" label="يوم الراتب في الشهر الميلادي" value={d.payDay} width={2} /> من كل شهر ميلادي،
-        وعطلتي <Pills name="weekend" legend="عطلة نهاية الأسبوع" selected={d.weekend} options={[{ value: 'fri-sat', label: 'الجمعة والسبت' }, { value: 'sat-sun', label: 'السبت والأحد' }]} />،
-        وإذا وافق العطلة <Pills name="rule" legend="إذا وافق يوم الراتب العطلة" selected={d.rule} options={[{ value: 'before', label: 'يُقدَّم' }, { value: 'after', label: 'يُؤخَّر' }, { value: 'none', label: 'لا يتغير' }]} />
-      </form>
-      <FieldErrors names={['payDay']} />
-      <p class="hint">إذا كان راتبك في آخر الشهر فاكتب 31، ونحسبه في آخر يوم من كل شهر.</p>
-    </div>
-    <ResultCard view={view} notes={['العطل الرسمية والأعياد لا تُحسب، لأن الجهات قد تعلن تقديم الرواتب قبلها بإعلان خاص.', 'التاريخ المستخدم هو تاريخ اليوم بحسب جهازك.']}>
-      <p class="formula" slot="formula">نأخذ يوم الراتب في الشهر الحالي، وإن مضى نأخذ الشهر التالي. إذا وافق الجمعة أو السبت (أو السبت أو الأحد) ننقله إلى أقرب يوم عمل قبله أو بعده بحسب اختيارك.</p>
-    </ResultCard>
-    <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> مواعيد رواتبك في الأشهر القادمة</h2>
-      <div data-x="table" set:html={paydayTable(r.ok ? r.value : null)} />
-    </section>
-  </div>
+  <SalaryDayCalc payDay={27} weekend="fri-sat" rule="before" />
 
   <Fragment slot="article">
+    <p class="hint">صفحات مخصّصة: <a href="/salary-saudi/">كم باقي على الراتب في السعودية</a> · <a href="/salary-uae/">كم باقي على الراتب في الإمارات</a></p>
     <h2>متى ينزل الراتب؟</h2>
     <p>موعد الراتب يختلف من جهة إلى أخرى، لذلك تكتب أنت يوم راتبك. ومن أشهر المواعيد في الخليج:</p>
     <ul>
       <li><strong>القطاع الحكومي في السعودية:</strong> يوم 27 من كل شهر ميلادي. وإذا وافق الجمعة أو السبت يُقدَّم عادة إلى الخميس الذي قبله.</li>
       <li><strong>القطاع الخاص:</strong> يحدده عقد العمل، وغالباً في آخر الشهر أو في أيامه الأولى.</li>
-      <li><strong>في الإمارات:</strong> يُصرف الأجر عبر نظام حماية الأجور، وموعده بحسب صاحب العمل، وأغلب الشركات تصرفه في آخر الشهر.</li>
+      <li><strong>القطاع الخاص في الإمارات:</strong> منذ 1 يونيو 2026 يجب أن يُصرف أجر الشهر عبر نظام حماية الأجور في موعد أقصاه اليوم الأول من الشهر التالي، بحسب القرار الوزاري رقم 340 لسنة 2026.</li>
     </ul>
     <div class="example">
       <p>راتب يوم 27، والعطلة الجمعة والسبت: يوم 27 نوفمبر 2026 يوافق الجمعة، فيُقدَّم الراتب إلى <strong>الخميس 26 نوفمبر</strong>. أما 27 ديسمبر 2026 فيوافق الأحد، فينزل في موعده.</p>
@@ -61,20 +31,3 @@ const view = r.ok ? paydayView(r.value, d.payDay) : errorView(r, 'باقي عل�
     </ul>
   </Fragment>
 </CalcLayout>
-
-<script>
-  import { mountCalculator, num } from '../scripts/runtime';
-  import { calcPayday, type ShiftRule, type Weekend } from '../lib/calc/payday';
-  import { paydayView } from '../lib/views-extra';
-  import { paydayTable } from '../lib/exhibits-extra';
-  import { localTodayISO } from '../lib/calc/core';
-  const root = document.querySelector<HTMLElement>('[data-calc="salary-day"]')!;
-  mountCalculator(root, {
-    compute: (f) => {
-      const payDay = num(f.payDay);
-      const result = calcPayday({ payDay, weekend: f.weekend as Weekend, rule: f.rule as ShiftRule, onDate: localTodayISO() });
-      return { result, view: result.ok ? paydayView(result.value, payDay ?? 0) : null };
-    },
-    extras: (p) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = paydayTable(p); },
-  });
-</script>

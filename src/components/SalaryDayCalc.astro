@@ -1,0 +1,54 @@
+---
+// Salary-day countdown: the sentence, the result and the 12-month table. Pages pass their country's defaults.
+import NumIn from './NumIn.astro';
+import Pills from './Pills.astro';
+import FieldErrors from './FieldErrors.astro';
+import ResultCard from './ResultCard.astro';
+import { calcPayday, type ShiftRule, type Weekend } from '../lib/calc/payday';
+import { paydayView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { paydayTable } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+export interface Props { payDay: number; weekend: Weekend; rule: ShiftRule; hint?: string }
+const { payDay, weekend, rule, hint = 'إذا كان راتبك في آخر الشهر فاكتب 31، ونحسبه في آخر يوم من كل شهر.' } = Astro.props;
+const d = { payDay, weekend, rule };
+const r = calcPayday({ ...d, onDate: toISODate(new Date()) });
+const view = r.ok ? paydayView(r.value, d.payDay) : errorView(r, 'باقي على الراتب')!;
+---
+  <div data-calc="salary-day">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتب يوم راتبك في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="موعد الراتب">
+        راتبي ينزل يوم <NumIn name="payDay" label="يوم الراتب في الشهر الميلادي" value={d.payDay} width={2} /> من كل شهر ميلادي،
+        وعطلتي <Pills name="weekend" legend="عطلة نهاية الأسبوع" selected={d.weekend} options={[{ value: 'fri-sat', label: 'الجمعة والسبت' }, { value: 'sat-sun', label: 'السبت والأحد' }]} />،
+        وإذا وافق العطلة <Pills name="rule" legend="إذا وافق يوم الراتب العطلة" selected={d.rule} options={[{ value: 'before', label: 'يُقدَّم' }, { value: 'after', label: 'يُؤخَّر' }, { value: 'none', label: 'لا يتغير' }]} />
+      </form>
+      <FieldErrors names={['payDay']} />
+      <p class="hint">{hint}</p>
+    </div>
+    <ResultCard view={view} notes={['العطل الرسمية والأعياد لا تُحسب، لأن الجهات قد تعلن تقديم الرواتب قبلها بإعلان خاص.', 'التاريخ المستخدم هو تاريخ اليوم بحسب جهازك.']}>
+      <p class="formula" slot="formula">نأخذ يوم الراتب في الشهر الحالي، وإن مضى نأخذ الشهر التالي. إذا وافق الجمعة أو السبت (أو السبت أو الأحد) ننقله إلى أقرب يوم عمل قبله أو بعده بحسب اختيارك.</p>
+    </ResultCard>
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> مواعيد رواتبك في الأشهر القادمة</h2>
+      <div data-x="table" set:html={paydayTable(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcPayday, type ShiftRule, type Weekend } from '../lib/calc/payday';
+  import { paydayView } from '../lib/views-extra';
+  import { paydayTable } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="salary-day"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const payDay = num(f.payDay);
+      const result = calcPayday({ payDay, weekend: f.weekend as Weekend, rule: f.rule as ShiftRule, onDate: localTodayISO() });
+      return { result, view: result.ok ? paydayView(result.value, payDay ?? 0) : null };
+    },
+    extras: (p) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = paydayTable(p); },
+  });
+</script>

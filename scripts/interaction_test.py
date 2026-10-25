@@ -135,6 +135,11 @@ with sync_playwright() as p:
         check(f'countdown {g}: shows a number', v.isdigit(), v)
     check('preview image per page', pg.locator('meta[property="og:image"]').get_attribute('content').endswith('/og/g-new-year-2027.png'))
 
+    for slug, day in [('salary-saudi', '27'), ('salary-uae', '1')]:
+        pg.goto(B + f'/{slug}/'); pg.wait_for_timeout(400)
+        check(f'{slug}: default day {day} and a whole number of days', pg.input_value('#f-payDay') == day and val(pg).isdigit(), val(pg))
+        check(f'{slug}: 12 paydays listed', pg.locator('[data-x="table"] tbody tr').count() == 12)
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)
