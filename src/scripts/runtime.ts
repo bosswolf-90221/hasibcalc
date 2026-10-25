@@ -206,7 +206,9 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     } else if (act === 'whatsapp') {
       const head = `${$('label').textContent}: ${odoText(valueEl)} ${$('unit').textContent}`.replace(/\s+/g, ' ').trim();
       const sentence = ($('sentence').textContent ?? '').replace(/\s+/g, ' ').trim();
-      const text = `${head}\n${sentence}\n\nاحسبها أنت 👇\n${cleanUrl()}`;
+      // Money and health results stay private: share the question, not the visitor's numbers.
+      const question = (document.querySelector('h1')?.childNodes[0]?.textContent ?? document.title).replace(/\s+/g, ' ').trim();
+      const text = btn.dataset.sensitive ? `${question}\nاحسبها بنفسك مجاناً 👇\n${cleanUrl()}` : `${head}\n${sentence}\n\nاحسبها أنت 👇\n${cleanUrl()}`;
       window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
     } else if (act === 'share-clean') {
       copy(cleanUrl(), 'نسخنا رابط الحاسبة بدون أرقامك');

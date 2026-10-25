@@ -72,3 +72,13 @@ export function paydayTable(p: PaydayResult | null): string {
     .join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>تاريخ الراتب</th><th>اليوم</th><th>ملاحظة</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+
+import type { Ovulation } from './calc/ovulation';
+/** The next three cycles: period start, fertile days and ovulation. */
+export function ovulationTable(o: Ovulation | null): string {
+  if (!o) return '';
+  const rows = o.upcoming
+    .map((c, i) => `<tr${i === 0 ? ' class="total"' : ''}><td>${arDate(c.start)}</td><td>${arDate(c.fertileStart)} – ${arDate(c.fertileEnd)}</td><td>${arDate(c.ovulation)}</td></tr>`)
+    .join('');
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>بداية الدورة</th><th>أيام الخصوبة</th><th>التبويض المتوقع</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}

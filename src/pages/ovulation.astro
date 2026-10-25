@@ -1,0 +1,86 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import DateIn from '../components/DateIn.astro';
+import NumIn from '../components/NumIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcOvulation } from '../lib/calc/ovulation';
+import { ovulationView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { ovulationTable } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+
+const now = new Date();
+const today = toISODate(now);
+const lmp = toISODate(new Date(now.getTime() - 10 * 86_400_000));
+const d = { cycleDays: 28, periodDays: 5 };
+const r = calcOvulation({ lmpDate: lmp, ...d, onDate: today });
+const view = r.ok ? ovulationView(r.value) : errorView(r, 'يوم التبويض المتوقع')!;
+---
+<CalcLayout slug="ovulation" lede="اكتبي أول يوم من آخر دورة شهرية وطول دورتك المعتاد، ونحسب يوم التبويض المتوقع وأيام الخصوبة وموعد الدورة القادمة، بتاريخ اليوم في جهازك.">
+  <div data-calc="ovulation">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتبي التاريخ في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات الدورة">
+        أول يوم من آخر دورة كان <DateIn name="lmpDate" label="أول يوم من آخر دورة شهرية" value={lmp} max={today} />،
+        ودورتي عادة <NumIn name="cycleDays" label="طول الدورة بالأيام" value={d.cycleDays} width={2} /> يوماً،
+        وتستمر <NumIn name="periodDays" label="عدد أيام نزول الدورة" value={d.periodDays} width={2} /> أيام.
+      </form>
+      <FieldErrors names={['lmpDate', 'cycleDays', 'periodDays']} />
+      <p class="hint">طول الدورة من أول يوم في دورة إلى أول يوم في الدورة التي بعدها. إذا لم تعرفيه فاتركيه 28.</p>
+    </div>
+    <ResultCard view={view} sensitive notes={['الحساب تقديري ويفترض أن دورتك منتظمة. التبويض قد يتقدم أو يتأخر أياماً من شهر لآخر.', 'لا تعتمدي على هذه الحاسبة وسيلةً لمنع الحمل.', 'للمعلومات العامة فقط، واستشيري طبيبتك إذا كانت دورتك غير منتظمة أو تأخر الحمل.']}>
+      <p class="formula" slot="formula">التبويض في اليوم <code>(طول الدورة − 14)</code> من الدورة، أي اليوم 14 في دورة من 28 يوماً. وأيام الخصوبة هي <code>الأيام الخمسة قبل التبويض + يوم التبويض</code>.</p>
+    </ResultCard>
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> مواعيدك في الدورات الثلاث القادمة</h2>
+      <div data-x="table" set:html={ovulationTable(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <h2>كيف يُحسب موعد التبويض؟</h2>
+    <p>يحدث التبويض عادة قبل الدورة التالية بنحو 14 يوماً. لذلك نطرح 14 من طول دورتك: في دورة من 28 يوماً يكون التبويض نحو <strong>اليوم 14</strong>، وفي دورة من 35 يوماً نحو <strong>اليوم 21</strong>.</p>
+    <p>أما <strong>أيام الخصوبة</strong> فهي ستة أيام: الأيام الخمسة التي تسبق التبويض ويوم التبويض نفسه، لأن الحيوانات المنوية قد تعيش حتى خمسة أيام، والبويضة تبقى قابلة للتخصيب نحو يوم واحد بعد خروجها. وأعلى الأيام خصوبة هي الثلاثة الأخيرة منها.</p>
+    <div class="example">
+      <p>آخر دورة بدأت في 1 أكتوبر 2026، والدورة 28 يوماً: التبويض المتوقع <strong>14 أكتوبر</strong>، وأيام الخصوبة من 9 إلى 14 أكتوبر، والدورة القادمة متوقعة في <strong>29 أكتوبر</strong>.</p>
+    </div>
+    <h2>متى لا يكون الحساب دقيقاً؟</h2>
+    <ul>
+      <li>إذا كانت الدورة غير منتظمة، فطولها يتغير من شهر لآخر، ويتغير معه موعد التبويض.</li>
+      <li>بعد الولادة أو أثناء الرضاعة أو بعد إيقاف حبوب منع الحمل.</li>
+      <li>مع بعض الحالات مثل تكيس المبايض أو اضطراب الغدة الدرقية.</li>
+    </ul>
+    <p>في هذه الحالات تفيد اختبارات التبويض المنزلية أو متابعة الطبيبة أكثر من الحساب بالتقويم. وإذا حدث حمل، استخدمي <a href="/pregnancy/">حاسبة الحمل وموعد الولادة</a>.</p>
+    <Faq title="أسئلة شائعة" items={[
+      { q: "متى يحدث التبويض في دورة 28 يوماً؟", a: "نحو اليوم 14 من الدورة، وأيام الخصوبة من اليوم 9 إلى اليوم 14." },
+      { q: "كم يوماً تستمر أيام الخصوبة؟", a: "نحو ستة أيام: الأيام الخمسة قبل التبويض ويوم التبويض." },
+      { q: "هل يمكن الاعتماد على الحاسبة لمنع الحمل؟", a: "لا. الحساب بالتقويم تقديري، والتبويض قد يتغير موعده، فلا يصلح وحده وسيلة لمنع الحمل." },
+      { q: "متى تأتي الدورة القادمة؟", a: "بعد عدد أيام يساوي طول دورتك من أول يوم في الدورة الأخيرة، ويظهر التاريخ في نتيجة الحاسبة." },
+    ]} />
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://www.yourfertility.org.au/everyone/timing" rel="noopener" target="_blank">Your Fertility (أستراليا): توقيت الحمل وأيام الخصوبة</a></li>
+      <li><a href="https://info.health.nz/pregnancy-maternity/fertility/timing-for-conception" rel="noopener" target="_blank">Health New Zealand: توقيت الحمل</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcOvulation } from '../lib/calc/ovulation';
+  import { ovulationView } from '../lib/views-extra';
+  import { ovulationTable } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="ovulation"]')!;
+  const lmp = root.querySelector<HTMLInputElement>('#f-lmpDate')!;
+  lmp.max = localTodayISO();
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcOvulation({ lmpDate: f.lmpDate, cycleDays: num(f.cycleDays), periodDays: num(f.periodDays), onDate: localTodayISO() });
+      return { result, view: result.ok ? ovulationView(result.value) : null };
+    },
+    extras: (o) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = ovulationTable(o); },
+  });
+</script>

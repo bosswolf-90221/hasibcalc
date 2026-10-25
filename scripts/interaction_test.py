@@ -140,6 +140,18 @@ with sync_playwright() as p:
         check(f'{slug}: default day {day} and a whole number of days', pg.input_value('#f-payDay') == day and val(pg).isdigit(), val(pg))
         check(f'{slug}: 12 paydays listed', pg.locator('[data-x="table"] tbody tr').count() == 12)
 
+    pg.goto(B + '/ovulation/?lmpDate=2026-10-01&cycleDays=28&periodDays=5'); pg.wait_for_timeout(500)
+    check('ovulation: result shows a day', val(pg).isdigit(), val(pg))
+    check('ovulation: 3 cycles listed', pg.locator('[data-x="table"] tbody tr').count() == 3)
+    pg.fill('#f-cycleDays', '15'); pg.wait_for_timeout(300)
+    check('ovulation: invalid cycle flagged', pg.locator('#f-cycleDays-err').is_visible())
+    pg.evaluate("window.open = (u) => { window.__wa = u; return null; }")
+    pg.fill('#f-cycleDays', '28'); pg.wait_for_timeout(300)
+    pg.click('[data-act="whatsapp"]')
+    from urllib.parse import unquote
+    t = unquote(pg.evaluate('window.__wa') or '')
+    check('whatsapp on a private result shares the question only', 'متى موعد التبويض' in t and 'يوم التبويض المتوقع' not in t, t[:120])
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)

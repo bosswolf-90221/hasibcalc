@@ -83,3 +83,37 @@ describe('pregnancy month', () => {
     expect(pregnancyMonth(42)).toBe(9);
   });
 });
+
+import { calcOvulation } from '../src/lib/calc/ovulation';
+describe('ovulation', () => {
+  test('28-day cycle: ovulation day 14, fertile 9–14, next period day 29', () => {
+    const o = val(calcOvulation({ lmpDate: '2026-10-01', cycleDays: 28, periodDays: 5, onDate: '2026-10-05' }));
+    expect(o.cycleDay).toBe(5);
+    expect(o.focus).toMatchObject({ start: '2026-10-01', periodEnd: '2026-10-05', fertileStart: '2026-10-09', ovulation: '2026-10-14', nextStart: '2026-10-29' });
+    expect(o.daysToOvulation).toBe(9);
+    expect(o.periodToday).toBe(true);
+    expect(o.fertileToday).toBe(false);
+  });
+  test('after ovulation the focus moves to the next cycle', () => {
+    const o = val(calcOvulation({ lmpDate: '2026-10-01', cycleDays: 28, periodDays: 5, onDate: '2026-10-20' }));
+    expect(o.focus.start).toBe('2026-10-29');
+    expect(o.focus.ovulation).toBe('2026-11-11');
+    expect(o.daysToNextPeriod).toBe(9);
+  });
+  test('35-day cycle ovulates around day 21; fertile today', () => {
+    const o = val(calcOvulation({ lmpDate: '2026-10-01', cycleDays: 35, periodDays: 5, onDate: '2026-10-18' }));
+    expect(o.focus.ovulation).toBe('2026-10-21');
+    expect(o.fertileToday).toBe(true);
+  });
+  test('an old last period rolls forward whole cycles', () => {
+    const o = val(calcOvulation({ lmpDate: '2026-08-01', cycleDays: 30, periodDays: 5, onDate: '2026-10-25' }));
+    expect(o.current.start).toBe('2026-09-30');
+    expect(o.cycleDay).toBe(26);
+    expect(o.upcoming).toHaveLength(3);
+  });
+  test('validation', () => {
+    expect(calcOvulation({ lmpDate: '2026-11-01', cycleDays: 28, periodDays: 5, onDate: '2026-10-25' }).ok).toBe(false);
+    expect(calcOvulation({ lmpDate: '2026-10-01', cycleDays: 15, periodDays: 5, onDate: '2026-10-25' }).ok).toBe(false);
+    expect(calcOvulation({ lmpDate: '2026-10-01', cycleDays: 28, periodDays: 12, onDate: '2026-10-25' }).ok).toBe(false);
+  });
+});

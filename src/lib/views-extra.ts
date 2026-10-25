@@ -165,3 +165,23 @@ export function paydayView(p: PaydayResult, payDay: number): View {
     ],
   };
 }
+
+import type { Ovulation } from './calc/ovulation';
+const shortDate = (iso: string) => { const [y, m, d] = gParts(iso); return `${d} ${G_MONTHS[m - 1]}`; };
+export function ovulationView(o: Ovulation): View {
+  const [y, m, d] = gParts(o.focus.ovulation);
+  return {
+    label: 'يوم التبويض المتوقع',
+    value: d,
+    decimals: 0,
+    unit: `${G_MONTHS[m - 1]} ${y}`,
+    sentence: `أيام الخصوبة من ${shortDate(o.focus.fertileStart)} إلى ${shortDate(o.focus.ovulation)}، ودورتك القادمة متوقعة ${arDate(o.current.nextStart)}.`,
+    badge: o.fertileToday ? 'اليوم من أيام الخصوبة' : `اليوم ${o.cycleDay} من دورتك`,
+    rows: [
+      ['باقي على التبويض', o.daysToOvulation === 0 ? 'اليوم' : days(o.daysToOvulation)],
+      ['أيام الخصوبة', `${shortDate(o.focus.fertileStart)} – ${shortDate(o.focus.ovulation)}`],
+      ['الدورة القادمة', `${arDate(o.current.nextStart)} (بعد ${days(o.daysToNextPeriod)})`],
+      ['اليوم من الدورة الحالية', int(o.cycleDay)],
+    ],
+  };
+}
