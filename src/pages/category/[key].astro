@@ -10,7 +10,7 @@ const cat = CATEGORIES.find((c) => c.key === Astro.params.key)!;
 const items = inCategory(cat.key);
 const outside = CALCULATORS.filter((c) => !c.categories.includes(cat.key));
 ---
-<Base title={`حاسبات ${cat.name}`} description={cat.description} path={`/category/${cat.key}/`} bare>
+<Base title={cat.seoTitle} description={cat.description} path={`/category/${cat.key}/`} bare>
   <div class="stage calc-stage">
     <div class="container calc-title">
       <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">{cat.name}</li></ol></nav>
