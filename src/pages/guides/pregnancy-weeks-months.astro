@@ -1,33 +1,55 @@
 ---
 import GuideLayout from '../../layouts/GuideLayout.astro';
+import Faq from '../../components/Faq.astro';
+import { MONTH_WEEKS, pregnancyMonth } from '../../lib/calc/pregnancy';
+
+const ORD = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع'];
+const tri = (w: number) => (w <= 13 ? 'الأول' : w <= 27 ? 'الثاني' : 'الثالث');
+const WEEKS = Array.from({ length: 42 }, (_, i) => i + 1);
 ---
 <GuideLayout slug="pregnancy-weeks-months">
-  <h2>كيف يُحسب عمر الحمل؟</h2>
-  <p>يُحسب طبياً من <strong>أول يوم في آخر دورة شهرية</strong>، لا من يوم الإخصاب. لذلك يبدأ «الأسبوع الثالث من الحمل» تقريباً يوم الإخصاب نفسه. ومدة الحمل الكاملة 40 أسبوعاً، أي 280 يوماً.</p>
-  <div class="cta"><p>اعرفي أسبوعك اليوم وموعد ولادتك المتوقع</p><a href="/pregnancy/">حاسبة الحمل ←</a></div>
+  <div class="example answer">
+    <p><strong>الجواب المختصر:</strong> الشهر في الحمل نحو <strong>4 أسابيع وثلث</strong> (4.3 أسبوع). والحمل الكامل <strong>40 أسبوعاً = 280 يوماً</strong>، ويُقسم إلى 9 أشهر: الأشهر الثلاثة الأولى تنتهي بالأسبوع 13، والستة الأولى بالأسبوع 27، والتاسع يمتد من الأسبوع 36 إلى الولادة.</p>
+    <form class="wk-conv" onsubmit="return false" aria-label="تحويل أسبوع الحمل إلى شهر">
+      <label for="wk">أنا في الأسبوع</label>
+      <input class="in" id="wk" type="text" inputmode="numeric" value="20" style="width:4ch" autocomplete="off" />
+      <output id="wk-out" for="wk" aria-live="polite">← الشهر الخامس، الثلث الثاني</output>
+    </form>
+  </div>
 
   <h2>جدول أسابيع الحمل بالأشهر</h2>
-  <table>
-    <thead><tr><th>الشهر</th><th>الأسابيع تقريباً</th><th>الثلث</th></tr></thead>
-    <tbody>
-      <tr><td>الأول</td><td>1 إلى 4</td><td rowspan="3">الأول (حتى نهاية الأسبوع 13)</td></tr>
-      <tr><td>الثاني</td><td>5 إلى 8</td></tr>
-      <tr><td>الثالث</td><td>9 إلى 13</td></tr>
-      <tr><td>الرابع</td><td>14 إلى 17</td><td rowspan="3">الثاني (14 إلى 27)</td></tr>
-      <tr><td>الخامس</td><td>18 إلى 22</td></tr>
-      <tr><td>السادس</td><td>23 إلى 27</td></tr>
-      <tr><td>السابع</td><td>28 إلى 31</td><td rowspan="3">الثالث (28 حتى الولادة)</td></tr>
-      <tr><td>الثامن</td><td>32 إلى 35</td></tr>
-      <tr><td>التاسع</td><td>36 إلى 40</td></tr>
-    </tbody>
-  </table>
-  <p>تحويل الأسابيع إلى أشهر تقريبي، لأن الشهر نحو 4.3 أسابيع، ولهذا يفضّل الأطباء الحديث بالأسابيع.</p>
+  <div class="scroll-x"><table>
+    <thead><tr><th>شهر الحمل</th><th>الأسابيع</th><th>الثلث</th></tr></thead>
+    <tbody>{MONTH_WEEKS.map(([from, to], i) => <tr><td>الشهر {ORD[i]}</td><td class="num">{from}–{to}</td><td>{tri(to)}</td></tr>)}</tbody>
+  </table></div>
+  <p>تحويل الأسابيع إلى أشهر تقريبي، لأن الشهر ليس عدداً كاملاً من الأسابيع، ولهذا يتحدث الأطباء بالأسابيع.</p>
+
+  <h2>كم شهراً في كل أسبوع؟ من الأسبوع 1 إلى 42</h2>
+  <div class="scroll-x"><table>
+    <thead><tr><th>الأسبوع</th><th>شهر الحمل</th><th>الثلث</th><th>الأيام منذ آخر دورة</th></tr></thead>
+    <tbody>{WEEKS.map((w) => <tr><td class="num">الأسبوع {w}</td><td>الشهر {ORD[pregnancyMonth(w) - 1]}</td><td>{tri(w)}</td><td class="num">{(w - 1) * 7 + 1}–{w * 7}</td></tr>)}</tbody>
+  </table></div>
+  <p>بعد الأسبوع 40 يُعد الحمل متجاوزاً موعده المتوقع، والولادة حتى نهاية الأسبوع 41 ما زالت ضمن المدة الطبيعية.</p>
+
+  <div class="cta"><p>اعرفي أسبوعك اليوم وموعد ولادتك المتوقع</p><a href="/pregnancy/">حاسبة الحمل ←</a></div>
+
+  <h2>كيف يُحسب عمر الحمل؟</h2>
+  <p>يُحسب طبياً من <strong>أول يوم في آخر دورة شهرية</strong>، لا من يوم الإخصاب. لذلك يبدأ «الأسبوع الثالث من الحمل» تقريباً يوم الإخصاب نفسه. وإذا أردتِ معرفة أيام الخصوبة قبل الحمل فاستخدمي <a href="/ovulation/">حاسبة التبويض</a>.</p>
 
   <h2>مثال</h2>
   <div class="example"><p>آخر دورة بدأت في 1 يناير 2026، والدورة 28 يوماً. في 12 مارس 2026 يكون عمر الحمل 10 أسابيع، أي في الشهر الثالث، والموعد المتوقع للولادة 8 أكتوبر 2026.</p></div>
 
   <h2>هل الموعد دقيق؟</h2>
   <p>هو تقدير. أغلب الولادات تحدث بين الأسبوع 37 والأسبوع 42، ونسبة قليلة فقط تحدث في اليوم المتوقع بالضبط. وإذا كانت دورتك غير منتظمة، فالتصوير بالموجات فوق الصوتية في الثلث الأول أدق.</p>
+
+  <Faq title="أسئلة شائعة" items={[
+    { q: "الشهر كم أسبوع في الحمل؟", a: "نحو 4 أسابيع وثلث، أي 4.3 أسبوع تقريباً. لذلك بعض أشهر الحمل في الجدول 4 أسابيع وبعضها 5." },
+    { q: "9 أشهر كم أسبوع؟", a: "الحمل الكامل 40 أسبوعاً محسوبة من أول يوم في آخر دورة، أي 280 يوماً، وهي تقابل 9 أشهر وأسبوعاً تقريباً." },
+    { q: "الأسبوع 20 من الحمل في أي شهر؟", a: "في الشهر الخامس، وهو منتصف الحمل تقريباً ومن أسابيع الثلث الثاني." },
+    { q: "متى يبدأ الشهر السابع؟", a: "مع بداية الأسبوع 28، وهو أيضاً بداية الثلث الثالث." },
+    { q: "متى ينتهي الشهر الثالث والثلث الأول؟", a: "بنهاية الأسبوع 13." },
+    { q: "الشهر التاسع من أي أسبوع؟", a: "من الأسبوع 36 حتى الولادة، والولادة من الأسبوع 37 تُعد في موعدها." },
+  ]} />
 
   <p>هذا الدليل للمعلومات العامة، ومتابعة الحمل تكون مع طبيبتك.</p>
 
@@ -37,3 +59,25 @@ import GuideLayout from '../../layouts/GuideLayout.astro';
     <li><a href="https://www.nhs.uk/pregnancy/" rel="noopener" target="_blank">NHS: الحمل أسبوعاً بأسبوع</a></li>
   </ul>
 </GuideLayout>
+
+<script>
+  import { pregnancyMonth } from '../../lib/calc/pregnancy';
+  const ORD = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع'];
+  const input = document.getElementById('wk') as HTMLInputElement;
+  const out = document.getElementById('wk-out')!;
+  const toWestern = (s: string) => s.replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+  const update = () => {
+    const w = Number(toWestern(input.value.trim()));
+    if (!Number.isInteger(w) || w < 1 || w > 42) { out.textContent = '← اكتبي رقم أسبوع من 1 إلى 42'; return; }
+    const t = w <= 13 ? 'الأول' : w <= 27 ? 'الثاني' : 'الثالث';
+    out.textContent = `← الشهر ${ORD[pregnancyMonth(w) - 1]}، الثلث ${t}`;
+  };
+  input.addEventListener('input', update);
+  update();
+</script>
+
+<style>
+  .answer p { margin-top: 0; }
+  .wk-conv { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 12px; font-weight: 600; }
+  .wk-conv output { color: var(--deep); }
+</style>
