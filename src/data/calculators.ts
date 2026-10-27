@@ -242,7 +242,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['حمل', 'الحمل', 'ولادة', 'موعد الولادة', 'حاسبة الحمل', 'أسابيع الحمل', 'حامل', 'الدورة'],
     related: ['ovulation', 'days-between', 'hijri', 'calories'],
-    updated: '2026-10-25',
+    updated: '2026-10-27',
   },
   {
     slug: 'ovulation',
@@ -256,7 +256,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['التبويض', 'حاسبة التبويض', 'أيام الخصوبة', 'الدورة الشهرية', 'موعد الدورة', 'الحمل', 'الإباضة', 'خصوبة'],
     related: ['pregnancy', 'days-between', 'calories', 'bmi'],
-    updated: '2026-10-25',
+    updated: '2026-10-27',
   },
   {
     slug: 'calories',

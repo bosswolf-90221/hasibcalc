@@ -301,6 +301,7 @@ details.how .how-body { padding-bottom: 14px; }
 .faq details[open] summary::after { content: '−'; }
 .faq details p { margin: 10px 0 0; color: var(--soft); }
 .sources { font-size: .9rem; color: var(--soft); }
+.src-note { font-size: .85rem; color: var(--soft); margin-top: 6px; }
 .reviewed { font-size: .85rem; color: var(--soft); margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line); }
 .callout { border-inline-start: 4px solid var(--em-2); background: var(--accent-bg); padding: 12px 16px; border-radius: 0 12px 12px 0; margin: 16px 0; }
 
