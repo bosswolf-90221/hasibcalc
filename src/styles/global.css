@@ -449,7 +449,7 @@ details.how .how-body { padding-bottom: 14px; }
 .hbar { display: block; height: 8px; border-radius: 99px; background: var(--em-2); transition: width .45s ease; }
 .ledger tr.total .hbar { background: var(--accent); }
 .leaves + .leaf-day, .bscale + .leaf-day { margin-top: 14px; }
-select.in.sel { appearance: none; cursor: pointer; padding-inline: 12px 30px; font-size: .9em; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: left 14px center, left 9px center; background-size: 5px 5px; background-repeat: no-repeat; }
+select.in.sel { appearance: none; cursor: pointer; padding: 0 12px 0 30px; font-size: .9em; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: left 14px center, left 9px center; background-size: 5px 5px; background-repeat: no-repeat; }
 .machine .pq .exhibit { margin: 20px 0 0; padding: 20px; border-radius: 18px; }
 
 /* guides */

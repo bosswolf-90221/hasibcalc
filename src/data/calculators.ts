@@ -1,5 +1,5 @@
 // Single source of truth for calculator pages: routes, metadata, categories, search terms and related links.
-export type CategoryKey = 'money' | 'shopping' | 'health-age' | 'dates';
+export type CategoryKey = 'money' | 'shopping' | 'health-age' | 'dates' | 'study';
 
 export type CalculatorMeta = {
   slug: string;
@@ -286,6 +286,20 @@ export const CALCULATORS: CalculatorMeta[] = [
     related: ['end-of-service', 'loan', 'zakat', 'percentage'],
     updated: '2026-10-23',
   },
+  {
+    slug: 'gpa',
+    question: 'كم معدلي الجامعي؟',
+    short: 'المعدل الجامعي',
+    blurb: 'المعدل الفصلي والتراكمي من 5 أو من 4',
+    tone: '#4338ca',
+    sample: '4.38',
+    seoTitle: 'حساب المعدل التراكمي والفصلي للجامعة من 5 ومن 4',
+    description: 'احسب معدلك الفصلي والتراكمي في الجامعة بالنظام السعودي من 5 أو من 4، أو بنظام 4 بالسالب في الإمارات، من تقديرات المواد وساعاتها ومعدلك السابق.',
+    categories: ['study'],
+    terms: ['المعدل', 'المعدل التراكمي', 'المعدل الفصلي', 'gpa', 'جي بي ايه', 'الجامعة', 'حساب المعدل', 'من 5', 'من 4', 'ساعات', 'تقدير'],
+    related: ['percentage', 'age', 'days-between', 'hijri'],
+    updated: '2026-10-27',
+  },
 ];
 
 export const CATEGORIES: { key: CategoryKey; name: string; seoTitle: string; intro: string; description: string }[] = [
@@ -316,6 +330,13 @@ export const CATEGORIES: { key: CategoryKey; name: string; seoTitle: string; int
     seoTitle: 'حاسبات التاريخ الهجري والميلادي والأيام بين تاريخين',
     intro: 'التاريخ الهجري والميلادي، والأيام بين تاريخين، وكم بقي على موعدك.',
     description: 'حاسبات التاريخ: تحويل التاريخ من ميلادي إلى هجري وبالعكس بتقويم أم القرى، والعمر بالهجري، وعدد الأيام وأيام العمل بين تاريخين، وكم باقي على الراتب.',
+  },
+  {
+    key: 'study',
+    name: 'الدراسة',
+    seoTitle: 'حاسبات المعدل الجامعي التراكمي والفصلي',
+    intro: 'أرقام الطالب: معدلك في هذا الفصل، ومعدلك التراكمي، وكم تحتاج لترفعه.',
+    description: 'حاسبات للطلاب: المعدل الجامعي الفصلي والتراكمي بالنظام السعودي من 5 ومن 4، ونظام 4 بالسالب في الإمارات.',
   },
 ];
 

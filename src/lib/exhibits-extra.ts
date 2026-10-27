@@ -94,3 +94,12 @@ export function leaveTable(l: Leave | null): string {
     .join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>سنة الخدمة</th><th>الفترة</th><th>أيام مستحقة</th><th>المجموع</th></tr></thead><tbody>${rows}<tr class="total"><td colspan="2">الرصيد بعد خصم ${f(l.taken)} يوم مأخوذ</td><td></td><td class="nums">${f(l.remaining)}</td></tr></tbody></table></div>`;
 }
+
+import { type Gpa, GRADE_AR } from './calc/gpa';
+/** Each course's points, and the totals. */
+export function gpaTable(g: Gpa | null): string {
+  if (!g) return '';
+  const f = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
+  const rows = g.courses.map((c) => `<tr><td>المادة ${c.n}</td><td>${c.grade} (${GRADE_AR[c.grade]})</td><td class="nums">${c.hours}</td><td class="nums">${f(c.weight)}</td><td class="nums">${f(c.points)}</td></tr>`).join('');
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>المادة</th><th>التقدير</th><th>الساعات</th><th>الوزن</th><th>النقاط</th></tr></thead><tbody>${rows}<tr class="total"><td colspan="2">المجموع ÷ الساعات = ${f(g.semGpa)}</td><td class="nums">${g.semHours}</td><td></td><td class="nums">${f(g.semPoints)}</td></tr></tbody></table></div>`;
+}

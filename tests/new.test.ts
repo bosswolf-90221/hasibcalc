@@ -154,3 +154,35 @@ describe('annual leave', () => {
     expect(calcLeave({ ...base, endDate: '2023-01-01' }).ok).toBe(false);
   });
 });
+
+import { calcGpa } from '../src/lib/calc/gpa';
+describe('gpa', () => {
+  const C = (...xs: [string, number | null][]) => xs.map(([grade, hours]) => ({ grade, hours }));
+  test('Saudi 5-point semester GPA', () => {
+    const g = val(calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: C(['A', 3], ['B+', 4], ['C', 2]) }));
+    expect(g.semPoints).toBe(38.25);
+    expect(g.semGpa).toBeCloseTo(4.25, 5);
+    expect(g.hasPrev).toBe(false);
+  });
+  test('cumulative with previous hours', () => {
+    const g = val(calcGpa({ system: 's5', prevGpa: 4.2, prevHours: 60, courses: C(['A+', 3], ['A', 3], ['B+', 4], ['B', 2], ['C+', 3]) }));
+    expect(g.semGpa).toBeCloseTo(65.75 / 15, 6);
+    expect(g.cumGpa).toBeCloseTo((252 + 65.75) / 75, 6);
+    expect(g.totalHours).toBe(75);
+  });
+  test('F weighs 1 out of 5 and 0 out of 4', () => {
+    expect(val(calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: C(['F', 3]) })).semGpa).toBe(1);
+    expect(val(calcGpa({ system: 's4', prevGpa: null, prevHours: null, courses: C(['F', 3]) })).semGpa).toBe(0);
+  });
+  test('4.0 scale with minus grades', () => {
+    const g = val(calcGpa({ system: 'us4', prevGpa: null, prevHours: null, courses: C(['A-', 3], ['B-', 3]) }));
+    expect(g.semGpa).toBeCloseTo(3.2, 6);
+  });
+  test('empty rows are skipped; half-filled rows and wrong-scale grades are errors', () => {
+    expect(val(calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: C(['A', 3], ['', null]) })).courses).toHaveLength(1);
+    expect(calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: C(['A', null]) }).ok).toBe(false);
+    expect(calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: C(['A-', 3]) }).ok).toBe(false);
+    expect(calcGpa({ system: 's4', prevGpa: 4.5, prevHours: 30, courses: C(['A', 3]) }).ok).toBe(false);
+    expect(calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: C(['', null]) }).ok).toBe(false);
+  });
+});

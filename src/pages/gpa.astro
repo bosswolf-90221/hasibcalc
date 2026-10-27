@@ -1,0 +1,123 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import SelIn from '../components/SelIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcGpa, GRADES, GRADE_AR, SCALES, type GpaSystem } from '../lib/calc/gpa';
+import { gpaView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { gpaTable } from '../lib/exhibits-extra';
+
+const ROWS = 8;
+const DEF: [string, number | ''][] = [['A+', 3], ['A', 3], ['B+', 4], ['B', 2], ['C+', 3], ['', ''], ['', ''], ['', '']];
+const d = { system: 's5' as GpaSystem, prevGpa: 4.2, prevHours: 60 };
+const r = calcGpa({ system: d.system, prevGpa: d.prevGpa, prevHours: d.prevHours, courses: DEF.map(([grade, h]) => ({ grade, hours: h === '' ? null : h })) });
+const view = r.ok ? gpaView(r.value) : errorView(r, 'معدلك')!;
+const GOPTS = [{ value: '', label: '—' }, ...GRADES.map((g) => ({ value: g, label: `\u200E${g}\u200E` }))];
+const SYS = [{ value: 's5', label: 'السعودي من 5' }, { value: 's4', label: 'السعودي من 4' }, { value: 'us4', label: 'من 4 بالسالب (الإمارات)' }];
+const names = ['system', 'prevGpa', 'prevHours', ...Array.from({ length: ROWS }, (_, i) => [`g${i + 1}`, `h${i + 1}`]).flat()];
+const ex = calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: [{ grade: 'A', hours: 3 }, { grade: 'B+', hours: 4 }, { grade: 'C', hours: 2 }] });
+const e = ex.ok ? ex.value : null;
+const T = (s: GpaSystem) => GRADES.filter((g) => SCALES[s].points[g] !== undefined);
+---
+<CalcLayout slug="gpa" lede="اختر نظام جامعتك، واكتب تقدير كل مادة وعدد ساعاتها، ونحسب معدلك الفصلي. وإذا أضفت معدلك التراكمي السابق وساعاته، نحسب معدلك التراكمي الجديد.">
+  <div data-calc="gpa">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اختر النظام واكتب موادك</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات المعدل">
+        نظام جامعتي <SelIn name="system" label="نظام المعدل" options={SYS} value={d.system} />،
+        ومعدلي التراكمي السابق <NumIn name="prevGpa" label="المعدل التراكمي السابق" value={d.prevGpa} width={4} />
+        من <NumIn name="prevHours" label="الساعات المجتازة سابقاً" value={d.prevHours} width={3} /> ساعة.
+      </form>
+      <ol class="courses" aria-label="مواد هذا الفصل">
+        {Array.from({ length: ROWS }, (_, i) => (
+          <li>
+            <span class="cn">المادة {i + 1}</span>
+            <SelIn name={`g${i + 1}`} label={`تقدير المادة ${i + 1}`} options={GOPTS} value={DEF[i][0]} />
+            <NumIn name={`h${i + 1}`} label={`ساعات المادة ${i + 1}`} value={DEF[i][1]} width={2} /> ساعات
+          </li>
+        ))}
+      </ol>
+      <FieldErrors names={names} />
+      <p class="hint">اترك الصف فارغاً إذا كانت موادك أقل. وإذا كان هذا أول فصل لك فامسح المعدل والساعات السابقة.</p>
+    </div>
+
+    <ResultCard view={view} notes={[
+      'المواد المنسحب منها أو غير المكتملة أو المعادلة لا تدخل في المعدل، فلا تكتبها.',
+      'بعض الجامعات تحسب المادة المعادة بآخر تقدير فقط. إن كانت جامعتك كذلك فاطرح ساعات المادة القديمة من الساعات السابقة.',
+      'التقدير العام (ممتاز وجيد جداً...) ومرتبة الشرف تحددهما لائحة جامعتك.',
+    ]}>
+      <p class="formula" slot="formula"><code>المعدل = مجموع (ساعات المادة × وزن التقدير) ÷ مجموع الساعات</code>، والتراكمي يضيف نقاط الفصول السابقة وساعاتها.</p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> نقاط موادك هذا الفصل</h2>
+      <div data-x="table" set:html={gpaTable(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <div class="example">
+      <p><strong>الجواب المختصر:</strong> اضرب ساعات كل مادة في وزن تقديرها، واجمع النواتج، ثم اقسم المجموع على مجموع الساعات. وللمعدل التراكمي أضف نقاطك السابقة (المعدل السابق × ساعاته) وساعاتك السابقة قبل القسمة.</p>
+    </div>
+
+    <h2>أوزان التقديرات في كل نظام</h2>
+    <div class="scroll-x"><table>
+      <thead><tr><th>التقدير</th><th>السعودي من 5</th><th>السعودي من 4</th><th>من 4 بالسالب</th></tr></thead>
+      <tbody>{GRADES.map((g) => <tr><td>{g} ({GRADE_AR[g]})</td><td>{SCALES.s5.points[g]?.toFixed(2) ?? '—'}</td><td>{SCALES.s4.points[g]?.toFixed(2) ?? '—'}</td><td>{SCALES.us4.points[g]?.toFixed(2) ?? '—'}</td></tr>)}</tbody>
+    </table></div>
+    <p>في النظام السعودي من 5 يأخذ الراسب (هـ) درجة واحدة، ومن 4 يأخذ صفراً. ونظام 4 بالسالب معتمد في جامعة الإمارات وكثير من الجامعات على النظام الأمريكي، وليس فيه A+، فتُحسب كـA.</p>
+
+    <h2>مثال محسوب</h2>
+    <div class="example">
+      <p>ثلاث مواد بالنظام من 5: مادة 3 ساعات بتقدير أ (4.75)، ومادة 4 ساعات بتقدير ب+ (4.50)، ومادة ساعتان بتقدير ج (3.00).</p>
+      <p>النقاط: 3 × 4.75 + 4 × 4.50 + 2 × 3.00 = 14.25 + 18 + 6 = {e?.semPoints}. الساعات: 9. المعدل = {e?.semPoints} ÷ 9 = <strong class="num">{e?.semGpa.toFixed(2)}</strong> من 5.</p>
+      <p>ولو كان معدله السابق 4.20 من 60 ساعة: (4.20 × 60 + {e?.semPoints}) ÷ 69 = <strong class="num">{((4.2 * 60 + (e?.semPoints ?? 0)) / 69).toFixed(2)}</strong>.</p>
+    </div>
+
+    <h2>لماذا المعدل التراكمي يتحرك ببطء؟</h2>
+    <p>لأن الفصل الجديد يُقسم على مجموع كل ساعاتك. فمن عنده 100 ساعة سابقة، لن يرفع فصل من 15 ساعة معدله إلا قليلاً مهما كان ممتازاً. لذلك الفصول الأولى هي الأكثر تأثيراً في المعدل.</p>
+
+    <Faq title="أسئلة شائعة" items={[
+      { q: "كيف أحسب معدلي التراكمي؟", a: "اضرب معدلك السابق في ساعاته لتحصل على نقاطك السابقة، وأضف إليها نقاط هذا الفصل، ثم اقسم المجموع على كل الساعات." },
+      { q: "كم وزن أ+ وأ في النظام من 5؟", a: "أ+ = 5، وأ = 4.75، وب+ = 4.50، وب = 4، وج+ = 3.50، وج = 3، ود+ = 2.50، ود = 2، وهـ = 1." },
+      { q: "كيف أحوّل معدلي من 5 إلى 4؟", a: "لا توجد معادلة رسمية واحدة، لأن الراسب يأخذ 1 من 5 و0 من 4. الطريقة الأدق إعادة حساب المعدل بأوزان النظام من 4 لكل مادة، وهو ما تفعله الحاسبة إذا غيّرت النظام." },
+      { q: "هل المادة التي انسحبت منها تدخل في المعدل؟", a: "لا. المنسحب منها وغير المكتملة والمعادلة لا تدخل في حساب المعدل." },
+    ]} />
+
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://info.psu.edu.sa/RSEUL_Eng/files/basic-html/page74.html" rel="noopener" target="_blank">جامعة الأمير سلطان: قواعد تنفيذ لائحة الدراسة والاختبارات للمرحلة الجامعية (التقديرات من 5 ومن 4)</a></li>
+      <li><a href="https://dpy.psau.edu.sa/index.php/en/node/6631" rel="noopener" target="_blank">جامعة الأمير سطام بن عبدالعزيز: حساب المعدل الفصلي والتراكمي</a></li>
+      <li><a href="https://www.uaeu.ac.ae/en/academics/grading-letters.pdf" rel="noopener" target="_blank">جامعة الإمارات العربية المتحدة: رموز التقديرات ونقاطها</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcGpa, type GpaSystem } from '../lib/calc/gpa';
+  import { gpaView } from '../lib/views-extra';
+  import { gpaTable } from '../lib/exhibits-extra';
+  const root = document.querySelector<HTMLElement>('[data-calc="gpa"]')!;
+  const ROWS = 8;
+  mountCalculator(root, {
+    compute: (f) => {
+      const prevH = f.prevHours.trim() === '' ? null : num(f.prevHours);
+      const prevG = f.prevGpa.trim() === '' ? null : num(f.prevGpa);
+      const courses = Array.from({ length: ROWS }, (_, i) => ({ grade: f[`g${i + 1}`] ?? '', hours: (f[`h${i + 1}`] ?? '').trim() === '' ? null : num(f[`h${i + 1}`]) }));
+      const result = calcGpa({ system: (f.system as GpaSystem) || 's5', prevGpa: prevG, prevHours: prevH, courses });
+      return { result, view: result.ok ? gpaView(result.value) : null };
+    },
+    extras: (o) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = gpaTable(o); },
+  });
+</script>
+
+<style>
+  .courses { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+  .courses li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 1.05rem; }
+  .courses .cn { min-width: 5.5em; color: var(--soft); font-weight: 600; }
+  .courses :global(select.in.sel) { min-width: 5.2em; }
+</style>

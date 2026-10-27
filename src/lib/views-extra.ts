@@ -212,3 +212,26 @@ export function leaveView(l: Leave): View {
     ],
   };
 }
+
+import type { Gpa } from './calc/gpa';
+const g2 = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
+const hrs = (n: number) => `${Number.isInteger(n) ? n : n.toFixed(1)} ساعة`;
+export function gpaView(g: Gpa): View {
+  const main = g.hasPrev ? g.cumGpa : g.semGpa;
+  return {
+    label: g.hasPrev ? 'معدلك التراكمي' : 'معدلك الفصلي',
+    value: Math.round(main * 100) / 100,
+    decimals: 2,
+    unit: `من ${g.max}`,
+    sentence: g.hasPrev
+      ? `معدل هذا الفصل ${g2(g.semGpa)} من ${hrs(g.semHours)}، والتراكمي ${g2(g.cumGpa)} من مجموع ${hrs(g.totalHours)}.`
+      : `من ${hrs(g.semHours)} في ${g.courses.length === 1 ? 'مادة واحدة' : g.courses.length === 2 ? 'مادتين' : `${g.courses.length} مواد`}. أضف معدلك السابق وساعاته لتعرف التراكمي.`,
+    badge: g.system === 's5' ? 'النظام السعودي من 5' : g.system === 's4' ? 'النظام السعودي من 4' : 'نظام 4 بالسالب',
+    rows: [
+      ['المعدل الفصلي', g2(g.semGpa)],
+      ['ساعات الفصل', hrs(g.semHours)],
+      ['نقاط الفصل', g2(g.semPoints)],
+      ...(g.hasPrev ? ([['المعدل التراكمي', g2(g.cumGpa)], ['مجموع الساعات', hrs(g.totalHours)]] as [string, string][]) : []),
+    ],
+  };
+}

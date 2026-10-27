@@ -5,7 +5,7 @@ import { odo } from '../lib/format';
 export interface Props { items: CalculatorMeta[]; compact?: boolean; id?: string; headingLevel?: 2 | 3 }
 const { items, compact = false, id } = Astro.props;
 const catName = (c: CalculatorMeta) => CATEGORIES.find((x) => x.key === c.categories[0])!.name;
-const GLYPH: Record<string, string> = { 'end-of-service': '51', vat: '5%', loan: '48', percentage: '%', discount: '−', age: '31', bmi: '24', zakat: '2.5' };
+const GLYPH: Record<string, string> = { 'end-of-service': '51', vat: '5%', loan: '48', percentage: '%', discount: '−', age: '31', bmi: '24', zakat: '2.5', gpa: '4.8' };
 ---
 {compact ? (
   <ul class="mini" id={id}>
