@@ -103,3 +103,12 @@ export function gpaTable(g: Gpa | null): string {
   const rows = g.courses.map((c) => `<tr><td>المادة ${c.n}</td><td>${c.grade} (${GRADE_AR[c.grade]})</td><td class="nums">${c.hours}</td><td class="nums">${f(c.weight)}</td><td class="nums">${f(c.points)}</td></tr>`).join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>المادة</th><th>التقدير</th><th>الساعات</th><th>الوزن</th><th>النقاط</th></tr></thead><tbody>${rows}<tr class="total"><td colspan="2">المجموع ÷ الساعات = ${f(g.semGpa)}</td><td class="nums">${g.semHours}</td><td></td><td class="nums">${f(g.semPoints)}</td></tr></tbody></table></div>`;
 }
+
+import type { GpaTarget } from './calc/gpa-target';
+/** Required semester GPA for common semester loads. */
+export function gpaTargetTable(t: GpaTarget | null): string {
+  if (!t) return '';
+  const f = (n: number) => (n > t.max ? 'غير ممكن' : n <= t.min ? 'محقق بأي درجة' : (Math.round(n * 100) / 100).toFixed(2));
+  const rows = t.byLoad.map((r) => `<tr><td class="nums">${r.hours} ساعة</td><td>${f(r.needed)}</td></tr>`).join('');
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>ساعات الفصل القادم</th><th>المعدل الفصلي المطلوب</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}

@@ -235,3 +235,27 @@ export function gpaView(g: Gpa): View {
     ],
   };
 }
+
+import type { GpaTarget } from './calc/gpa-target';
+export function gpaTargetView(t: GpaTarget): View {
+  const f = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
+  const rows: [string, string][] = [
+    ['أعلى تراكمي بعد الفصل القادم', `${f(t.bestAfterNext)} (لو حصلت على ${t.max} في كل المواد)`],
+  ];
+  if (t.hoursAtMax !== null) rows.push(['ساعات تحتاجها بالدرجة الكاملة', `${Math.ceil(t.hoursAtMax)} ساعة`]);
+  if (t.bestAtGraduation !== null) rows.push(['أعلى معدل ممكن عند التخرج', f(t.bestAtGraduation)]);
+  return {
+    label: 'المعدل الفصلي المطلوب',
+    value: t.status === 'already' ? t.min : Math.round(t.needed * 100) / 100,
+    decimals: 2,
+    unit: `من ${t.max}`,
+    sentence:
+      t.status === 'impossible'
+        ? `لا يمكن الوصول إليه في فصل واحد، لأنه يحتاج معدلاً فصلياً ${f(t.needed)} وهو أعلى من ${t.max}. تحتاج نحو ${Math.ceil(t.hoursAtMax ?? 0)} ساعة كلها بالدرجة الكاملة.`
+        : t.status === 'already'
+          ? 'معدلك سيبقى فوق هدفك بعد الفصل القادم مهما كانت درجاتك فيه.'
+          : `تحتاج معدلاً فصلياً ${f(t.needed)} من ${t.max} في الفصل القادم لتصل إلى هدفك.`,
+    badge: t.status === 'impossible' ? 'غير ممكن في فصل واحد' : t.status === 'already' ? 'الهدف محقق' : 'ممكن',
+    rows,
+  };
+}

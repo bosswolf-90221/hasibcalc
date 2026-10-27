@@ -1,0 +1,95 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import SelIn from '../components/SelIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcGpaTarget, type TargetSystem } from '../lib/calc/gpa-target';
+import { gpaTargetView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { gpaTargetTable } from '../lib/exhibits-extra';
+
+const d = { system: 's5' as TargetSystem, current: 3.5, doneHours: 60, target: 3.75, nextHours: 15 };
+const r = calcGpaTarget({ ...d, leftHours: null });
+const view = r.ok ? gpaTargetView(r.value) : errorView(r, 'المعدل الفصلي المطلوب')!;
+const SYS = [{ value: 's5', label: 'من 5' }, { value: 's4', label: 'من 4' }];
+const ex = calcGpaTarget({ system: 's4', current: 3.37, doneHours: 108, target: 3.7, nextHours: 18, leftHours: 72 });
+const e = ex.ok ? ex.value : null;
+const f2 = (n?: number | null) => (n == null ? '' : (Math.round(n * 100) / 100).toFixed(2));
+---
+<CalcLayout slug="gpa-target" lede="اكتب معدلك التراكمي الآن، وعدد ساعاتك، والمعدل الذي تريد الوصول إليه، ونحسب المعدل الذي تحتاجه في الفصل القادم، ونخبرك إن كان الهدف ممكناً.">
+  <div data-calc="gpa-target">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات المعدل المستهدف">
+        معدلي التراكمي <NumIn name="current" label="المعدل التراكمي الحالي" value={d.current} width={4} />
+        <SelIn name="system" label="نظام المعدل" options={SYS} value={d.system} />
+        بعد <NumIn name="doneHours" label="الساعات المجتازة" value={d.doneHours} width={3} /> ساعة،
+        وأريد أن أصل إلى <NumIn name="target" label="المعدل المستهدف" value={d.target} width={4} />،
+        وسأدرس في الفصل القادم <NumIn name="nextHours" label="ساعات الفصل القادم" value={d.nextHours} width={2} /> ساعة،
+        وباقي لي للتخرج <NumIn name="leftHours" label="الساعات الباقية للتخرج (اختياري)" value="" width={3} placeholder="؟" /> ساعة.
+      </form>
+      <FieldErrors names={['current', 'system', 'doneHours', 'target', 'nextHours', 'leftHours']} />
+      <p class="hint">الساعات الباقية للتخرج اختيارية؛ اكتبها لتعرف أعلى معدل يمكنك الوصول إليه عند التخرج.</p>
+    </div>
+
+    <ResultCard view={view} notes={[
+      'الحساب يفترض أن كل الساعات تدخل في المعدل. المواد المنسحب منها لا تُحسب.',
+      'إن كانت جامعتك تستبدل درجة المادة المعادة بآخر درجة، فإعادة مادة ضعيفة قد ترفعك أسرع مما يظهر هنا.',
+    ]}>
+      <p class="formula" slot="formula"><code>المعدل المطلوب = (الهدف × (ساعاتك + ساعات الفصل) − معدلك × ساعاتك) ÷ ساعات الفصل</code></p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> المطلوب حسب عدد ساعات الفصل</h2>
+      <div data-x="table" set:html={gpaTargetTable(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <div class="example">
+      <p><strong>الجواب المختصر:</strong> اضرب معدلك المستهدف في مجموع ساعاتك بعد الفصل، واطرح منه نقاطك الحالية (معدلك × ساعاتك)، ثم اقسم الناتج على ساعات الفصل القادم. إن خرج الرقم أكبر من 5 (أو 4)، فالهدف غير ممكن في فصل واحد.</p>
+    </div>
+
+    <h2>مثال حقيقي: هل يصل معدلي من 3.37 إلى 3.7؟</h2>
+    <div class="example">
+      <p>طالب صيدلة معدله 3.37 من 4 بعد 108 ساعات، وباقي له 72 ساعة للتخرج، ويريد 3.7.</p>
+      <p>نقاطه الآن: 3.37 × 108 = 363.96. ليصل إلى 3.7 يحتاج نحو {Math.ceil(e?.hoursAtMax ?? 0)} ساعة كلها بتقدير A، وهو لا يملك إلا 72 ساعة. حتى لو حصل على 4 في كل ما بقي، فأعلى معدل يصل إليه عند التخرج هو <strong class="num">{f2(e?.bestAtGraduation)}</strong>.</p>
+      <p>الخلاصة: 3.7 غير ممكن، لكن 3.6 ممكن إذا حافظ على تقديرات عالية جداً.</p>
+    </div>
+
+    <h2>لماذا يصعب رفع المعدل كلما تقدمت؟</h2>
+    <p>لأن المعدل التراكمي متوسط لكل ساعاتك من البداية. فكل فصل جديد يُقسم على عدد أكبر من الساعات، فيصغر أثره. لذلك السنة الأولى هي الأكثر تأثيراً، ولذلك ترى في الجدول أعلاه أن الفصل الأثقل بالساعات يحتاج معدلاً أقل للوصول إلى الهدف نفسه.</p>
+    <p>ولحساب معدلك من تقديرات المواد مباشرة، استخدم <a href="/gpa/">حاسبة المعدل الجامعي</a>.</p>
+
+    <Faq title="أسئلة شائعة" items={[
+      { q: "كيف أعرف كم أحتاج في الفصل القادم لأرفع معدلي؟", a: "اضرب المعدل الذي تريده في مجموع ساعاتك بعد الفصل، واطرح نقاطك الحالية، واقسم الباقي على ساعات الفصل. الحاسبة أعلاه تفعل ذلك وتخبرك إن كان ممكناً." },
+      { q: "هل يمكن رفع المعدل من 2 إلى 3.5؟", a: "يعتمد على عدد ساعاتك المجتازة والباقية. كلما كانت ساعاتك قليلة كان ممكناً أكثر. اكتب أرقامك والساعات الباقية للتخرج لترى أعلى معدل يمكنك الوصول إليه." },
+      { q: "ما أعلى معدل أصل إليه عند التخرج؟", a: "اكتب الساعات الباقية للتخرج في الحاسبة، فنحسب معدلك إذا حصلت على الدرجة الكاملة في كل ما بقي. لا يمكن تجاوز هذا الرقم." },
+      { q: "هل إعادة المادة ترفع المعدل؟", a: "في الجامعات التي تحسب المادة المعادة بآخر درجة، نعم، وقد تكون أسرع طريقة. راجع لائحة جامعتك أو عمادة القبول والتسجيل." },
+    ]} />
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcGpaTarget, type TargetSystem } from '../lib/calc/gpa-target';
+  import { gpaTargetView } from '../lib/views-extra';
+  import { gpaTargetTable } from '../lib/exhibits-extra';
+  const root = document.querySelector<HTMLElement>('[data-calc="gpa-target"]')!;
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcGpaTarget({
+        system: (f.system as TargetSystem) || 's5',
+        current: num(f.current),
+        doneHours: num(f.doneHours),
+        target: num(f.target),
+        nextHours: num(f.nextHours),
+        leftHours: (f.leftHours ?? '').trim() === '' ? null : num(f.leftHours),
+      });
+      return { result, view: result.ok ? gpaTargetView(result.value) : null };
+    },
+    extras: (o) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = gpaTargetTable(o); },
+  });
+</script>

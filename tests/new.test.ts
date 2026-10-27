@@ -186,3 +186,25 @@ describe('gpa', () => {
     expect(calcGpa({ system: 's5', prevGpa: null, prevHours: null, courses: C(['', null]) }).ok).toBe(false);
   });
 });
+
+import { calcGpaTarget } from '../src/lib/calc/gpa-target';
+describe('gpa target', () => {
+  test('reachable: 3.5 after 60h, want 3.75 with 15h → 4.75', () => {
+    const t = val(calcGpaTarget({ system: 's5', current: 3.5, doneHours: 60, target: 3.75, nextHours: 15, leftHours: null }));
+    expect(t.needed).toBeCloseTo(4.75, 6);
+    expect(t.status).toBe('reachable');
+  });
+  test('impossible in one semester, and the pharmacy example', () => {
+    const t = val(calcGpaTarget({ system: 's4', current: 3.37, doneHours: 108, target: 3.7, nextHours: 18, leftHours: 72 }));
+    expect(t.status).toBe('impossible');
+    expect(t.hoursAtMax).toBeCloseTo(118.8, 6);
+    expect(t.bestAtGraduation).toBeCloseTo((363.96 + 288) / 180, 6);
+  });
+  test('already safe when even the minimum keeps you above target', () => {
+    expect(val(calcGpaTarget({ system: 's5', current: 4.8, doneHours: 120, target: 4.3, nextHours: 15, leftHours: null })).status).toBe('already');
+  });
+  test('validation', () => {
+    expect(calcGpaTarget({ system: 's4', current: 4.5, doneHours: 60, target: 3, nextHours: 15, leftHours: null }).ok).toBe(false);
+    expect(calcGpaTarget({ system: 's5', current: 3, doneHours: 60, target: 4, nextHours: 15, leftHours: 10 }).ok).toBe(false);
+  });
+});

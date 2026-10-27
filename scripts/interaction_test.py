@@ -167,6 +167,9 @@ with sync_playwright() as p:
     pg.select_option('#f-g6', 'A-'); pg.fill('#f-h6', '3'); pg.wait_for_timeout(300)
     check('gpa: minus grade flagged on the Saudi scale', pg.locator('#f-g6-err').is_visible())
 
+    pg.goto(B + '/gpa-target/?system=s4&current=3.37&doneHours=108&target=3.7&nextHours=18&leftHours=72'); pg.wait_for_timeout(500)
+    check('gpa-target: impossible case shows 5.68 and best 3.62 at graduation', val(pg) == '5.68' and '3.62' in pg.locator('[data-r="rows"]').inner_text(), val(pg))
+
     check('no page errors during interaction', not errs, '; '.join(errs))
     b.close()
 print(f'\n{len(fails)} failed' if fails else '\nall interaction checks passed'); sys.exit(1 if fails else 0)
