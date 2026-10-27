@@ -10,11 +10,18 @@ import { dateSpanView } from '../lib/views-extra';
 import { errorView } from '../lib/views';
 import { spanBlocks } from '../lib/exhibits-extra';
 import { toISODate } from '../lib/calc/core';
+import { arDate } from '../lib/format';
+import { toHijri, HIJRI_MONTHS, WEEKDAYS } from '../lib/calc/hijri';
 
 const today = toISODate(new Date());
 const end = `${Number(today.slice(0, 4)) + 1}-01-01`;
 const r = calcDateSpan({ startDate: today, endDate: end, includeEnd: false, weekend: 'sat-sun' });
 const view = r.ok ? dateSpanView(r.value, false) : errorView(r, 'عدد الأيام')!;
+const MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+const dim = (y: number, m: number) => new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+const MONTH_ROWS = MONTHS.map((n, m) => ({ n, a: dim(2026, m), b: dim(2027, m), c: dim(2028, m) }));
+const plus = (n: number) => { const d = new Date(Date.UTC(2027, 0, 1) + n * 86_400_000); const h = toHijri(d); return `${WEEKDAYS[d.getUTCDay()]} ${arDate(toISODate(d))} (${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ)`; };
+const ADD_ROWS = [30, 60, 90, 100, 180, 365].map((n) => ({ n, d: plus(n) }));
 ---
 <CalcLayout slug="days-between" lede="اكتب تاريخ البداية والنهاية، ونحسب المدة بالأيام والأسابيع والأشهر، وعدد أيام العمل بحسب عطلة نهاية الأسبوع في بلدك.">
   <div data-calc="days-between">
@@ -38,6 +45,34 @@ const view = r.ok ? dateSpanView(r.value, false) : errorView(r, 'عدد الأي
   </div>
 
   <Fragment slot="article">
+    <div class="example">
+      <p><strong>الجواب المختصر:</strong> عدد الأيام بين تاريخين = تاريخ النهاية − تاريخ البداية بالأيام الفعلية في التقويم. الشهر الميلادي 28 أو 29 أو 30 أو 31 يوماً، والسنة 365 يوماً، أو 366 في السنة الكبيسة، أي 52 أسبوعاً ويوماً أو يومين.</p>
+    </div>
+
+    <h2>ما التاريخ بعد عدد من الأيام؟</h2>
+    <form class="add-days" onsubmit="return false" aria-label="إضافة أيام إلى تاريخ">
+      <label for="ad-n">التاريخ بعد</label>
+      <input class="in" id="ad-n" type="text" inputmode="numeric" value="90" style="width:5ch" autocomplete="off" />
+      <span>يوماً من</span>
+      <label class="sr-only" for="ad-d">تاريخ البداية</label>
+      <input class="in" id="ad-d" type="date" value={today} />
+      <label class="sr-only" for="ad-dir">قبل أو بعد</label>
+      <select class="in sel" id="ad-dir"><option value="1">بعد</option><option value="-1">قبل</option></select>
+      <output id="ad-out" for="ad-n ad-d ad-dir" aria-live="polite"></output>
+    </form>
+    <p>مفيد لمعرفة نهاية مدة 90 يوماً، أو فترة التجربة، أو موعد مراجعة بعد عدد من الأيام. اكتب عدداً سالباً أو اختر «قبل» لتعرف التاريخ قبل المدة.</p>
+    <div class="scroll-x"><table>
+      <thead><tr><th>بعد</th><th>من 1 يناير 2027 يكون التاريخ</th></tr></thead>
+      <tbody>{ADD_ROWS.map((r) => <tr><td>{r.n} يوماً</td><td>{r.d}</td></tr>)}</tbody>
+    </table></div>
+
+    <h2>كم يوماً في كل شهر؟</h2>
+    <div class="scroll-x"><table>
+      <thead><tr><th>الشهر</th><th>2026</th><th>2027</th><th>2028</th></tr></thead>
+      <tbody>{MONTH_ROWS.map((r) => <tr><td>{r.n}</td><td>{r.a}</td><td>{r.b}</td><td>{r.c}</td></tr>)}</tbody>
+    </table></div>
+    <p>فبراير 28 يوماً، إلا في السنة الكبيسة فيكون 29 يوماً، والسنة الكبيسة القادمة 2028.</p>
+
     <h2>كيف يُحسب عدد الأيام بين تاريخين؟</h2>
     <p>نطرح تاريخ البداية من تاريخ النهاية بالأيام الفعلية في التقويم، فنحسب طول كل شهر كما هو (28 أو 29 أو 30 أو 31 يوماً) ونراعي السنة الكبيسة. ثم نحوّل الناتج إلى أسابيع وأشهر كاملة.</p>
     <h2>هل أحسب اليوم الأخير؟</h2>
@@ -54,6 +89,11 @@ const view = r.ok ? dateSpanView(r.value, false) : errorView(r, 'عدد الأي
     <Faq title="أسئلة شائعة" items={[
       { q: "كيف أعرف كم يوماً باقٍ على مناسبة؟", a: "اجعل تاريخ البداية اليوم، وتاريخ النهاية يوم المناسبة، واختر «بدون اليوم الأخير»." },
       { q: "هل يمكن أن يكون تاريخ النهاية قبل البداية؟", a: "نعم، نحسب المدة بين التاريخين وننبهك أن الترتيب معكوس." },
+      { q: "الشهر كم يوم؟", a: "الشهر الميلادي 30 أو 31 يوماً، إلا فبراير فهو 28 يوماً و29 في السنة الكبيسة. والشهر الهجري 29 أو 30 يوماً." },
+      { q: "السنة كم يوم وكم أسبوع؟", a: "السنة الميلادية 365 يوماً، أي 52 أسبوعاً ويوماً واحداً، والكبيسة 366 يوماً. والسنة الهجرية 354 أو 355 يوماً." },
+      { q: "3 أشهر كم يوم؟", a: "بين 89 و92 يوماً بحسب الأشهر. مثلاً من 1 يناير إلى 1 أبريل 2027 تسعون يوماً، ومن 1 يوليو إلى 1 أكتوبر 92 يوماً." },
+      { q: "كيف أحسب التاريخ بعد 90 يوماً؟", a: "اكتب 90 والتاريخ في أداة «ما التاريخ بعد عدد من الأيام» أعلاه، فتظهر لك النتيجة بالميلادي والهجري واليوم من الأسبوع." },
+      { q: "هل تخصم الحاسبة العطل الرسمية؟", a: "لا، تخصم عطلة نهاية الأسبوع فقط. اطرح أيام العطل الرسمية الواقعة في المدة بنفسك." },
     ]} />
   </Fragment>
 </CalcLayout>
@@ -64,12 +104,33 @@ const view = r.ok ? dateSpanView(r.value, false) : errorView(r, 'عدد الأي
   import { dateSpanView } from '../lib/views-extra';
   import { spanBlocks } from '../lib/exhibits-extra';
   import { localTodayISO } from '../lib/calc/core';
+  import { toHijri, HIJRI_MONTHS, WEEKDAYS } from '../lib/calc/hijri';
   const root = document.querySelector<HTMLElement>('[data-calc="days-between"]')!;
   const p = new URLSearchParams(location.search);
   const s = root.querySelector<HTMLInputElement>('#f-startDate')!;
   const e = root.querySelector<HTMLInputElement>('#f-endDate')!;
   if (!p.has('startDate')) { s.value = localTodayISO(); s.dataset.default = s.value; }
   if (!p.has('endDate')) { e.value = `${Number(s.value.slice(0, 4)) + 1}-01-01`; e.dataset.default = e.value; }
+  // "date after N days" tool in the article
+  {
+    const n = document.getElementById('ad-n') as HTMLInputElement;
+    const d = document.getElementById('ad-d') as HTMLInputElement;
+    const dir = document.getElementById('ad-dir') as HTMLSelectElement;
+    const out = document.getElementById('ad-out')!;
+    const MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    const toW = (x: string) => x.replace(/[٠-٩]/g, (c) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(c))).replace(/[,،\s]/g, '');
+    if (!p.has('ad')) { d.value = localTodayISO(); }
+    const run = () => {
+      const k = Number(toW(n.value));
+      const base = d.value ? new Date(d.value + 'T00:00:00Z') : null;
+      if (!base || !Number.isInteger(k) || Math.abs(k) > 36500) { out.textContent = 'اكتب عدد أيام صحيحاً وتاريخاً.'; return; }
+      const t = new Date(base.getTime() + Number(dir.value) * k * 86_400_000);
+      const h = toHijri(t);
+      out.textContent = `${WEEKDAYS[t.getUTCDay()]} ${t.getUTCDate()} ${MONTHS[t.getUTCMonth()]} ${t.getUTCFullYear()} (${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ)`;
+    };
+    [n, d, dir].forEach((el) => el.addEventListener('input', run));
+    run();
+  }
   mountCalculator(root, {
     compute: (f) => {
       const includeEnd = f.includeEnd === 'yes';
@@ -79,3 +140,8 @@ const view = r.ok ? dateSpanView(r.value, false) : errorView(r, 'عدد الأي
     extras: (sp) => { root.querySelector<HTMLElement>('[data-x="span"]')!.innerHTML = spanBlocks(sp); },
   });
 </script>
+
+<style>
+  .add-days { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-weight: 600; margin: 8px 0 12px; }
+  .add-days output { flex-basis: 100%; color: var(--deep); font-size: 1.05rem; }
+</style>

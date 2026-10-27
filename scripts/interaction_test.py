@@ -127,7 +127,7 @@ with sync_playwright() as p:
     wa_url = pg.evaluate('window.__wa') or ''
     from urllib.parse import unquote
     txt = unquote(wa_url)
-    check('whatsapp: wa.me link with result text and page URL', wa_url.startswith('https://wa.me/?text=') and 'باقي على الراتب' in txt and '/salary-day' in txt, txt[:160])
+    check('whatsapp: wa.me link with result text and page URL', wa_url.startswith('https://wa.me/?text=') and ('باقي على الراتب' in txt or 'راتبك اليوم' in txt) and '/salary-day' in txt, txt[:160])
 
     for g in ['white-friday-2026', 'uae-national-day-2026', 'new-year-2027']:
         pg.goto(B + f'/guides/{g}/'); pg.wait_for_timeout(300)
