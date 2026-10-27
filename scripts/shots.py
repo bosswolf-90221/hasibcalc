@@ -3,6 +3,8 @@ import sys, json
 from playwright.sync_api import sync_playwright
 import os
 BASE = os.environ.get('BASE_URL', 'http://localhost:4321')
+if len(sys.argv) < 2 or sys.argv[1].startswith('-'):
+    sys.exit('usage: python3 scripts/shots.py OUTPUT_DIR   (BASE_URL env sets the site, default http://localhost:4321)')
 OUT = sys.argv[1]
 pages = ['/', '/end-of-service/', '/vat/', '/loan/', '/percentage/', '/discount/', '/age/', '/bmi/', '/zakat/', '/hijri/', '/days-between/', '/pregnancy/', '/calories/', '/category/dates/', '/category/money/', '/about/', '/privacy/', '/contact/', '/nope/']
 report = {}
