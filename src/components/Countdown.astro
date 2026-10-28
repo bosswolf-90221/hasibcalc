@@ -10,6 +10,7 @@ const unit = (n: number) => (n === 1 ? 'يوم واحد' : n === 2 ? 'يومان
 <div class="countdown" data-countdown={target} data-today={today} data-done={done} role="status" aria-live="polite">
   <p class="cd-label" data-cd="label">{left > 0 ? label : left === 0 ? today : done}</p>
   <p class="cd-value"><span class="odo" data-cd="value" set:html={odo(String(Math.max(left, 0)))} /><span class="cd-unit" data-cd="unit">{left > 0 ? unit(left) : ''}</span></p>
+  <p class="cd-clock" data-cd="clock" hidden aria-hidden="true"></p>
   <p class="cd-note" data-cd="note">{note}</p>
 </div>
 
@@ -24,5 +25,22 @@ const unit = (n: number) => (n === 1 ? 'يوم واحد' : n === 2 ? 'يومان
     $('unit').textContent = left > 0 ? unit(left) : '';
     if (left === 0) $('label').textContent = box.dataset.today!;
     if (left < 0) $('label').textContent = box.dataset.done!;
+    // exact time left to the start of the day (visitor's clock), ticking every second
+    if (left > 0) {
+      const [y, m, d] = box.dataset.countdown!.split('-').map(Number);
+      const end = new Date(y, m - 1, d).getTime();
+      const clock = $('clock');
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const tick = () => {
+        const ms = end - Date.now();
+        if (ms <= 0) { clock.hidden = true; return; }
+        const s = Math.floor(ms / 1000);
+        const dd = Math.floor(s / 86400), hh = Math.floor((s % 86400) / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
+        clock.innerHTML = `<span>بالضبط:</span> <b>${dd}</b> ${unit(dd)} <b>${hh}</b> ساعة <b>${mm}</b> دقيقة <b><i>${pad(ss)}</i></b> ثانية`;
+        clock.hidden = false;
+      };
+      tick();
+      window.setInterval(tick, 1000);
+    }
   }
 </script>

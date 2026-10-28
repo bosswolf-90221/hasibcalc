@@ -484,3 +484,53 @@ select.in.sel { appearance: none; cursor: pointer; padding: 0 12px 0 30px; font-
 .countdown .odo { font-size: clamp(2.6rem, 8vw, 3.8rem); line-height: 1; }
 .countdown .cd-unit { font-size: 1.05rem; color: #cfe6dd; padding-bottom: 6px; }
 .countdown .cd-note { margin: 8px 0 0; font-size: .88rem; color: #9fc6b8; }
+
+/* ---- interactions (site-wide). Everything below is decoration: content works and reads the same without it. */
+/* reading progress: a mint hairline that fills as the page scrolls (browsers with scroll timelines only) */
+.read-progress { position: fixed; inset-inline: 0; top: 0; height: 3px; z-index: 60; pointer-events: none; display: none; }
+@supports (animation-timeline: scroll()) {
+  .read-progress { display: block; background: var(--accent); transform-origin: right; transform: scaleX(0);
+    animation-name: read-fill; animation-timing-function: linear; animation-fill-mode: both; animation-timeline: scroll(root block); }
+  @keyframes read-fill { to { transform: scaleX(1); } }
+}
+/* article blocks rise in as they enter the screen */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .article > h2, .article > .example, .article > .scroll-x, .article > ol, .article > table, .faq details {
+      animation-name: rise; animation-timing-function: linear; animation-fill-mode: both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
+    @keyframes rise { from { opacity: .25; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  }
+}
+/* press feedback */
+.btn:active, .pills label:active, .topsearch:active, .to-top:active { transform: scale(.96); }
+.tile:active { transform: translateY(-2px) scale(.985); }
+.mini a:active, .guide-list a:active { transform: scale(.985); }
+.btn, .pills label, .topsearch { transition-property: background-color, color, transform; transition-duration: .2s; }
+/* number field: a quick lift when stepped with the arrow keys */
+.in.nudge { animation: nudge .25s ease; }
+@keyframes nudge { 40% { transform: translateY(-3px); } }
+/* result lands on a new value: soft mint glow on the number */
+[data-result].settled .r-value .odo i:not(.c) { animation: settle .6s ease; }
+@keyframes settle { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mint) 70%, transparent); } 100% { box-shadow: 0 0 0 8px transparent; } }
+/* FAQ: + turns into × and the answer slides in */
+.faq summary::after { content: '+'; display: inline-block; transition: transform .25s ease; font-size: 1.3rem; line-height: 1; }
+.faq details[open] summary::after { content: '+'; transform: rotate(45deg); }
+.faq summary { transition: color .2s; }
+.faq summary:hover { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .faq details[open] p { animation: reveal .3s ease; } }
+/* tables: click a number to copy it */
+.article .data-table td.num, .article td.num { cursor: copy; }
+.article td.copied { animation: copied .9s ease; }
+@keyframes copied { 0%, 40% { background: color-mix(in srgb, var(--mint) 45%, transparent); } }
+.copy-tip { position: absolute; z-index: 70; transform: translateX(-50%); background: var(--deep); color: var(--mint); font-size: .8rem; padding: 6px 10px; border-radius: 8px; pointer-events: none; white-space: nowrap; animation: reveal .2s ease; }
+/* back to top */
+.to-top { position: fixed; inset-inline-start: max(16px, env(safe-area-inset-left)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40;
+  width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--deep); color: var(--mint); display: grid; place-items: center; cursor: pointer;
+  box-shadow: 0 10px 24px -12px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(12px); transition: opacity .25s, transform .25s, visibility .25s; }
+.to-top.show { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { background: var(--em-2); }
+/* countdown: exact time left, seconds ticking */
+.countdown .cd-clock { margin: 6px 0 0; font-size: .95rem; color: #cfe6dd; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.countdown .cd-clock b { font-weight: 500; color: var(--mint); font-size: 1.15rem; }
+.countdown .cd-clock span { color: #9fc6b8; font-size: .82rem; }
+.countdown .cd-clock i { font-style: normal; display: inline-block; min-width: 2ch; }

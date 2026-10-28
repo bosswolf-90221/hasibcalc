@@ -53,6 +53,7 @@ const ld = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.n
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   </head>
   <body>
+    <div class="read-progress" aria-hidden="true"></div>
     <a class="skip" href="#main">انتقل إلى المحتوى</a>
     <header class="site-head">
       <div class="container topnav">
@@ -117,6 +118,8 @@ const ld = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.n
         <p class="legal">© {new Date().getFullYear()} {SITE.name}. النتائج تقديرية لأغراض المعلومات ولا تُغني عن استشارة مختص.</p>
       </div>
     </footer>
+    <button class="to-top" type="button" data-to-top aria-label="العودة إلى أعلى الصفحة"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg></button>
+    <script>import '../scripts/interactions';</script>
     <script>
       import { CALCULATORS } from '../data/calculators';
       const dlg = document.querySelector<HTMLDialogElement>('#finder')!;

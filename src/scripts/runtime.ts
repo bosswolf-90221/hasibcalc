@@ -66,13 +66,27 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     }
   }
 
+  // a short glow on the result when it lands on a new value (typing bursts settle once, after the last key)
+  let settleTimer = 0;
+  function settle() {
+    result.classList.remove('settled');
+    void result.offsetWidth;
+    result.classList.add('settled');
+  }
+  function settleSoon() {
+    clearTimeout(settleTimer);
+    settleTimer = window.setTimeout(settle, 280);
+  }
+
   function animateTo(target: number, decimals: number) {
     cancelAnimationFrame(raf);
     const burst = performance.now() - lastInput < 260;
     const tiny = Math.abs(target - shown) <= Math.abs(shown) * 0.002;
     if (reduceMotion() || burst || tiny) {
+      const changed = shown !== target;
       shown = target;
       valueEl.innerHTML = odo(fmt(target, decimals));
+      if (changed && !reduceMotion()) settleSoon();
       return;
     }
     const from = shown;
@@ -83,7 +97,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       shown = from + (target - from) * e;
       valueEl.innerHTML = odo(fmt(shown, decimals));
       if (p < 1) raf = requestAnimationFrame(step);
-      else shown = target;
+      else { shown = target; settle(); }
     };
     raf = requestAnimationFrame(step);
   }
