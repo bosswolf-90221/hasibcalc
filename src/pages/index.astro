@@ -77,7 +77,7 @@ const chips = ['end-of-service', 'hijri', 'loan', 'vat', 'pregnancy', 'calories'
     </section>
 
     <section class="sec" aria-labelledby="guides-h">
-      <div class="sec-head"><h2 id="guides-h">أدلة مختصرة</h2><p>شرح بأمثلة محسوبة لأكثر الأسئلة تكراراً. <a href="/guides/" style="color:var(--accent)">كل الأدلة</a></p></div>
+      <div class="sec-head"><h2 id="guides-h">أدلة مختصرة</h2><p>شرح بأمثلة محسوبة لأكثر الأسئلة تكراراً. <a href="/guides/" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px">كل الأدلة</a></p></div>
       <Reveal client:idle selector="li"><ul class="guide-list">{GUIDES.slice(0, 3).map((g) => <li><a href={`/guides/${g.slug}/`}><small>{g.kicker}</small><b>{g.title}</b><span>{g.description}</span></a></li>)}</ul></Reveal>
     </section>
 
