@@ -224,7 +224,8 @@ details.how .how-body { padding-bottom: 14px; }
 .ledger .muted { color: var(--soft); font-size: .86rem; }
 .zl td:nth-child(2) { color: var(--soft); }
 .zl tr.total td:nth-child(2) { color: var(--ink); }
-.scroll-x { overflow-x: auto; }
+.scroll-x { overflow-x: auto; max-width: 100%; }
+.article.card { min-width: 0; }
 
 /* timeline (end of service) */
 .tl { position: relative; padding-top: 36px; }

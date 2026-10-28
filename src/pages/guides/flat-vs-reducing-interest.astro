@@ -1,7 +1,23 @@
 ---
 import GuideLayout from '../../layouts/GuideLayout.astro';
+import Faq from '../../components/Faq.astro';
+import { monthlyPayment, calcLoan } from '../../lib/calc/loan';
+import { money } from '../../lib/format';
+
+// Worked example: 100,000 AED, 4 years, 4.5% reducing.
+const P = 100000, RATE = 4.5, N = 48, r = RATE / 100 / 12;
+const pay = monthlyPayment(P, RATE / 100, N);
+const rows: { m: number; open: number; int: number; prin: number; close: number }[] = [];
+let bal = P;
+for (let m = 1; m <= 6; m++) { const int = bal * r; const prin = pay - int; rows.push({ m, open: bal, int, prin, close: bal - prin }); bal -= prin; }
+const loan = calcLoan({ principal: P, annualRatePercent: RATE, months: N, method: 'reducing' });
+const years = loan.ok ? loan.value.years : [];
 ---
 <GuideLayout slug="flat-vs-reducing-interest">
+  <div class="example">
+    <p><strong>الجواب المختصر:</strong> الفائدة المتناقصة تُحسب كل شهر على الرصيد المتبقي فقط: فائدة الشهر = الرصيد المتبقي × (النسبة السنوية ÷ 12). والفائدة الثابتة تُحسب على المبلغ كله طوال المدة. لذلك الفائدة الثابتة 4.5% تكلّف تقريباً مثل متناقصة 8.4%.</p>
+  </div>
+
   <h2>الفرق في جملة واحدة</h2>
   <p><strong>الفائدة الثابتة</strong> تُحسب على كامل مبلغ القرض طوال المدة، حتى بعد أن تسدد جزءاً منه. أما <strong>الفائدة المتناقصة</strong> فتُحسب كل شهر على الرصيد المتبقي فقط، فتقل الفائدة كلما سددت.</p>
 
@@ -23,6 +39,26 @@ import GuideLayout from '../../layouts/GuideLayout.astro';
     <p><strong>المتناقصة:</strong> القسط = الأصل × ر ÷ (1 − (1 + ر)<sup>−ن</sup>)، حيث ر الفائدة الشهرية (4.5% ÷ 12) ون عدد الأشهر 48. الناتج 2,280.35.</p>
   </div>
 
+  <h2>طريقة حساب الفائدة المتناقصة خطوة بخطوة</h2>
+  <p>القسط الشهري ثابت ({money(pay)} درهم في مثالنا)، لكن ما بداخله يتغيّر كل شهر: جزء فائدة يقل، وجزء من أصل القرض يزيد.</p>
+  <ol>
+    <li><strong>احسب الفائدة الشهرية:</strong> 4.5% ÷ 12 = 0.375% شهرياً.</li>
+    <li><strong>فائدة الشهر الأول:</strong> 100,000 × 0.375% = 375 درهماً.</li>
+    <li><strong>ما يُسدَّد من الأصل:</strong> القسط − الفائدة = {money(pay)} − 375 = {money(rows[0].prin)} درهماً.</li>
+    <li><strong>الرصيد الجديد:</strong> 100,000 − {money(rows[0].prin)} = {money(rows[0].close)} درهماً.</li>
+    <li><strong>كرّر كل شهر</strong> على الرصيد الجديد، فتقل الفائدة شهراً بعد شهر.</li>
+  </ol>
+  <div class="scroll-x"><table>
+    <thead><tr><th>الشهر</th><th>الرصيد في أوله</th><th>الفائدة</th><th>من الأصل</th><th>الرصيد بعده</th></tr></thead>
+    <tbody>{rows.map((x) => <tr><td>{x.m}</td><td>{money(x.open)}</td><td>{money(x.int)}</td><td>{money(x.prin)}</td><td>{money(x.close)}</td></tr>)}</tbody>
+  </table></div>
+  <p>وعلى مستوى السنوات، يتغيّر توزيع ما تدفعه هكذا:</p>
+  <div class="scroll-x"><table>
+    <thead><tr><th>السنة</th><th>الفائدة المدفوعة</th><th>من الأصل</th><th>الرصيد في آخرها</th></tr></thead>
+    <tbody>{years.map((y) => <tr><td>{y.year}</td><td>{money(y.interest)}</td><td>{money(y.principal)}</td><td>{money(y.balance)}</td></tr>)}</tbody>
+  </table></div>
+  <p>لاحظ أن الفائدة في السنة الأولى أكبر بكثير منها في الأخيرة. لذلك السداد المبكر في أول القرض يوفّر أكثر.</p>
+
   <h2>متى تُستخدم كل واحدة؟</h2>
   <ul>
     <li>القروض الشخصية وتمويل السيارات تُعرض غالباً بفائدة ثابتة، لأن الرقم يبدو أصغر.</li>
@@ -37,4 +73,11 @@ import GuideLayout from '../../layouts/GuideLayout.astro';
     <li>رسوم السداد المبكر.</li>
   </ul>
   <p>اسأل عنها قبل التوقيع، فقد تغيّر المقارنة بين عرضين.</p>
+
+  <Faq title="أسئلة شائعة" items={[
+    { q: "كيف تُحسب الفائدة المتناقصة؟", a: "كل شهر: الرصيد المتبقي × النسبة السنوية ÷ 12. ثم يُطرح ما بقي من القسط من الرصيد، ويُعاد الحساب على الرصيد الجديد في الشهر التالي." },
+    { q: "كم تعادل الفائدة الثابتة بالفائدة المتناقصة؟", a: "تقريباً ضعفها في القروض المتوسطة. فالثابتة 4.5% على 4 سنوات تعادل متناقصة نحو 8.4%. والقاعدة التقريبية: المتناقصة ≈ الثابتة × 2 × عدد الأشهر ÷ (عدد الأشهر + 1)، وهي تبالغ قليلاً." },
+    { q: "أيهما أفضل: الفائدة الثابتة أم المتناقصة؟", a: "بالنسبة نفسها، المتناقصة أرخص دائماً. لكن قارن دائماً بالتكلفة الإجمالية أو بمعدل النسبة السنوي APR، لا بالنسبة المعلنة وحدها." },
+    { q: "هل السداد المبكر يوفّر في الفائدة المتناقصة؟", a: "نعم، لأن الفائدة تُحسب على الرصيد المتبقي، فكل سداد إضافي يقلل فوائد كل الأشهر التالية. تحقق من رسوم السداد المبكر في عقدك." },
+  ]} />
 </GuideLayout>
