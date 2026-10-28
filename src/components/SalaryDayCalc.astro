@@ -3,6 +3,7 @@
 import NumIn from './NumIn.astro';
 import Pills from './Pills.astro';
 import FieldErrors from './FieldErrors.astro';
+import AddToCalendar from './AddToCalendar.astro';
 import ResultCard from './ResultCard.astro';
 import { calcPayday, type ShiftRule, type Weekend } from '../lib/calc/payday';
 import { paydayView } from '../lib/views-extra';
@@ -29,6 +30,7 @@ const view = r.ok ? paydayView(r.value, d.payDay) : errorView(r, 'باقي عل�
     <ResultCard view={view} notes={['العطل الرسمية والأعياد لا تُحسب، لأن الجهات قد تعلن تقديم الرواتب قبلها بإعلان خاص.', 'التاريخ المستخدم هو تاريخ اليوم بحسب جهازك.']}>
       <p class="formula" slot="formula">نأخذ يوم الراتب في الشهر الحالي، وإن مضى نأخذ الشهر التالي. إذا وافق الجمعة أو السبت (أو السبت أو الأحد) ننقله إلى أقرب يوم عمل قبله أو بعده بحسب اختيارك.</p>
     </ResultCard>
+    <AddToCalendar title="يوم الراتب" dates={r.ok ? r.value.upcoming.map((u) => u.actual) : []} details="موعد الراتب المتوقع (يُقدَّم أو يُؤخَّر حسب العطلة). المصدر: hasibcalc.com/salary-day/" file="salary-days" label="أضف مواعيد راتبك (12 شهراً) إلى تقويمك" />
     <section class="exhibit" aria-labelledby="x-t">
       <h2 id="x-t" class="exhibit-title"><b>02</b> مواعيد رواتبك في الأشهر القادمة</h2>
       <div data-x="table" set:html={paydayTable(r.ok ? r.value : null)} />
@@ -49,6 +51,10 @@ const view = r.ok ? paydayView(r.value, d.payDay) : errorView(r, 'باقي عل�
       const result = calcPayday({ payDay, weekend: f.weekend as Weekend, rule: f.rule as ShiftRule, onDate: localTodayISO() });
       return { result, view: result.ok ? paydayView(result.value, payDay ?? 0) : null };
     },
-    extras: (p) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = paydayTable(p); },
+    extras: (p) => {
+      root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = paydayTable(p);
+      const cal = root.querySelector<HTMLElement>('[data-cal]');
+      if (cal) cal.dataset.dates = p.upcoming.map((u) => u.actual).join(',');
+    },
   });
 </script>

@@ -2,9 +2,11 @@
 import Faq from '../../components/Faq.astro';
 import GuideLayout from '../../layouts/GuideLayout.astro';
 import Countdown from '../../components/Countdown.astro';
+import AddToCalendar from '../../components/AddToCalendar.astro';
 ---
 <GuideLayout slug="new-year-2027">
   <Countdown target="2027-01-01" label="باقي على رأس السنة 2027" today="سنة سعيدة. اليوم أول يوم من 2027" done="أهلاً بسنة 2027" note="الجمعة 1 يناير 2027. والعدّاد يحسب بتاريخ جهازك." />
+  <AddToCalendar title="رأس السنة الميلادية 2027" dates={["2027-01-01"]} details="الجمعة 1 يناير 2027. العدّاد على hasibcalc.com/guides/new-year-2027/" file="new-year-2027" />
 
   <h2>الخلاصة</h2>
   <p>تبدأ السنة الميلادية 2027 يوم <strong>الجمعة 1 يناير 2027</strong>. وهي سنة عادية من 365 يوماً، لأن السنة الكبيسة القادمة 2028.</p>

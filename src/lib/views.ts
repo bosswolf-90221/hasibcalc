@@ -21,6 +21,8 @@ export type View = {
   rows: Row[];
   notes?: string[];
   error?: string;
+  /** «ماذا لو؟» lines under the result: the next question people usually ask, already computed */
+  whatif?: string[];
 };
 
 export function errorView<T>(r: CalcResult<T>, label: string): View | null {
@@ -53,6 +55,7 @@ export function gratuityView(g: Gratuity): View {
       ['قبل تطبيق الحد الأعلى', money(g.uncapped)],
       ['الحد الأعلى (24 × الأساسي)', money(g.cap)],
     ],
+    whatif: gratuityWhatIf(g),
   };
 }
 
@@ -163,4 +166,23 @@ export function zakatView(z: Zakat): View {
       ['النسبة', '2.5%'],
     ],
   };
+}
+
+/** What-ifs for end of service, from the same rule (21 days/yr up to 5, then 30; cap 24 × basic). */
+export function gratuityWhatIf(g: Gratuity): string[] {
+  const out: string[] = [];
+  const basic = g.dailyWage * 30;
+  const at = (y: number, daily: number) => Math.min(24 * daily * 30, daily * (Math.min(y, 5) * 21 + Math.max(0, y - 5) * 30));
+  if (g.capped) out.push('وصلت مكافأتك إلى الحد الأعلى (أجر سنتين)، فالبقاء مدة أطول لا يزيدها.');
+  else {
+    const plus = at(g.serviceYears + 1, g.dailyWage) - g.total;
+    out.push(`لو بقيت سنة أخرى: تزيد مكافأتك نحو ${int(plus)} درهم.`);
+    if (g.serviceYears < 5) {
+      const left = 5 - g.serviceYears;
+      out.push(`بعد ${left < 1 ? 'أقل من سنة' : years(Math.round(left * 10) / 10)} تكمل 5 سنوات، فتُحسب كل سنة بعدها بأجر 30 يوماً بدل 21.`);
+    }
+  }
+  const raised = at(g.serviceYears, (basic + 1000) / 30);
+  if (basic > 0) out.push(`لو كان راتبك الأساسي أعلى بـ 1,000 درهم: تصير المكافأة نحو ${int(raised)} درهم.`);
+  return out;
 }

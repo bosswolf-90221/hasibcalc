@@ -534,3 +534,13 @@ select.in.sel { appearance: none; cursor: pointer; padding: 0 12px 0 30px; font-
 .countdown .cd-clock b { font-weight: 500; color: var(--mint); font-size: 1.15rem; }
 .countdown .cd-clock span { color: #9fc6b8; font-size: .82rem; }
 .countdown .cd-clock i { font-style: normal; display: inline-block; min-width: 2ch; }
+/* «ماذا لو؟» under the result */
+.whatif { margin: 16px 0 0; padding: 14px 16px; border-radius: 14px; background: var(--well); border-inline-start: 3px solid var(--accent); }
+.whatif .wi-h { margin: 0 0 6px; font-size: .82rem; font-weight: 600; color: var(--accent); }
+.whatif ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.whatif li { font-size: .95rem; line-height: 1.7; }
+.whatif li::before { content: '←'; color: var(--accent); margin-inline-end: 8px; }
+@media (prefers-reduced-motion: no-preference) { [data-result].settled .whatif li { animation: reveal .35s ease; } }
+/* add to calendar */
+.addcal { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 24px; max-width: var(--measure); }
+.addcal .ac-l { font-size: .88rem; color: var(--soft); }

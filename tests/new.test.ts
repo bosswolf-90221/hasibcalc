@@ -208,3 +208,36 @@ describe('gpa target', () => {
     expect(calcGpaTarget({ system: 's5', current: 3, doneHours: 60, target: 4, nextHours: 15, leftHours: 10 }).ok).toBe(false);
   });
 });
+
+import { googleCalUrl, icsFile } from '../src/lib/calendar';
+import { gratuityWhatIf } from '../src/lib/views';
+import { loanWhatIf } from '../src/lib/views-extra';
+import { calcGratuity } from '../src/lib/calc/gratuity';
+describe('add to calendar', () => {
+  test('builds an all-day Google link and an .ics with a reminder', () => {
+    expect(googleCalUrl('اليوم الوطني', '2026-12-02', 'x')).toContain('dates=20261202%2F20261203');
+    const ics = icsFile('يوم الراتب', ['2026-11-26', '2026-12-25'], 'a, b');
+    expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(2);
+    expect(ics).toContain('DTSTART;VALUE=DATE:20261226'.replace('1226', '1225'));
+    expect(ics).toContain('DTEND;VALUE=DATE:20261126'.replace('1126', '1127'));
+    expect(ics).toContain('DESCRIPTION:a\\, b');
+    expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
+  });
+});
+describe('what-if lines', () => {
+  test('end of service: one more year at 21 days, cap reached', () => {
+    const g = calcGratuity({ basicSalary: 6000, startDate: '2022-01-01', endDate: '2024-12-31' });
+    if (!g.ok) throw new Error();
+    const w = gratuityWhatIf(g.value);
+    expect(w[0]).toContain('4,200'); // 21 × 200
+    const long = calcGratuity({ basicSalary: 6000, startDate: '1990-01-01', endDate: '2024-12-31' });
+    if (!long.ok) throw new Error();
+    expect(gratuityWhatIf(long.value)[0]).toContain('الحد الأعلى');
+  });
+  test('loan: shorter term means less interest', () => {
+    const w = loanWhatIf({ principal: 100000, annualRatePercent: 4.5, months: 48, method: 'reducing' });
+    expect(w).toHaveLength(3);
+    expect(w[0]).toContain('أقل');
+    expect(w[1]).toContain('أكثر');
+  });
+});

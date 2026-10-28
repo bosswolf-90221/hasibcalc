@@ -1,0 +1,30 @@
+---
+// «أضف إلى التقويم»: Google Calendar link + .ics download. Dates can be updated later by a calculator (data-dates).
+export interface Props { title: string; dates: string[]; details: string; file: string; label?: string }
+const { title, dates, details, file, label = 'أضفه إلى تقويمك' } = Astro.props;
+---
+<div class="addcal" data-cal data-title={title} data-dates={dates.join(',')} data-details={details} data-file={file}>
+  <span class="ac-l">{label}:</span>
+  <button class="btn" type="button" data-cal-act="google">تقويم Google</button>
+  <button class="btn" type="button" data-cal-act="ics">تقويم الآيفون وغيره (.ics)</button>
+</div>
+
+<script>
+  import { googleCalUrl, icsFile } from '../lib/calendar';
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-cal-act]');
+    const box = btn?.closest<HTMLElement>('[data-cal]');
+    if (!btn || !box) return;
+    const dates = (box.dataset.dates ?? '').split(',').filter(Boolean);
+    if (!dates.length) return;
+    const { title = '', details = '', file = 'hasib' } = box.dataset;
+    if (btn.dataset.calAct === 'google') {
+      window.open(googleCalUrl(title, dates[0], details), '_blank', 'noopener');
+    } else {
+      const url = URL.createObjectURL(new Blob([icsFile(title, dates, details)], { type: 'text/calendar;charset=utf-8' }));
+      const a = Object.assign(document.createElement('a'), { href: url, download: `${file}.ics` });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+  });
+</script>

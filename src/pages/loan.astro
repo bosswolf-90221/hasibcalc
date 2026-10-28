@@ -9,10 +9,11 @@ import { calcLoan } from '../lib/calc/loan';
 import { loanView, errorView } from '../lib/views';
 import { money } from '../lib/format';
 import { loanSchedule } from '../lib/exhibits';
+import { loanWhatIf } from '../lib/views-extra';
 
 const d = { principal: 100000, annualRatePercent: 4.5, months: 48, method: 'reducing' as const };
 const r = calcLoan(d);
-const view = r.ok ? loanView(r.value, d.method) : errorView(r, 'قسطك الشهري')!;
+const view = r.ok ? { ...loanView(r.value, d.method), whatif: loanWhatIf(d) } : errorView(r, 'قسطك الشهري')!;
 const years = r.ok ? r.value.years : [];
 const cmpFlat = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, method: 'flat' });
 const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, method: 'reducing' });
@@ -73,13 +74,15 @@ const cmpRed = calcLoan({ principal: 50000, annualRatePercent: 3, months: 36, me
   import { calcLoan } from '../lib/calc/loan';
   import { loanView } from '../lib/views';
   import { loanSchedule } from '../lib/exhibits';
+  import { loanWhatIf } from '../lib/views-extra';
   const root = document.querySelector<HTMLElement>('[data-calc="loan"]')!;
   const sched = root.querySelector<HTMLElement>('[data-x="sched"]')!;
   mountCalculator(root, {
     compute: (f) => {
       const method = f.method === 'flat' ? 'flat' : 'reducing';
-      const result = calcLoan({ principal: num(f.principal), annualRatePercent: num(f.annualRatePercent), months: num(f.months), method });
-      return { result, view: result.ok ? loanView(result.value, method) : null };
+      const input = { principal: num(f.principal), annualRatePercent: num(f.annualRatePercent), months: num(f.months), method } as const;
+      const result = calcLoan(input);
+      return { result, view: result.ok ? { ...loanView(result.value, method), whatif: loanWhatIf(input) } : null };
     },
     extras: (r) => { sched.innerHTML = loanSchedule(r.years); },
   });

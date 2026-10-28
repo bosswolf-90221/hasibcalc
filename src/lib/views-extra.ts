@@ -233,6 +233,7 @@ export function gpaView(g: Gpa): View {
       ['نقاط الفصل', g2(g.semPoints)],
       ...(g.hasPrev ? ([['المعدل التراكمي', g2(g.cumGpa)], ['مجموع الساعات', hrs(g.totalHours)]] as [string, string][]) : []),
     ],
+    whatif: gpaWhatIf(g),
   };
 }
 
@@ -258,4 +259,41 @@ export function gpaTargetView(t: GpaTarget): View {
     badge: t.status === 'impossible' ? 'غير ممكن في فصل واحد' : t.status === 'already' ? 'الهدف محقق' : 'ممكن',
     rows,
   };
+}
+
+function gpaWhatIf(g: Gpa): string[] {
+  const out: string[] = [];
+  const prevPts = g.prevGpa * g.prevHours;
+  const cum = (semPts: number) => (prevPts + semPts) / g.totalHours;
+  // lowest course raised to the top grade of the scale
+  const low = g.courses.reduce<null | (typeof g.courses)[number]>((m, c) => (!m || c.weight < m.weight ? c : m), null);
+  if (low && low.weight < g.max) {
+    const pts = g.semPoints - low.points + low.hours * g.max;
+    out.push(`لو رفعت المادة ${low.n} (${low.grade}) إلى الدرجة الكاملة: يصير ${g.hasPrev ? 'تراكمك' : 'معدلك'} ${g2(g.hasPrev ? cum(pts) : pts / g.semHours)}.`);
+  }
+  if (g.hasPrev && g.semGpa < g.max) out.push(`لو حصلت على الدرجة الكاملة في كل مواد هذا الفصل: يصير تراكمك ${g2(cum(g.max * g.semHours))}.`);
+  if (g.hasPrev) out.push(`كل فصل من 15 ساعة يحرّك تراكمك بقدر أقل، لأن ساعاتك صارت ${hrs(g.totalHours)}. لتعرف ما تحتاجه لهدف معيّن استخدم حاسبة المعدل المطلوب.`);
+  return out;
+}
+
+import { calcLoan, type LoanMethod } from './calc/loan';
+/** What-ifs for the loan page: one year shorter / longer, and 0.5 point less interest. */
+export function loanWhatIf(input: { principal: number | null; annualRatePercent: number | null; months: number | null; method: LoanMethod }): string[] {
+  const base = calcLoan(input);
+  if (!base.ok || !input.months || !input.principal || input.annualRatePercent === null) return [];
+  const b = base.value;
+  const out: string[] = [];
+  const line = (m: number, label: string) => {
+    const r = calcLoan({ ...input, months: m });
+    if (!r.ok) return;
+    const di = r.value.totalInterest - b.totalInterest;
+    out.push(`${label}: القسط ${money(r.value.payment)}، والفوائد ${di < 0 ? 'أقل' : 'أكثر'} بـ ${money(Math.abs(di))}.`);
+  };
+  if (input.months > 12) line(input.months - 12, 'لو قصّرت المدة سنة');
+  if (input.months + 12 <= 600) line(input.months + 12, 'لو مددتها سنة');
+  if (input.annualRatePercent >= 0.5) {
+    const r = calcLoan({ ...input, annualRatePercent: input.annualRatePercent - 0.5 });
+    if (r.ok) out.push(`لو كانت الفائدة أقل بنصف نقطة: توفّر ${money(b.totalInterest - r.value.totalInterest)} على كامل المدة.`);
+  }
+  return out;
 }

@@ -124,6 +124,12 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
         return d;
       }),
     );
+    const wiBox = result.querySelector<HTMLElement>('[data-r="whatif-box"]');
+    if (wiBox && !result.classList.contains('mini')) {
+      const list = view.whatif ?? [];
+      wiBox.hidden = list.length === 0;
+      $('whatif').replaceChildren(...list.map((w) => Object.assign(document.createElement('li'), { textContent: w })));
+    }
     if (view.value !== null) animateTo(view.value, view.decimals);
     clearTimeout(liveTimer);
     liveTimer = window.setTimeout(() => {
@@ -144,6 +150,8 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     $('badge').hidden = true;
     $('sentence').textContent = 'اكتب أرقامك في الخانات لتظهر النتيجة.';
     $('rows').replaceChildren();
+    const wiBox = result.querySelector<HTMLElement>('[data-r="whatif-box"]');
+    if (wiBox) wiBox.hidden = true;
     cancelAnimationFrame(raf);
     shown = 0;
     valueEl.innerHTML = odo(fmt(0, Number(valueEl.dataset.decimals ?? 0)));
