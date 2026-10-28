@@ -38,6 +38,7 @@
 | اختبارات المعادلات | `tests/*.test.ts` (الجديدة في `tests/new.test.ts`) |
 | فحص التفاعل في المتصفح | `scripts/interaction_test.py` |
 | فحص كل صفحات dist (عناوين، أوصاف، canonical، H1، روابط، sitemap) | `scripts/check-site.mjs` |
+| فحص جاهزية AdSense (من صفحات مساعدة Google 81904 و9061852 و1348695) | `scripts/adsense-audit.mjs` |
 | صور OG | `scripts/og-data.ts` + `scripts/og.py` ← `public/og/<slug>.png` و`g-<slug>.png` |
 | لقطات الشاشة للمراجعة | `scripts/shots.py <مجلد>` (لا ترفع اللقطات؛ `/shots/` في .gitignore) |
 | قواعد التصميم | `.claude/skills/frontend-design/SKILL.md` |
@@ -59,6 +60,7 @@ npm run build
 npx astro preview --port 4321 &          # في الخلفية
 python3 scripts/interaction_test.py
 set -a; . ./.env.production; set +a; node scripts/check-site.mjs
+node scripts/adsense-audit.mjs          # شروط قبول AdSense: لا نصوص «قريباً/غير مفعّل»، بريد تواصل يعمل، سياسة خصوصية كاملة، كود الإعلان في head، ads.txt، robots
 ```
 ثم لقطة Playwright بعرض 390px للصفحة المعدّلة: لا تمرير أفقي، ولا نص متداخل، ولا رموز مقلوبة. انتبه إلى أن الخلايا التي تحمل `class="num"` تُعرض LTR، فلا تضع فيها نصاً عربياً مختلطاً مثل «1 إلى 4» أو «سنة 39».
 
@@ -67,6 +69,7 @@ set -a; . ./.env.production; set +a; node scripts/check-site.mjs
 - تحقق من كل رقم في الأمثلة بتشغيل الحساب.
 - صفحات الصحة: تنبيه «للمعلومات العامة»، وسطر `src-note` يوضح أن المراجعة ليست طبية مع رابط /about/.
 - لا تحذف صفحات قائمة ولا تغيّر روابطها (slug). لا تغيّر كود الإعلانات ولا ads.txt.
+- لا تنشر أي نص «قريباً» أو «غير مفعّل» أو صفحة ناقصة: مراجع AdSense يعدّها موقعاً غير مكتمل. بريد التواصل contact@hasibcalc.com (في `src/config/site.ts`).
 
 ## الحسابات والأدوات الخارجية (قراءة إلا ما ذُكر)
 - Search Console: sc-domain:hasibcalc.com. طلب الفهرسة من مربع «فحص أي عنوان URL» أعلى «نظرة عامة» (الرابط المباشر للفحص يرجع 404).

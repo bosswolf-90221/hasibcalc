@@ -7,7 +7,7 @@ export const SITE = {
   url: (env.PUBLIC_SITE_URL || 'https://www.example.com').replace(/\/$/, ''),
   urlIsPlaceholder: !env.PUBLIC_SITE_URL,
   locale: 'ar_AE',
-  contactEmail: env.PUBLIC_CONTACT_EMAIL || '',
+  contactEmail: env.PUBLIC_CONTACT_EMAIL || 'contact@hasibcalc.com',
   contactFormEndpoint: env.PUBLIC_CONTACT_FORM_ENDPOINT || '',
   /** Date the formulas were last checked against the cited sources. Update when you re-check. */
   lastReviewed: '2026-10-17',
