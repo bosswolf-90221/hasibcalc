@@ -144,7 +144,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['زكاة', 'الزكاة', 'نصاب', 'ذهب', 'مدخرات', 'ربع العشر', 'رمضان'],
     related: ['end-of-service', 'loan', 'percentage', 'vat'],
-    updated: '2026-10-25',
+    updated: '2026-10-29',
   },
   {
     slug: 'hijri',
