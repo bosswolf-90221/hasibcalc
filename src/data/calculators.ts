@@ -158,7 +158,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['dates'],
     terms: ['السنة الهجرية', 'هجري', 'الهجري', 'ميلادي', 'تحويل التاريخ', 'تاريخ اليوم', 'أم القرى', 'التقويم', 'رمضان', 'hijri'],
     related: ['hijri-age', 'days-between', 'age', 'pregnancy'],
-    updated: '2026-10-25',
+    updated: '2026-10-30',
   },
   {
     slug: 'hijri-age',

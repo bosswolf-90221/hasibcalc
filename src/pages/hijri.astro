@@ -10,7 +10,7 @@ import { gregorianToHijri, hijriToGregorian, toHijri, fromHijri, HIJRI_MONTHS } 
 import { HIJRI_YEAR_NOW } from '../data/calculators';
 import { toHijriView, toGregorianView } from '../lib/views-extra';
 import { errorView } from '../lib/views';
-import { calendarLeaves } from '../lib/exhibits-extra';
+import { calendarLeaves, hijriTodayLine, hijriMonthTable } from '../lib/exhibits-extra';
 import { toISODate } from '../lib/calc/core';
 import { arDate } from '../lib/format';
 
@@ -45,6 +45,12 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
   </section>
 
   <Fragment slot="article">
+    <div class="example">
+      <p><strong>التاريخ الهجري اليوم:</strong> <span data-x="hijri-today" set:html={hijriTodayLine(today)} /></p>
+      <p>بحسب تقويم أم القرى، ويُحدَّث تلقائياً بتاريخ جهازك. وقد يختلف بيوم في الدول التي تعتمد رؤية الهلال.</p>
+    </div>
+    <h2>الشهر الهجري الحالي بالتاريخ الميلادي</h2>
+    <div class="hijri-month" data-x="hijri-month" set:html={hijriMonthTable(today)} />
     <h2>كيف يُحوَّل التاريخ من الميلادي إلى الهجري؟</h2>
     <p>السنة الهجرية قمرية، وطولها نحو 354 أو 355 يوماً، أي أقصر من السنة الميلادية بنحو 11 يوماً. لذلك لا يصلح طرح رقم ثابت أو ضرب السنة في معامل، بل يجب الرجوع إلى تقويم يحدد بداية كل شهر.</p>
     <p>تقويم <strong>أم القرى</strong> هو التقويم الرسمي في المملكة العربية السعودية، ويحدد بدايات الأشهر بحسابات فلكية مسبقة. وهو المستخدم في هذه الحاسبة وفي أغلب التطبيقات والجهات الرسمية الخليجية.</p>
@@ -59,6 +65,8 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
       <li>اليوم الهجري يبدأ عند المغرب، أما التحويل هنا فيقابل اليوم الميلادي كاملاً.</li>
     </ul>
     <Faq title="أسئلة شائعة" items={[
+      { q: "كم التاريخ الهجري اليوم؟", a: "يظهر في أعلى هذا الشرح بحسب تقويم أم القرى، مع اسم اليوم وما يقابله بالميلادي وعدد الأيام الباقية من الشهر، ويُحدَّث تلقائياً كل يوم." },
+      { q: "هل يتغير التاريخ الهجري عند المغرب؟", a: "اليوم الهجري يبدأ شرعاً عند غروب الشمس، أما التقاويم ومنها أم القرى فتقابل كل يوم ميلادي بيوم هجري كامل. لذلك قد تسمع ليلة الجمعة مثلاً منسوبة إلى التاريخ الهجري التالي." },
       { q: "كم السنة الهجرية الآن؟", a: `السنة الهجرية الحالية ${HIJRI_YEAR_NOW} هـ، وتبدأ سنة ${HIJRI_YEAR_NOW + 1} هـ (1 محرم) يوم ${nextNewYear ? arDate(toISODate(nextNewYear)) : ""} بحسب تقويم أم القرى. ولمعرفة التاريخ الهجري لليوم بالضبط، انظر نتيجة الحاسبة أعلاه.` },
       { q: "كم عدد أيام الشهر الهجري؟", a: "إما 29 يوماً أو 30 يوماً، ويظهر عدد أيام الشهر في نتيجة الحاسبة." },
       { q: "ما الفرق بين السنة الهجرية والميلادية؟", a: "السنة الهجرية 12 شهراً قمرياً، نحو 354 يوماً، والميلادية 365 أو 366 يوماً. لذلك تتقدم المناسبات الهجرية نحو 11 يوماً كل سنة ميلادية." },
@@ -76,7 +84,7 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
   import { mountCalculator, num } from '../scripts/runtime';
   import { gregorianToHijri, hijriToGregorian } from '../lib/calc/hijri';
   import { toHijriView, toGregorianView } from '../lib/views-extra';
-  import { calendarLeaves } from '../lib/exhibits-extra';
+  import { calendarLeaves, hijriTodayLine, hijriMonthTable } from '../lib/exhibits-extra';
   import { localTodayISO } from '../lib/calc/core';
 
   const a = document.querySelector<HTMLElement>('[data-calc="to-hijri"]')!;
@@ -89,6 +97,11 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
     },
     extras: (c) => { a.querySelector<HTMLElement>('[data-x="leaves"]')!.innerHTML = calendarLeaves(c); },
   });
+  const nowIso = localTodayISO();
+  const todayEl = document.querySelector<HTMLElement>('[data-x="hijri-today"]');
+  const monthEl = document.querySelector<HTMLElement>('[data-x="hijri-month"]');
+  if (todayEl) todayEl.innerHTML = hijriTodayLine(nowIso);
+  if (monthEl) monthEl.innerHTML = hijriMonthTable(nowIso);
   const b = document.querySelector<HTMLElement>('[data-calc="to-greg"]')!;
   mountCalculator(b, {
     compute: (f) => {
@@ -97,3 +110,8 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
     },
   });
 </script>
+
+<style>
+  .hijri-month :global(.table-cap) { font-size: var(--t-small); color: var(--soft); margin: 0 0 var(--s-1); }
+  .hijri-month :global(tr.today td) { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+</style>

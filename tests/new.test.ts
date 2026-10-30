@@ -241,3 +241,19 @@ describe('what-if lines', () => {
     expect(w[1]).toContain('أكثر');
   });
 });
+
+import { hijriTodayLine, hijriMonthTable } from '../src/lib/exhibits-extra';
+describe('hijri today line and month table', () => {
+  test('30 Oct 2026 is Friday 19 Jumada al-Ula 1448', () => {
+    const line = hijriTodayLine('2026-10-30');
+    expect(line).toContain('الجمعة 19 جمادى الأولى 1448 هـ');
+    expect(line).toContain('30 أكتوبر 2026');
+  });
+  test('month table lists every day and marks today', () => {
+    const t = hijriMonthTable('2026-10-30');
+    const rows = t.match(/<tr[ >]/g)!.length - 1;
+    expect([29, 30]).toContain(rows);
+    expect(t).toContain('aria-current="date"><td class="num">19</td>');
+    expect(t).toContain('<td class="num">10</td><td>الأربعاء</td><td>21 أكتوبر 2026</td>');
+  });
+});

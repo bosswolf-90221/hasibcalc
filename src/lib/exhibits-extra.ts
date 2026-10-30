@@ -1,5 +1,5 @@
 // Exhibits for the newer calculators. Numbers and fixed labels only.
-import { HIJRI_MONTHS, type Conversion } from './calc/hijri';
+import { HIJRI_MONTHS, WEEKDAYS, toHijri as toHijriDate, fromHijri, hijriMonthLength, type Conversion } from './calc/hijri';
 import type { DateSpan } from './calc/dates';
 import type { Pregnancy } from './calc/pregnancy';
 import type { Calories } from './calc/calories';
@@ -111,4 +111,28 @@ export function gpaTargetTable(t: GpaTarget | null): string {
   const f = (n: number) => (n > t.max ? 'غير ممكن' : n <= t.min ? 'محقق بأي درجة' : (Math.round(n * 100) / 100).toFixed(2));
   const rows = t.byLoad.map((r) => `<tr><td class="nums">${r.hours} ساعة</td><td>${f(r.needed)}</td></tr>`).join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>ساعات الفصل القادم</th><th>المعدل الفصلي المطلوب</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/** "Today in Hijri" line and the current Hijri month day by day (Umm al-Qura). `iso` is the visitor's local date. */
+export function hijriTodayLine(iso: string): string {
+  const d = new Date(iso + 'T00:00:00Z');
+  const h = toHijriDate(d);
+  const len = hijriMonthLength(h.year, h.month);
+  const left = len - h.day;
+  const tail = left === 0 ? 'وهو آخر أيام الشهر' : `من شهر عدد أيامه ${len} يوماً، وبقي على نهايته ${left === 1 ? 'يوم واحد' : left === 2 ? 'يومان' : `${left} ${left <= 10 ? 'أيام' : 'يوماً'}`}`;
+  return `اليوم <strong>${WEEKDAYS[d.getUTCDay()]} ${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ</strong>، الموافق ${arDate(iso)}. هو اليوم ${h.day} ${tail}.`;
+}
+
+export function hijriMonthTable(iso: string): string {
+  const h = toHijriDate(new Date(iso + 'T00:00:00Z'));
+  const len = hijriMonthLength(h.year, h.month);
+  const rows: string[] = [];
+  for (let day = 1; day <= len; day++) {
+    const g = fromHijri({ year: h.year, month: h.month, day });
+    if (!g) continue;
+    const gi = g.toISOString().slice(0, 10);
+    const mark = day === h.day ? ' class="today" aria-current="date"' : '';
+    rows.push(`<tr${mark}><td class="num">${day}</td><td>${WEEKDAYS[g.getUTCDay()]}</td><td>${arDate(gi)}</td></tr>`);
+  }
+  return `<p class="table-cap">شهر ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ (${len} يوماً) بتقويم أم القرى</p><div class="scroll-x"><table class="ledger"><thead><tr><th>اليوم الهجري</th><th>اليوم</th><th>التاريخ الميلادي</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 }
