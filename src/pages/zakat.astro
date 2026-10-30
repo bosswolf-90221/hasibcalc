@@ -62,7 +62,7 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 
     </ol>
     {belowV && belowV.nisab !== null && (
       <div class="example">
-        <p>مثال لمال لم يبلغ النصاب: صافي مال {fmt(belowV.net)} درهم وسعر الغرام 400 درهم. النصاب {fmt(belowV.nisab)} درهم، والمال أقل منه، فلا زكاة عليه (الحاسبة تعطي {fmt(belowV.zakat)}).</p>
+        <p>مثال لمال لم يبلغ النصاب: صافي مال {fmt(belowV.net)} درهم وسعر الغرام 400 درهم. النصاب {fmt(belowV.nisab)} درهم، والمال أقل منه، فلا زكاة عليه.</p>
       </div>
     )}
     <h2>كم زكاة المبلغ الذي بلغ النصاب؟</h2>
