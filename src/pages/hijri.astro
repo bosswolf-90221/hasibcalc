@@ -10,7 +10,7 @@ import { gregorianToHijri, hijriToGregorian, toHijri, fromHijri, HIJRI_MONTHS } 
 import { HIJRI_YEAR_NOW } from '../data/calculators';
 import { toHijriView, toGregorianView } from '../lib/views-extra';
 import { errorView } from '../lib/views';
-import { calendarLeaves, hijriTodayLine, hijriMonthTable } from '../lib/exhibits-extra';
+import { calendarLeaves, hijriTodayLine, hijriMonthTable, gregMonthHijriTable } from '../lib/exhibits-extra';
 import { toISODate } from '../lib/calc/core';
 import { arDate } from '../lib/format';
 
@@ -51,6 +51,13 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
     </div>
     <h2>الشهر الهجري الحالي بالتاريخ الميلادي</h2>
     <div class="hijri-month" data-x="hijri-month" set:html={hijriMonthTable(today)} />
+    <h2>كم يوافق التاريخ الميلادي بالهجري هذا الشهر والشهر القادم؟</h2>
+    <p>ابحث عن اليوم في الجدول لتعرف ما يوافقه بالهجري، ولأي تاريخ آخر استخدم الحاسبة أعلاه.</p>
+    <div class="hijri-month" data-x="greg-month-0" set:html={gregMonthHijriTable(today, 0)} />
+    <details class="greg-next">
+      <summary>الشهر الميلادي القادم بالهجري</summary>
+      <div class="hijri-month" data-x="greg-month-1" set:html={gregMonthHijriTable(today, 1)} />
+    </details>
     <h2>كيف يُحوَّل التاريخ من الميلادي إلى الهجري؟</h2>
     <p>السنة الهجرية قمرية، وطولها نحو 354 أو 355 يوماً، أي أقصر من السنة الميلادية بنحو 11 يوماً. لذلك لا يصلح طرح رقم ثابت أو ضرب السنة في معامل، بل يجب الرجوع إلى تقويم يحدد بداية كل شهر.</p>
     <p>تقويم <strong>أم القرى</strong> هو التقويم الرسمي في المملكة العربية السعودية، ويحدد بدايات الأشهر بحسابات فلكية مسبقة. وهو المستخدم في هذه الحاسبة وفي أغلب التطبيقات والجهات الرسمية الخليجية.</p>
@@ -66,6 +73,7 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
     </ul>
     <Faq title="أسئلة شائعة" items={[
       { q: "كم التاريخ الهجري اليوم؟", a: "يظهر في أعلى هذا الشرح بحسب تقويم أم القرى، مع اسم اليوم وما يقابله بالميلادي وعدد الأيام الباقية من الشهر، ويُحدَّث تلقائياً كل يوم." },
+      { q: "كم يوافق تاريخ ميلادي معيّن بالهجري؟", a: "اكتبه في حاسبة «من الميلادي إلى الهجري» أعلى الصفحة، أو ابحث عنه في جدول الشهر الحالي والقادم. مثلاً 31 أكتوبر 2026 يوافق 20 جمادى الأولى 1448 هـ، و11 نوفمبر 2026 يوافق 1 جمادى الآخرة 1448 هـ بتقويم أم القرى." },
       { q: "هل يتغير التاريخ الهجري عند المغرب؟", a: "اليوم الهجري يبدأ شرعاً عند غروب الشمس، أما التقاويم ومنها أم القرى فتقابل كل يوم ميلادي بيوم هجري كامل. لذلك قد تسمع ليلة الجمعة مثلاً منسوبة إلى التاريخ الهجري التالي." },
       { q: "كم السنة الهجرية الآن؟", a: `السنة الهجرية الحالية ${HIJRI_YEAR_NOW} هـ، وتبدأ سنة ${HIJRI_YEAR_NOW + 1} هـ (1 محرم) يوم ${nextNewYear ? arDate(toISODate(nextNewYear)) : ""} بحسب تقويم أم القرى. ولمعرفة التاريخ الهجري لليوم بالضبط، انظر نتيجة الحاسبة أعلاه.` },
       { q: "كم عدد أيام الشهر الهجري؟", a: "إما 29 يوماً أو 30 يوماً، ويظهر عدد أيام الشهر في نتيجة الحاسبة." },
@@ -84,7 +92,7 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
   import { mountCalculator, num } from '../scripts/runtime';
   import { gregorianToHijri, hijriToGregorian } from '../lib/calc/hijri';
   import { toHijriView, toGregorianView } from '../lib/views-extra';
-  import { calendarLeaves, hijriTodayLine, hijriMonthTable } from '../lib/exhibits-extra';
+  import { calendarLeaves, hijriTodayLine, hijriMonthTable, gregMonthHijriTable } from '../lib/exhibits-extra';
   import { localTodayISO } from '../lib/calc/core';
 
   const a = document.querySelector<HTMLElement>('[data-calc="to-hijri"]')!;
@@ -102,6 +110,7 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
   const monthEl = document.querySelector<HTMLElement>('[data-x="hijri-month"]');
   if (todayEl) todayEl.innerHTML = hijriTodayLine(nowIso);
   if (monthEl) monthEl.innerHTML = hijriMonthTable(nowIso);
+  for (const k of [0, 1]) { const el = document.querySelector<HTMLElement>(`[data-x="greg-month-${k}"]`); if (el) el.innerHTML = gregMonthHijriTable(nowIso, k); }
   const b = document.querySelector<HTMLElement>('[data-calc="to-greg"]')!;
   mountCalculator(b, {
     compute: (f) => {
@@ -114,4 +123,6 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
 <style>
   .hijri-month :global(.table-cap) { font-size: var(--t-small); color: var(--soft); margin: 0 0 var(--s-1); }
   .hijri-month :global(tr.today td) { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  .greg-next { margin-block-start: var(--s-2); }
+  .greg-next summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: var(--s-1) 0; min-height: 44px; display: flex; align-items: center; }
 </style>

@@ -257,3 +257,15 @@ describe('hijri today line and month table', () => {
     expect(t).toContain('<td class="num">10</td><td>الأربعاء</td><td>21 أكتوبر 2026</td>');
   });
 });
+
+import { gregMonthHijriTable } from '../src/lib/exhibits-extra';
+describe('Gregorian month with Hijri dates', () => {
+  test('October and November 2026 match Umm al-Qura', () => {
+    const oct = gregMonthHijriTable('2026-10-31', 0);
+    expect(oct).toContain('aria-current="date"><td>31 أكتوبر</td><td>السبت</td><td>20 جمادى الأولى 1448 هـ</td>');
+    const nov = gregMonthHijriTable('2026-10-31', 1);
+    expect(nov).toContain('<td>9 نوفمبر</td><td>الاثنين</td><td>29 جمادى الأولى 1448 هـ</td>');
+    expect(nov).toContain('<td>11 نوفمبر</td><td>الأربعاء</td><td>1 جمادى الآخرة 1448 هـ</td>');
+    expect(nov.match(/<tr>/g)!.length).toBe(31); // header + 30 days
+  });
+});

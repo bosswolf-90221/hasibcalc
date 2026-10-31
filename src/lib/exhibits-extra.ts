@@ -136,3 +136,21 @@ export function hijriMonthTable(iso: string): string {
   }
   return `<p class="table-cap">شهر ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ (${len} يوماً) بتقويم أم القرى</p><div class="scroll-x"><table class="ledger"><thead><tr><th>اليوم الهجري</th><th>اليوم</th><th>التاريخ الميلادي</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 }
+
+/** One Gregorian month day by day with its Umm al-Qura Hijri date. `offset` 0 = the month of `iso`, 1 = the next one. */
+export function gregMonthHijriTable(iso: string, offset = 0): string {
+  const [y, m] = iso.split('-').map(Number);
+  const first = new Date(Date.UTC(y, m - 1 + offset, 1));
+  const gy = first.getUTCFullYear(), gm = first.getUTCMonth();
+  const len = new Date(Date.UTC(gy, gm + 1, 0)).getUTCDate();
+  const G = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  const rows: string[] = [];
+  for (let d = 1; d <= len; d++) {
+    const dt = new Date(Date.UTC(gy, gm, d));
+    const gi = dt.toISOString().slice(0, 10);
+    const h = toHijriDate(dt);
+    const mark = gi === iso ? ' class="today" aria-current="date"' : '';
+    rows.push(`<tr${mark}><td>${d} ${G[gm]}</td><td>${WEEKDAYS[dt.getUTCDay()]}</td><td>${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ</td></tr>`);
+  }
+  return `<p class="table-cap">${G[gm]} ${gy} بالتاريخ الهجري (تقويم أم القرى)</p><div class="scroll-x"><table class="ledger"><thead><tr><th>التاريخ الميلادي</th><th>اليوم</th><th>يوافق بالهجري</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
