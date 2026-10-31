@@ -2,11 +2,19 @@
 import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import SalaryDayCalc from '../components/SalaryDayCalc.astro';
+import { salaryShortAnswer } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+const today = toISODate(new Date());
 ---
 <CalcLayout slug="salary-day" lede="اكتب يوم نزول راتبك في الشهر، ونحسب كم يوماً باقي عليه من تاريخ اليوم في جهازك. وإذا وافق يوم الراتب عطلة نهاية الأسبوع، ننقله إلى يوم العمل الذي تختاره.">
   <SalaryDayCalc payDay={27} weekend="fri-sat" rule="before" />
 
   <Fragment slot="article">
+    <div class="example">
+      <p><strong>كم باقي على الراتب اليوم؟</strong> بحسب تاريخ جهازك:</p>
+      <div data-x="salary-answer" set:html={salaryShortAnswer(today)} />
+      <p>وإن كان راتبك في يوم آخر فاكتبه في الحاسبة أعلاه.</p>
+    </div>
     <p class="hint">صفحات مخصّصة: <a href="/salary-saudi/">كم باقي على الراتب في السعودية</a> · <a href="/salary-uae/">كم باقي على الراتب في الإمارات</a></p>
     <h2>متى ينزل الراتب؟</h2>
     <p>موعد الراتب يختلف من جهة إلى أخرى، لذلك تكتب أنت يوم راتبك. ومن أشهر المواعيد في الخليج:</p>
@@ -18,7 +26,16 @@ import SalaryDayCalc from '../components/SalaryDayCalc.astro';
     <div class="example">
       <p>راتب يوم 27، والعطلة الجمعة والسبت: يوم 27 نوفمبر 2026 يوافق الجمعة، فيُقدَّم الراتب إلى <strong>الخميس 26 نوفمبر</strong>. أما 27 ديسمبر 2026 فيوافق الأحد، فينزل في موعده.</p>
     </div>
+    <h2>كيف أحسب كم باقي على الراتب بنفسي؟</h2>
+    <ol>
+      <li>حدّد يوم راتبك في الشهر، مثل 27.</li>
+      <li>إن لم يمضِ هذا اليوم في الشهر الحالي فهو موعدك القادم، وإلا فموعدك في الشهر التالي.</li>
+      <li>انظر في التقويم إلى اليوم الذي يوافقه: إن كان عطلة نهاية الأسبوع فقد يُقدَّم إلى آخر يوم عمل قبله.</li>
+      <li>اطرح تاريخ اليوم من تاريخ الراتب: الناتج هو عدد الأيام الباقية.</li>
+    </ol>
     <Faq title="أسئلة شائعة" items={[
+      { q: "متى ينزل راتب شهر نوفمبر 2026؟", a: "لراتب يوم 27 مع عطلة الجمعة والسبت: يوم 27 نوفمبر 2026 يوافق الجمعة، فيُقدَّم عادة إلى الخميس 26 نوفمبر. وراتب يوم 27 ديسمبر 2026 ينزل في موعده لأنه يوافق الأحد." },
+      { q: "لماذا يختلف عدد الأيام الباقية بين شخص وآخر؟", a: "لأن موعد الراتب يختلف بين الجهات: بعضها يوم 27، وبعضها آخر الشهر أو أول الشهر التالي، ولأن تقديم الراتب عند العطلة يختلف بحسب الجهة. لذلك اكتب يوم راتبك أنت في الحاسبة." },
       { q: "كم باقي على الراتب الحكومي في السعودية؟", a: "اترك يوم الراتب 27 والعطلة الجمعة والسبت مع خيار «يُقدَّم»، وستظهر عدد الأيام الباقية وتاريخ الراتب القادم واسم اليوم." },
       { q: "ماذا يحدث إذا وافق يوم الراتب الجمعة؟", a: "في القطاع الحكومي السعودي يُقدَّم الصرف عادة إلى الخميس الذي قبله. وفي القطاع الخاص يعتمد ذلك على سياسة صاحب العمل والبنك." },
       { q: "هل تحسب الحاسبة إجازات الأعياد؟", a: "لا. مواعيد العطل الرسمية وتقديم الرواتب قبل الأعياد تُعلن كل سنة، فلا نفترضها مسبقاً." },
@@ -31,3 +48,10 @@ import SalaryDayCalc from '../components/SalaryDayCalc.astro';
     </ul>
   </Fragment>
 </CalcLayout>
+
+<script>
+  import { salaryShortAnswer } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const el = document.querySelector<HTMLElement>('[data-x="salary-answer"]');
+  if (el) el.innerHTML = salaryShortAnswer(localTodayISO());
+</script>

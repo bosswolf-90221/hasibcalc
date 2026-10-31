@@ -186,7 +186,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money', 'dates'],
     terms: ['الراتب', 'راتب', 'كم باقي على الراتب', 'موعد الراتب', 'نزول الراتب', 'يوم 27', 'الرواتب', 'عداد'],
     related: ['salary-saudi', 'salary-uae', 'gosi', 'end-of-service'],
-    updated: '2026-10-25',
+    updated: '2026-10-31',
   },
   {
     slug: 'salary-saudi',

@@ -63,7 +63,7 @@ export function gosiSchedule(onISO: string, system: string, nationality: string)
   <p class="leaf-day">النسب تشمل المعاشات وساند (0.75% لكل طرف)، وعلى صاحب العمل 2% للأخطار المهنية. صفوف «من…» للمسجلين أول مرة بعد 3 يوليو 2024.</p>`;
 }
 
-import type { PaydayResult } from './calc/payday';
+import { calcPayday, type PaydayResult } from './calc/payday';
 /** The next 12 salary days, marking those moved off the weekend. */
 export function paydayTable(p: PaydayResult | null): string {
   if (!p) return '';
@@ -153,4 +153,17 @@ export function gregMonthHijriTable(iso: string, offset = 0): string {
     rows.push(`<tr${mark}><td>${d} ${G[gm]}</td><td>${WEEKDAYS[dt.getUTCDay()]}</td><td>${h.day} ${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ</td></tr>`);
   }
   return `<p class="table-cap">${G[gm]} ${gy} بالتاريخ الهجري (تقويم أم القرى)</p><div class="scroll-x"><table class="ledger"><thead><tr><th>التاريخ الميلادي</th><th>اليوم</th><th>يوافق بالهجري</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+
+/** Short answer for "كم باقي على الراتب؟" on a given local date: day 27 (Fri–Sat weekend, moved earlier) and day 1 (unchanged). */
+export function salaryShortAnswer(iso: string): string {
+  const dayWord = (n: number) => n === 0 ? 'اليوم هو يوم الراتب' : n === 1 ? 'باقي يوم واحد' : n === 2 ? 'باقي يومان' : `باقي ${n} ${n <= 10 ? 'أيام' : 'يوماً'}`;
+  const line = (payDay: number, weekend: 'fri-sat' | 'sat-sun', rule: 'before' | 'none', who: string) => {
+    const r = calcPayday({ payDay, weekend, rule, onDate: iso });
+    if (!r.ok) return '';
+    const n = r.value.next;
+    const moved = n.shifted ? ` (قُدِّم من يوم ${payDay} لأنه يوافق العطلة)` : '';
+    return `<li><strong>${who}:</strong> ${dayWord(r.value.daysLeft)}، والموعد ${n.weekday} ${arDate(n.actual)}${moved}.</li>`;
+  };
+  return `<ul>${line(27, 'fri-sat', 'before', 'راتب يوم 27')}${line(1, 'sat-sun', 'none', 'راتب يوم 1 من الشهر')}</ul>`;
 }
