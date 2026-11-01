@@ -118,11 +118,11 @@ export function gpaSemestersTable(): string {
   const starts = [2.0, 2.5, 3.0, 3.5, 4.0];
   const rows = starts
     .map((c) => {
-      const cells = [1, 2, 3, 4].map((n) => `<td class="num">${gpaAfterSemesters(c, 60, 15, n, 5).toFixed(2)}</td>`).join('');
-      return `<tr><td class="num">${c.toFixed(2)}</td>${cells}</tr>`;
+      const cells = [1, 2, 3, 4].map((n) => `<td class="num c">${gpaAfterSemesters(c, 60, 15, n, 5).toFixed(2)}</td>`).join('');
+      return `<tr><td class="num c">${c.toFixed(2)}</td>${cells}</tr>`;
     })
     .join('');
-  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>معدلك الآن</th><th>بعد فصل</th><th>بعد فصلين</th><th>بعد 3 فصول</th><th>بعد 4 فصول</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th class="c">معدلك الآن</th><th class="c">بعد فصل</th><th class="c">بعد فصلين</th><th class="c">بعد 3 فصول</th><th class="c">بعد 4 فصول</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 /** "Today in Hijri" line and the current Hijri month day by day (Umm al-Qura). `iso` is the visitor's local date. */
