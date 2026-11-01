@@ -282,3 +282,18 @@ describe('gpa semesters table', () => {
     expect(html.match(/<tr>/g)?.length).toBe(6);
   });
 });
+
+import { ramadanDaysTable, ramadanYearsTable } from '../src/lib/exhibits-extra';
+describe('ramadan tables', () => {
+  test('Ramadan 1448 day by day (Umm al-Qura)', () => {
+    const t = ramadanDaysTable(1448);
+    expect(t.match(/<tr/g)?.length).toBe(30); // header + 29 days
+    expect(t).toContain('<td class="num">1</td><td>الاثنين<br>');
+    expect(t).toContain('<td class="num">27</td><td>السبت</td><td class="nw">6 مارس 2027</td>');
+    expect(t).toContain('بداية العشر الأواخر');
+  });
+  test('Ramadan start dates 1446-1450', () => {
+    const t = ramadanYearsTable(1446, 1450);
+    for (const d of ['1 مارس 2025', '18 فبراير 2026', '8 فبراير 2027', '28 يناير 2028', '16 يناير 2029']) expect(t).toContain(d);
+  });
+});

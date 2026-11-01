@@ -216,6 +216,9 @@ details.how .how-body { padding-bottom: 14px; }
 .ledger th:first-child { border-start-start-radius: 10px; border-end-start-radius: 10px; }
 .ledger th:last-child { border-start-end-radius: 10px; border-end-end-radius: 10px; }
 .ledger td { padding: 11px 12px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.ledger td.nw { white-space: nowrap; }
+@media (max-width: 400px) { .ledger th, .ledger td, .article .data-table th, .article .data-table td { padding-inline: 7px; } .ledger td.nw { font-size: .86rem; } .article .data-table { font-size: .88rem; } }
+.ledger tr.fri td { background: var(--well); }
 .ledger td.c, .ledger th.c { text-align: center; }
 .ledger td.num:not(.c) { text-align: right; }
 .ledger td.n, .ledger th.n { text-align: end; direction: ltr; }

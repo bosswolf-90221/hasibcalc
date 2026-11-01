@@ -125,6 +125,30 @@ export function gpaSemestersTable(): string {
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th class="c">معدلك الآن</th><th class="c">بعد فصل</th><th class="c">بعد فصلين</th><th class="c">بعد 3 فصول</th><th class="c">بعد 4 فصول</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
+/** Ramadan of a Hijri year day by day (Umm al-Qura): day, weekday, Gregorian date, with calendar milestones. */
+export function ramadanDaysTable(hy: number): string {
+  const len = hijriMonthLength(hy, 9);
+  const rows: string[] = [];
+  for (let day = 1; day <= len; day++) {
+    const g = fromHijri({ year: hy, month: 9, day })!;
+    const note = day === 1 ? 'أول يوم صيام' : day === 21 ? 'بداية العشر الأواخر' : day === len ? 'آخر يوم في الشهر' : '';
+    const fri = g.getUTCDay() === 5 ? ' class="fri"' : '';
+    rows.push(`<tr${fri}><td class="num">${day}</td><td>${WEEKDAYS[g.getUTCDay()]}${note ? `<br><span class="muted">${note}</span>` : ''}</td><td class="nw">${arDate(g.toISOString().slice(0, 10))}</td></tr>`);
+  }
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>اليوم</th><th>يوم الأسبوع</th><th>التاريخ الميلادي</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+
+/** Start of Ramadan, Eid al-Fitr and the month length for a range of Hijri years. */
+export function ramadanYearsTable(from: number, to: number): string {
+  const rows: string[] = [];
+  for (let hy = from; hy <= to; hy++) {
+    const a = fromHijri({ year: hy, month: 9, day: 1 })!;
+    const e = fromHijri({ year: hy, month: 10, day: 1 })!;
+    rows.push(`<tr><td class="num">${hy}</td><td class="nw">${WEEKDAYS[a.getUTCDay()]}<br>${arDate(a.toISOString().slice(0, 10))}</td><td class="nw">${WEEKDAYS[e.getUTCDay()]}<br>${arDate(e.toISOString().slice(0, 10))}</td></tr>`);
+  }
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>السنة</th><th>أول رمضان</th><th>عيد الفطر</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+
 /** "Today in Hijri" line and the current Hijri month day by day (Umm al-Qura). `iso` is the visitor's local date. */
 export function hijriTodayLine(iso: string): string {
   const d = new Date(iso + 'T00:00:00Z');

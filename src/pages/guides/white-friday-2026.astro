@@ -24,7 +24,7 @@ const f = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 })
   <h2>كم يصبح السعر بعد الخصم؟ جدول جاهز</h2>
   <p>السعر بعد الخصم = السعر × (100 − نسبة الخصم) ÷ 100. فبعد خصم 30% تدفع 70% من السعر.</p>
   <div class="scroll-x"><table>
-    <thead><tr><th>السعر قبل الخصم</th>{OFFS.map((o) => <th>بعد خصم {o}%</th>)}</tr></thead>
+    <thead><tr><th>السعر قبل الخصم</th>{OFFS.map((o) => <th>خصم {o}%</th>)}</tr></thead>
     <tbody>{PRICES.map((p) => <tr><td>{f(p)}</td>{OFFS.map((o) => <td>{f(p * (100 - o) / 100)}</td>)}</tr>)}</tbody>
   </table></div>
   <p>ولأي سعر أو نسبة أخرى، أو لخصمين متتاليين، استخدم <a href="/discount/">حاسبة الخصم</a>.</p>
