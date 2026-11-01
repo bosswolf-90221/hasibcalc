@@ -312,7 +312,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['study'],
     terms: ['المعدل المطلوب', 'رفع المعدل', 'المعدل المستهدف', 'المعدل التراكمي', 'كيف ارفع معدلي', 'gpa', 'الجامعة', 'التخرج'],
     related: ['gpa', 'percentage', 'days-between', 'age'],
-    updated: '2026-10-27',
+    updated: '2026-11-01',
   },
 ];
 

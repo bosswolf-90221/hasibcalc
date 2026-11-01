@@ -59,3 +59,8 @@ export function calcGpaTarget(input: TargetInput): CalcResult<GpaTarget> {
     byLoad: [12, 15, 18, 21].map((h) => ({ hours: h, needed: needAt(h) })),
   });
 }
+
+/** Cumulative GPA after `semesters` further semesters of `perSem` hours, all at the top grade `max`. */
+export function gpaAfterSemesters(current: number, doneHours: number, perSem: number, semesters: number, max: number): number {
+  return (current * doneHours + max * perSem * semesters) / (doneHours + perSem * semesters);
+}

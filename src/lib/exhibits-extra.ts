@@ -104,13 +104,25 @@ export function gpaTable(g: Gpa | null): string {
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>المادة</th><th>التقدير</th><th>الساعات</th><th>الوزن</th><th>النقاط</th></tr></thead><tbody>${rows}<tr class="total"><td colspan="2">المجموع ÷ الساعات = ${f(g.semGpa)}</td><td class="nums">${g.semHours}</td><td></td><td class="nums">${f(g.semPoints)}</td></tr></tbody></table></div>`;
 }
 
-import type { GpaTarget } from './calc/gpa-target';
+import { gpaAfterSemesters, type GpaTarget } from './calc/gpa-target';
 /** Required semester GPA for common semester loads. */
 export function gpaTargetTable(t: GpaTarget | null): string {
   if (!t) return '';
   const f = (n: number) => (n > t.max ? 'غير ممكن' : n <= t.min ? 'محقق بأي درجة' : (Math.round(n * 100) / 100).toFixed(2));
   const rows = t.byLoad.map((r) => `<tr><td class="nums">${r.hours} ساعة</td><td>${f(r.needed)}</td></tr>`).join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>ساعات الفصل القادم</th><th>المعدل الفصلي المطلوب</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/** How many full-mark semesters lift a cumulative GPA (5-point scale, 60 done hours, 15 hours per semester). */
+export function gpaSemestersTable(): string {
+  const starts = [2.0, 2.5, 3.0, 3.5, 4.0];
+  const rows = starts
+    .map((c) => {
+      const cells = [1, 2, 3, 4].map((n) => `<td class="num">${gpaAfterSemesters(c, 60, 15, n, 5).toFixed(2)}</td>`).join('');
+      return `<tr><td class="num">${c.toFixed(2)}</td>${cells}</tr>`;
+    })
+    .join('');
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>معدلك الآن</th><th>بعد فصل</th><th>بعد فصلين</th><th>بعد 3 فصول</th><th>بعد 4 فصول</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 /** "Today in Hijri" line and the current Hijri month day by day (Umm al-Qura). `iso` is the visitor's local date. */

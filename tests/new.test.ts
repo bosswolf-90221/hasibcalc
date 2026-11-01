@@ -269,3 +269,16 @@ describe('Gregorian month with Hijri dates', () => {
     expect(nov.match(/<tr>/g)!.length).toBe(31); // header + 30 days
   });
 });
+
+import { gpaSemestersTable } from '../src/lib/exhibits-extra';
+import { gpaAfterSemesters } from '../src/lib/calc/gpa-target';
+describe('gpa semesters table', () => {
+  test('values from 3.0 and 2.0 over 1-4 full-mark semesters of 15 hours after 60 hours', () => {
+    const f = (c: number, n: number) => gpaAfterSemesters(c, 60, 15, n, 5).toFixed(2);
+    expect([1, 2, 3, 4].map((n) => f(3.0, n))).toEqual(['3.40', '3.67', '3.86', '4.00']);
+    expect([1, 2, 3, 4].map((n) => f(2.0, n))).toEqual(['2.60', '3.00', '3.29', '3.50']);
+    const html = gpaSemestersTable();
+    expect(html).toContain('3.86');
+    expect(html.match(/<tr>/g)?.length).toBe(6);
+  });
+});
