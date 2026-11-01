@@ -1,4 +1,5 @@
 ---
+import { vatAddTable, vatExtractTable } from '../lib/exhibits-extra';
 import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
@@ -43,6 +44,10 @@ const v = r.ok ? r.value : null;
     <div class="example">
       <p>سعر شامل 1,050 درهماً بنسبة 5%: قبل الضريبة = 1,050 ÷ 1.05 = 1,000، والضريبة 50 درهماً.</p>
     </div>
+    <h2>جدول: إضافة ضريبة 5%</h2>
+    <Fragment set:html={vatAddTable(5)} />
+    <h2>جدول: استخراج الضريبة من سعر شامل 5%</h2>
+    <Fragment set:html={vatExtractTable(5)} />
     <h2>الخطأ الأشهر</h2>
     <p>ضرب السعر الشامل في 5% يعطي 52.50 بدلاً من 50، لأن الضريبة محسوبة على السعر الأصلي وليس على السعر الشامل. استخدم القسمة على 1.05.</p>
     <h2>متى لا تنطبق هذه النتيجة؟</h2>

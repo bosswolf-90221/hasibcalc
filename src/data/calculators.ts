@@ -62,7 +62,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money', 'shopping'],
     terms: ['ضريبة', 'الضريبة', 'القيمة المضافة', 'vat', '5%', 'شامل الضريبة', 'فاتورة'],
     related: ['discount', 'percentage', 'loan', 'zakat'],
-    updated: '2026-10-22',
+    updated: '2026-11-01',
   },
   {
     slug: 'loan',
@@ -103,7 +103,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['shopping'],
     terms: ['خصم', 'الخصم', 'تخفيض', 'تخفيضات', 'عروض', 'سعر', 'تسوق', 'sale'],
     related: ['percentage', 'vat', 'loan', 'age'],
-    updated: '2026-10-25',
+    updated: '2026-11-01',
   },
   {
     slug: 'age',
@@ -117,7 +117,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age', 'dates'],
     terms: ['عمر', 'العمر', 'عمري', 'ميلاد', 'عيد ميلاد', 'تاريخ', 'سن'],
     related: ['hijri-age', 'bmi', 'days-between', 'percentage'],
-    updated: '2026-10-25',
+    updated: '2026-11-01',
   },
   {
     slug: 'bmi',
@@ -144,7 +144,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['زكاة', 'الزكاة', 'نصاب', 'ذهب', 'مدخرات', 'ربع العشر', 'رمضان'],
     related: ['end-of-service', 'loan', 'percentage', 'vat'],
-    updated: '2026-10-30',
+    updated: '2026-11-01',
   },
   {
     slug: 'hijri',

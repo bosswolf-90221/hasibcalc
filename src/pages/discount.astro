@@ -1,4 +1,5 @@
 ---
+import { discountPayTable, discountStackTable } from '../lib/exhibits-extra';
 import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
@@ -42,6 +43,11 @@ const v = r.ok ? r.value : null;
     <div class="example">
       <p>قطعة بـ 100 درهم: بعد 30% تصبح 70، وبعد 10% إضافية تصبح 63. وفّرت 37 درهماً، أي 37%.</p>
     </div>
+    <h2>جدول: كم تدفع بعد الخصم؟</h2>
+    <Fragment set:html={discountPayTable()} />
+    <h2>جدول: الخصم الفعلي عند جمع خصمين</h2>
+    <p>الخصم الفعلي = 100 − (100 − الأول) × (100 − الثاني) ÷ 100:</p>
+    <Fragment set:html={discountStackTable()} />
     <h2>أخطاء شائعة</h2>
     <ul>
       <li>توقّع أن «خصم حتى 70%» يشمل كل القطع، وهو غالباً يشمل بعضها فقط.</li>
@@ -50,6 +56,7 @@ const v = r.ok ? r.value : null;
     <h2>متى لا تنطبق؟</h2>
     <p>عندما يكون الخصم مبلغاً ثابتاً وليس نسبة، مثل «50 درهماً على مشتريات فوق 300»، أو عندما يُطبَّق الخصم الإضافي على السعر الأصلي بحسب شروط العرض.</p>
     <Faq title="أسئلة شائعة" items={[
+      { q: "هل خصم 50% وخصم 20% يساويان 70%؟", a: "لا، يساويان 60%. الخصم الثاني يُحسب على السعر بعد الخصم الأول." },
       { q: "كيف أعرف نسبة الخصم من السعرين؟", a: "(السعر الأصلي − السعر الجديد) ÷ السعر الأصلي × 100. أو استخدم <a href=\"/percentage/\">حاسبة نسبة التغير</a>." },
     ]} />
   </Fragment>

@@ -149,6 +149,63 @@ export function ramadanYearsTable(from: number, to: number): string {
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>السنة</th><th>أول رمضان</th><th>عيد الفطر</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 }
 
+const nf = (x: number, d = 0, fixed = false) => (Math.round(x * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
+const head = (cols: string[]) => `<thead><tr>${cols.map((c) => `<th class="c">${c}</th>`).join('')}</tr></thead>`;
+const row = (cells: (string | number)[]) => `<tr>${cells.map((c) => `<td class="num c">${c}</td>`).join('')}</tr>`;
+const wrap = (cols: string[], rows: string[]) => `<div class="scroll-x"><table class="ledger">${head(cols)}<tbody>${rows.join('')}</tbody></table></div>`;
+
+/** Percent of common numbers: rows are percentages, columns are bases. */
+export function percentOfTable(): string {
+  const bases = [100, 250, 500, 1000];
+  return wrap(['النسبة', ...bases.map((b) => `من ${nf(b)}`)], [5, 10, 15, 20, 25, 30, 50].map((p) => row([`${p}%`, ...bases.map((b) => nf((b * p) / 100, 1))])));
+}
+
+/** A rise followed by the same fall (and the reverse) starting from 100. */
+export function percentSuccessiveTable(): string {
+  const cases: [number, number][] = [[10, -10], [20, -20], [50, -50], [-50, 50], [100, -50]];
+  return wrap(['التغير الأول', 'التغير الثاني', 'تصبح 100', 'الأثر الصافي'], cases.map(([a, b]) => {
+    const end = 100 * (1 + a / 100) * (1 + b / 100);
+    const net = end - 100;
+    return row([`${a > 0 ? '+' : '−'}${Math.abs(a)}%`, `${b > 0 ? '+' : '−'}${Math.abs(b)}%`, nf(end, 1), net === 0 ? '0%' : `${net > 0 ? '+' : '−'}${nf(Math.abs(net), 1)}%`]);
+  }));
+}
+
+/** What you pay after a single discount, for common prices. */
+export function discountPayTable(): string {
+  const prices = [100, 250, 500, 1000];
+  return wrap(['الخصم', ...prices.map((b) => `تدفع من ${nf(b)}`)], [10, 15, 20, 25, 30, 40, 50, 60, 70].map((d) => row([`${d}%`, ...prices.map((b) => nf((b * (100 - d)) / 100, 1))])));
+}
+
+/** Two successive discounts: the real combined discount. */
+export function discountStackTable(): string {
+  const pairs: [number, number][] = [[10, 10], [20, 10], [20, 20], [30, 10], [30, 20], [40, 20], [50, 20], [50, 50]];
+  return wrap(['الخصم الأول', 'الخصم الثاني', 'الخصم الفعلي'], pairs.map(([a, b]) => row([`${a}%`, `${b}%`, `${nf(100 - (100 - a) * (100 - b) / 100, 1)}%`])));
+}
+
+/** VAT: add to a price before tax, or extract from a price that includes tax. */
+export function vatAddTable(rate: number): string {
+  return wrap(['قبل الضريبة', 'الضريبة', 'الإجمالي'], [100, 250, 500, 1000, 2500, 5000, 10000].map((a) => row([nf(a), nf((a * rate) / 100, 2, true), nf((a * (100 + rate)) / 100, 2, true)])));
+}
+export function vatExtractTable(rate: number): string {
+  return wrap(['السعر الشامل', 'قبل الضريبة', 'الضريبة'], [100, 250, 500, 1000, 2500, 5000, 10000].map((a) => { const base = (a * 100) / (100 + rate); return row([nf(a), nf(base, 2, true), nf(a - base, 2, true)]); }));
+}
+
+/** Age in months, days and weeks (approximate, 365.2425-day year). */
+export function ageDaysTable(): string {
+  return wrap(['العمر (سنة)', 'بالأشهر', 'بالأيام تقريباً', 'بالأسابيع تقريباً'], [1, 5, 10, 18, 21, 30, 40, 50, 60].map((y) => { const d = Math.round(y * 365.2425); return row([y, nf(y * 12), nf(d), nf(Math.round(d / 7))]); }));
+}
+
+/** Adult BMI categories (WHO / CDC). */
+export function bmiClassTable(): string {
+  const rows: [string, string][] = [['نقص الوزن', 'أقل من 18.5'], ['النطاق الطبيعي', 'من 18.5 إلى أقل من 25'], ['زيادة الوزن', 'من 25 إلى أقل من 30'], ['سمنة من الدرجة الأولى', 'من 30 إلى أقل من 35'], ['سمنة من الدرجة الثانية', 'من 35 إلى أقل من 40'], ['سمنة من الدرجة الثالثة', '40 فأكثر']];
+  return `<div class="scroll-x"><table class="ledger">${head(['التصنيف', 'مؤشر كتلة الجسم'])}<tbody>${rows.map(([a, b]) => `<tr><td class="c">${a}</td><td class="c">${b}</td></tr>`).join('')}</tbody></table></div>`;
+}
+/** Weight range for the normal BMI band, and where obesity starts, by height. */
+export function bmiHeightTable(): string {
+  const w = (bmi: number, cm: number) => (bmi * (cm / 100) ** 2).toFixed(1);
+  return wrap(['الطول (سم)', 'الوزن الطبيعي (كجم)', 'السمنة من (كجم)'], [150, 160, 170, 180, 190].map((h) => row([h, `${w(18.5, h)} – ${w(24.9, h)}`, w(30, h)])));
+}
+
 /** "Today in Hijri" line and the current Hijri month day by day (Umm al-Qura). `iso` is the visitor's local date. */
 export function hijriTodayLine(iso: string): string {
   const d = new Date(iso + 'T00:00:00Z');

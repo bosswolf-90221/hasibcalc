@@ -1,4 +1,6 @@
 ---
+import { bmiClassTable, bmiHeightTable } from '../lib/exhibits-extra';
+import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import FieldErrors from '../components/FieldErrors.astro';
@@ -41,9 +43,20 @@ const view = r.ok ? bmiView(r.value) : errorView(r, 'مؤشر كتلة جسمك'
       <li>من 25 إلى أقل من 30: زيادة وزن.</li>
       <li>30 فأكثر: سمنة.</li>
     </ul>
+    <p>التصنيف الكامل للبالغين، مع درجات السمنة:</p>
+    <Fragment set:html={bmiClassTable()} />
     <div class="example"><p>وزن 75 كجم وطول 175 سم: 75 ÷ (1.75 × 1.75) = 24.5، أي ضمن النطاق الطبيعي.</p></div>
+    <h2>الوزن المناسب لكل طول</h2>
+    <p>هذا الجدول يعكس المعادلة نفسها: يبيّن مدى الوزن الذي يقع ضمن النطاق الطبيعي (18.5 إلى 24.9) والوزن الذي تبدأ منه السمنة (30) لكل طول.</p>
+    <Fragment set:html={bmiHeightTable()} />
     <h2>متى لا تنطبق هذه النتيجة؟</h2>
     <p>عند الرياضيين ذوي الكتلة العضلية العالية، والحوامل، وكبار السن، ولمن هم دون 20 سنة، إذ تُستخدم لهم منحنيات نمو بحسب العمر والجنس. لأي قرار صحي استشر طبيبك.</p>
+    <Faq title="أسئلة شائعة" items={[
+      { q: "ما مؤشر كتلة الجسم الطبيعي؟", a: "من 18.5 إلى أقل من 25 للبالغين، بحسب تصنيف المراكز الأمريكية لمكافحة الأمراض ومنظمة الصحة العالمية." },
+      { q: "هل المؤشر يقيس الدهون مباشرة؟", a: "لا. هو نسبة بين الوزن والطول، ولا يفرّق بين الكتلة العضلية والدهون، لذا يُستخدم للفحص الأولي لا للتشخيص." },
+      { q: "هل المؤشر نفسه للرجال والنساء؟", a: "تصنيف البالغين واحد للجنسين. أما من هم دون 20 سنة فتُستخدم لهم منحنيات نمو بحسب العمر والجنس." },
+    ]} />
+    <p class="src-note">هذه الصفحة للمعلومات العامة وليست استشارة طبية. للتفاصيل انظر <a href="/about/">من نحن</a>.</p>
     <h2>المصادر</h2>
     <ul class="sources">
       <li><a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html" rel="noopener" target="_blank">CDC: تصنيفات مؤشر كتلة الجسم للبالغين</a></li>
