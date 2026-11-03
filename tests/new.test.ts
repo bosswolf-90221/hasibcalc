@@ -283,7 +283,7 @@ describe('gpa semesters table', () => {
   });
 });
 
-import { ramadanDaysTable, ramadanYearsTable } from '../src/lib/exhibits-extra';
+import { ramadanDaysTable, ramadanYearsTable, hijriYearsTable } from '../src/lib/exhibits-extra';
 describe('ramadan tables', () => {
   test('Ramadan 1448 day by day (Umm al-Qura)', () => {
     const t = ramadanDaysTable(1448);
@@ -295,5 +295,16 @@ describe('ramadan tables', () => {
   test('Ramadan start dates 1446-1450', () => {
     const t = ramadanYearsTable(1446, 1450);
     for (const d of ['1 مارس 2025', '18 فبراير 2026', '8 فبراير 2027', '28 يناير 2028', '16 يناير 2029']) expect(t).toContain(d);
+  });
+});
+
+describe('hijri years table', () => {
+  test('first and last day of Hijri years (Umm al-Qura)', () => {
+    const t = hijriYearsTable(1348, 1349);
+    expect(t).toContain('<td class="num">1348</td><td class="nw">9 يونيو 1929</td><td class="nw">28 مايو 1930</td>');
+    const t2 = hijriYearsTable(1448, 1448);
+    expect(t2).toContain('16 يونيو 2026');
+    expect(t2).toContain('5 يونيو 2027');
+    expect(hijriYearsTable(1343, 1450).match(/<tr>/g)!.length).toBe(109);
   });
 });

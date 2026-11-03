@@ -149,6 +149,18 @@ export function ramadanYearsTable(from: number, to: number): string {
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>السنة</th><th>أول رمضان</th><th>عيد الفطر</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 }
 
+/** First and last day of each Hijri year (Umm al-Qura) with the Gregorian dates. */
+export function hijriYearsTable(from: number, to: number): string {
+  const rows: string[] = [];
+  for (let hy = from; hy <= to; hy++) {
+    const a = fromHijri({ year: hy, month: 1, day: 1 })!;
+    const nxt = fromHijri({ year: hy + 1, month: 1, day: 1 })!;
+    const e = new Date(nxt.getTime() - 86400000);
+    rows.push(`<tr><td class="num">${hy}</td><td class="nw">${arDate(a.toISOString().slice(0, 10))}</td><td class="nw">${arDate(e.toISOString().slice(0, 10))}</td></tr>`);
+  }
+  return `<div class="scroll-x"><table class="ledger"><thead><tr><th>السنة الهجرية</th><th>تبدأ (1 محرم)</th><th>تنتهي (آخر ذي الحجة)</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+
 const nf = (x: number, d = 0, fixed = false) => (Math.round(x * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
 const head = (cols: string[]) => `<thead><tr>${cols.map((c) => `<th class="c">${c}</th>`).join('')}</tr></thead>`;
 const row = (cells: (string | number)[]) => `<tr>${cells.map((c) => `<td class="num c">${c}</td>`).join('')}</tr>`;
