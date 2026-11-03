@@ -5,11 +5,12 @@ import Faq from '../../components/Faq.astro';
 // Healthy range for adults = BMI 18.5 to 24.9 (WHO / CDC). Middle of the range shown at BMI 22.
 const w = (bmi: number, cm: number) => (bmi * (cm / 100) ** 2).toFixed(1);
 const rows = [150, 155, 160, 165, 170, 175, 180, 185, 190, 195].map((h) => [h, w(18.5, h), w(22, h), w(24.9, h)]);
+const cmRows = Array.from({ length: 41 }, (_, i) => 150 + i).map((h) => [h, w(18.5, h), w(22, h), w(24.9, h)]);
 const ex = { h: 172, m2: (1.72 ** 2).toFixed(3), lo: w(18.5, 172), hi: w(24.9, 172), mid: w(22, 172) };
 ---
 <GuideLayout slug="ideal-weight-by-height">
   <div class="example">
-    <p><strong>الجواب المختصر:</strong> الوزن الطبيعي للبالغ هو الذي يجعل مؤشر كتلة الجسم بين <strong>18.5 و24.9</strong>. احسبه هكذا: اضرب مربع طولك بالمتر في 18.5 للحد الأدنى، وفي 24.9 للحد الأعلى. فلطول 170 سم يكون الوزن الطبيعي بين <strong class="num">{w(18.5, 170)}</strong> و<strong class="num">{w(24.9, 170)}</strong> كجم.</p>
+    <p><strong>الجواب المختصر:</strong> الوزن المناسب (أو الطبيعي) للبالغ هو الذي يجعل مؤشر كتلة الجسم بين <strong>18.5 و24.9</strong>. احسبه هكذا: اضرب مربع طولك بالمتر في 18.5 للحد الأدنى، وفي 24.9 للحد الأعلى. فلطول 170 سم يكون الوزن الطبيعي بين <strong class="num">{w(18.5, 170)}</strong> و<strong class="num">{w(24.9, 170)}</strong> كجم.</p>
   </div>
   <p class="src-note">للمعلومات العامة فقط، وليس تشخيصاً طبياً. نقارن الأرقام بتصنيفات منظمة الصحة العالمية والمراكز الأمريكية لمكافحة الأمراض، وهذه المراجعة ليست طبية. <a href="/about/">كيف نراجع المعلومات</a>.</p>
 
@@ -24,10 +25,17 @@ const ex = { h: 172, m2: (1.72 ** 2).toFixed(3), lo: w(18.5, 172), hi: w(24.9, 1
   <p>فلا يوجد «وزن مثالي» واحد لكل طول، بل نطاق طبيعي واسع. ومنتصف هذا النطاق، أي مؤشر 22 تقريباً، رقم مرجعي مفيد إن أردت هدفاً واحداً.</p>
 
   <h2>جدول الوزن الطبيعي حسب الطول (للبالغين)</h2>
-  <div class="scroll-x"><table>
-    <thead><tr><th>الطول (سم)</th><th>من (كجم)</th><th>المنتصف (كجم)</th><th>إلى (كجم)</th></tr></thead>
-    <tbody>{rows.map(([h, a, m, b]) => <tr><td class="num">{h}</td><td class="num">{a}</td><td class="num">{m}</td><td class="num">{b}</td></tr>)}</tbody>
+  <div class="scroll-x"><table class="ledger">
+    <thead><tr><th class="c">الطول (سم)</th><th class="c">من (كجم)</th><th class="c">المنتصف (كجم)</th><th class="c">إلى (كجم)</th></tr></thead>
+    <tbody>{rows.map(([h, a, m, b]) => <tr><td class="num c">{h}</td><td class="num c">{a}</td><td class="num c">{m}</td><td class="num c">{b}</td></tr>)}</tbody>
   </table></div>
+  <details class="all-cm">
+    <summary>جدول الوزن المناسب لكل سنتيمتر من 150 إلى 190 سم</summary>
+    <div class="scroll-x"><table class="ledger">
+      <thead><tr><th class="c">الطول (سم)</th><th class="c">من (كجم)</th><th class="c">المنتصف (كجم)</th><th class="c">إلى (كجم)</th></tr></thead>
+      <tbody>{cmRows.map(([h, a, m, b]) => <tr><td class="num c">{h}</td><td class="num c">{a}</td><td class="num c">{m}</td><td class="num c">{b}</td></tr>)}</tbody>
+    </table></div>
+  </details>
   <p>الجدول واحد للرجال والنساء، لأن تصنيف المؤشر للبالغين لا يفرّق بينهما.</p>
   <div class="cta"><p>احسب مؤشرك ونطاقك لطولك بالضبط</p><a href="/bmi/">حاسبة مؤشر كتلة الجسم ←</a></div>
 
@@ -54,6 +62,7 @@ const ex = { h: 172, m2: (1.72 ** 2).toFixed(3), lo: w(18.5, 172), hi: w(24.9, 1
   <Faq title="أسئلة شائعة" items={[
     { q: "كم الوزن المثالي لطول 160 سم؟", a: `بين ${w(18.5, 160)} و${w(24.9, 160)} كجم تقريباً للبالغين، ومنتصف النطاق نحو ${w(22, 160)} كجم.` },
     { q: "كم الوزن المثالي لطول 170 سم؟", a: `بين ${w(18.5, 170)} و${w(24.9, 170)} كجم تقريباً، والمنتصف نحو ${w(22, 170)} كجم.` },
+ ...[155, 165, 175, 180].map((h) => ({ q: `كم الوزن المناسب لطول ${h} سم؟`, a: `بين ${w(18.5, h)} و${w(24.9, h)} كجم تقريباً للبالغين، ومنتصف النطاق نحو ${w(22, h)} كجم.` })),
     { q: "هل الوزن المثالي للمرأة مختلف عن الرجل؟", a: "تصنيف مؤشر كتلة الجسم للبالغين واحد للجنسين، فالنطاق الطبيعي لكل طول واحد. لكن توزيع الدهون والعضلات يختلف، ولذلك يفيد قياس محيط الخصر." },
     { q: "ما معادلة الوزن المثالي؟", a: "الوزن = مؤشر كتلة الجسم × مربع الطول بالمتر. للحد الأدنى استعمل 18.5، وللحد الأعلى 24.9." },
     { q: "هل يصلح الجدول للأطفال؟", a: "لا. من هم دون 20 سنة تُقاس أوزانهم بمنحنيات نمو بحسب العمر والجنس، ويحددها طبيب الأطفال." },
@@ -66,3 +75,7 @@ const ex = { h: 172, m2: (1.72 ** 2).toFixed(3), lo: w(18.5, 172), hi: w(24.9, 1
     <li><a href="https://www.nhs.uk/health-assessment-tools/calculate-your-body-mass-index/calculate-bmi-for-adults" rel="noopener" target="_blank">هيئة الخدمات الصحية البريطانية NHS: حدود مؤشر كتلة الجسم</a></li>
   </ul>
 </GuideLayout>
+<style>
+  .all-cm { margin-block: var(--s-2); }
+  .all-cm summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 44px; display: flex; align-items: center; }
+</style>
