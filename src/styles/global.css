@@ -186,6 +186,9 @@ details.how .how-body { padding-bottom: 14px; }
 .calc-title .ask-line { font-size: clamp(1.2rem, 2.4vw, 1.5rem); font-weight: 600; color: var(--on-deep-soft); }
 .calc-title h1 { font-size: clamp(2rem, 5vw, 3.3rem); color: #fff; }
 .calc-title .lede { color: var(--on-deep-soft); }
+.calc-title .seal { display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; margin: 0; padding: 6px 14px 6px 12px; border: 1px solid rgba(127, 240, 200, .35); border-radius: 999px; font-size: var(--t-micro, .76rem); color: var(--mint); background: rgba(6, 41, 31, .35); }
+.calc-title .seal-mark { position: relative; flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--mint); }
+.calc-title .seal-mark::after { content: ''; position: absolute; inset-inline-start: 4px; top: 2px; width: 5px; height: 9px; border: solid var(--mint); border-width: 0 1.5px 1.5px 0; transform: rotate(40deg); }
 .switcher { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; position: relative; }
 .switcher select { appearance: none; font: inherit; font-size: .88rem; font-weight: 500; color: #e0f3ec; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); border-radius: 99px; padding: 8px 38px 8px 16px; padding-inline: 16px 38px; cursor: pointer; }
 .switcher select option { color: #0d1a16; }
