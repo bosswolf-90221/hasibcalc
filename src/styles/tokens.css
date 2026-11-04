@@ -1,0 +1,84 @@
+/* حاسِب: نظام التصميم «مواقف الحياة». كل الألوان والمقاسات تأتي من هنا. */
+:root {
+  /* الأسطح والنص */
+  --paper: #fbfbf9;
+  --surface: #ffffff;
+  --ink: #15201d;
+  --ink-soft: #4f5b57;
+  --line: #e6e7e1;
+  --line-strong: #8a948f;
+
+  /* اللون المميز الوحيد: للروابط والإجراءات والنتيجة */
+  --accent: #0b6e5f;
+  --accent-hover: #095a4e;
+  --accent-tint: #e4f1ec;
+  --on-accent: #ffffff;
+  --accent-chart: #7fbfae;
+  --brand-mark: #8fe3cf;
+
+  /* الحالات: كل حالة لها لونها وأيقونتها، فلا يعتمد المعنى على اللون وحده */
+  --success: #2f7a32;
+  --success-bg: #e8f4e6;
+  --warning: #8a5a00;
+  --warning-bg: #fbefd9;
+  --error: #a3271c;
+  --error-bg: #fbe9e7;
+  --info: #1f5a96;
+  --info-bg: #e7edf6;
+
+  /* مواقف الحياة: خلفية هادئة لكل موقف، والنص فوقها دائماً --ink */
+  --moment-job: #e4f1ec;
+  --moment-pay: #f3ede1;
+  --moment-loan: #e7edf6;
+  --moment-faith: #ece9f4;
+  --moment-baby: #f7e7e9;
+  --moment-health: #eaf1dd;
+  --moment-shop: #fbefd9;
+  --moment-study: #e2f0f2;
+  --moment-dates: #efefea;
+
+  /* الخط: عائلة واحدة بأوزان متباعدة، لأن الموقع أداة تُقرأ وتُستخدم بسرعة */
+  --font: 'Vazirmatn Variable', 'Segoe UI', Tahoma, system-ui, sans-serif;
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-bold: 700;
+  --w-heavy: 800;
+
+  /* مقاسات النص */
+  --t-result: clamp(3.2rem, 9vw, 6.4rem);
+  --t-display: clamp(2.5rem, 6vw, 4.6rem);
+  --t-h1: clamp(2.1rem, 5vw, 3.6rem);
+  --t-h2: clamp(1.5rem, 2.6vw, 2rem);
+  --t-h3: 1.2rem;
+  --t-lead: clamp(1.05rem, 1.8vw, 1.3rem);
+  --t-body: 1.0625rem;
+  --t-small: 0.92rem;
+  --t-micro: 0.8rem;
+  --lh-tight: 1.15;
+  --lh-body: 1.75;
+  --measure: 68ch;
+
+  /* المسافات */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 22px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 72px;
+  --gutter: clamp(18px, 4vw, 40px);
+  --container: 1200px;
+
+  /* الأشكال: بلا ظلال، والفصل بالمساحة واللون */
+  --r-field: 11px;
+  --r-card: 18px;
+  --target: 46px;
+  --focus-ring: 0 0 0 3px rgba(11, 110, 95, 0.18);
+
+  /* الحركة */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --t-fast: 0.16s;
+
+  color-scheme: light;
+}
