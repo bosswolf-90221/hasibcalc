@@ -1,0 +1,814 @@
+{
+  "pages": {
+    "/404.html": {
+      "title": "الصفحة غير موجودة | حاسِب",
+      "description": "الصفحة التي تبحث عنها غير موجودة في حاسِب. اختر إحدى الحاسبات المتوفرة: نهاية الخدمة، القسط، الضريبة، الزكاة وغيرها.",
+      "canonical": "https://hasibcalc.com/404/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "هذه الصفحة غير موجودة",
+      "jsonLd": [
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/about/": {
+      "title": "من نحن وكيف نحسب | حاسِب",
+      "description": "ما هي حاسِب، ومن يستفيد منها، وكيف نحسب النتائج ونراجع المعادلات، وحدود الدقة والمسؤولية.",
+      "canonical": "https://hasibcalc.com/about/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "حاسبات عربية تشرح نفسها",
+      "jsonLd": [
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/age/": {
+      "title": "حاسبة العمر: كم عمري بالسنوات والأشهر والأيام؟ | حاسِب",
+      "description": "احسب عمرك بالضبط بالسنوات والأشهر والأيام، وعدد الأيام التي عشتها، وكم بقي على عيد ميلادك القادم.",
+      "canonical": "https://hasibcalc.com/age/",
+      "ogImage": "https://hasibcalc.com/og/age.png",
+      "h1": "كم عمري بالضبط؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/annual-leave/": {
+      "title": "حاسبة الإجازة السنوية وبدلها في الإمارات (القطاع الخاص) | حاسِب",
+      "description": "احسب رصيد إجازتك السنوية وقيمة بدل الأيام غير المستخدمة عند ترك العمل وفق قانون العمل الإماراتي: 30 يوماً في السنة، ويومان عن كل شهر في السنة الأولى، على الراتب الأساسي.",
+      "canonical": "https://hasibcalc.com/annual-leave/",
+      "ogImage": "https://hasibcalc.com/og/annual-leave.png",
+      "h1": "كم رصيد إجازتي السنوية وبدلها؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/bmi/": {
+      "title": "حاسبة مؤشر كتلة الجسم BMI للبالغين | حاسِب",
+      "description": "احسب مؤشر كتلة الجسم من وزنك وطولك، واعرف تصنيفه للبالغين ونطاق الوزن الموافق للنطاق الطبيعي لطولك.",
+      "canonical": "https://hasibcalc.com/bmi/",
+      "ogImage": "https://hasibcalc.com/og/bmi.png",
+      "h1": "هل وزني طبيعي؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/calories/": {
+      "title": "حاسبة السعرات الحرارية اليومية للبالغين | حاسِب",
+      "description": "احسب عدد السعرات التي يحتاجها جسمك يومياً للمحافظة على وزنك بمعادلة ميفلين سان جيور، بحسب جنسك وعمرك ووزنك وطولك ومستوى نشاطك.",
+      "canonical": "https://hasibcalc.com/calories/",
+      "ogImage": "https://hasibcalc.com/og/calories.png",
+      "h1": "كم سعرة يحتاج جسمي يومياً؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/category/dates/": {
+      "title": "حاسبات التاريخ الهجري والميلادي والأيام بين تاريخين | حاسِب",
+      "description": "حاسبات التاريخ: تحويل التاريخ من ميلادي إلى هجري وبالعكس بتقويم أم القرى، والعمر بالهجري، وعدد الأيام وأيام العمل بين تاريخين، وكم باقي على الراتب.",
+      "canonical": "https://hasibcalc.com/category/dates/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "التاريخ والوقت",
+      "jsonLd": [
+        "Answer",
+        "FAQPage",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/category/health-age/": {
+      "title": "حاسبات الحمل والتبويض والعمر والوزن المثالي | حاسِب",
+      "description": "حاسبات شخصية: الحمل بالأسابيع وموعد الولادة، والتبويض وأيام الخصوبة، والعمر بالميلادي والهجري، ومؤشر كتلة الجسم BMI، والسعرات اليومية.",
+      "canonical": "https://hasibcalc.com/category/health-age/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "الصحة والعمر",
+      "jsonLd": [
+        "Answer",
+        "FAQPage",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/category/money/": {
+      "title": "حاسبات الراتب ونهاية الخدمة والقروض والزكاة | حاسِب",
+      "description": "حاسبات مالية عربية: مكافأة نهاية الخدمة والإجازة السنوية وبدلها في الإمارات، الراتب الصافي بعد التأمينات GOSI، موعد الراتب، القسط الشهري للقرض، وزكاة المال.",
+      "canonical": "https://hasibcalc.com/category/money/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "المال والعمل",
+      "jsonLd": [
+        "Answer",
+        "FAQPage",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/category/shopping/": {
+      "title": "حاسبات الخصم والضريبة والنسبة المئوية | حاسِب",
+      "description": "حاسبات للتسوق: السعر بعد الخصم، الخصم الإضافي، ضريبة القيمة المضافة، والنسبة المئوية ونسبة التغير.",
+      "canonical": "https://hasibcalc.com/category/shopping/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "التسوق والنسب",
+      "jsonLd": [
+        "Answer",
+        "FAQPage",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/category/study/": {
+      "title": "حاسبات المعدل الجامعي التراكمي والفصلي | حاسِب",
+      "description": "حاسبات للطلاب: المعدل الجامعي الفصلي والتراكمي بالنظام السعودي من 5 ومن 4، ونظام 4 بالسالب في الإمارات.",
+      "canonical": "https://hasibcalc.com/category/study/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "الدراسة",
+      "jsonLd": [
+        "Answer",
+        "FAQPage",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/contact/": {
+      "title": "اتصل بنا | حاسِب",
+      "description": "راسل فريق حاسِب لاقتراح حاسبة جديدة أو الإبلاغ عن خطأ في معادلة.",
+      "canonical": "https://hasibcalc.com/contact/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "اتصل بنا",
+      "jsonLd": [
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/days-between/": {
+      "title": "كم يوم بين تاريخين؟ حساب عدد الأيام والأسابيع وأيام العمل | حاسِب",
+      "description": "كم يوماً بين تاريخين؟ اكتب التاريخين فتظهر الأيام والأسابيع والأشهر وأيام العمل فوراً، مع التاريخ بعد 30 أو 90 يوماً، وكم سنة في 36 شهراً.",
+      "canonical": "https://hasibcalc.com/days-between/",
+      "ogImage": "https://hasibcalc.com/og/days-between.png",
+      "h1": "كم يوماً بين تاريخين؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/discount/": {
+      "title": "حاسبة الخصم والتخفيض: كم السعر بعد الخصم؟ ونسبة التخفيض الحقيقية | حاسِب",
+      "description": "اعرف السعر النهائي بعد الخصم، وكم توفّر، ونسبة الخصم الفعلية عند وجود خصم إضافي فوق الخصم الأول.",
+      "canonical": "https://hasibcalc.com/discount/",
+      "ogImage": "https://hasibcalc.com/og/discount.png",
+      "h1": "كم السعر بعد الخصم؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/end-of-service/": {
+      "title": "حساب نهاية الخدمة في القطاع الخاص بالإمارات: حاسبة المكافأة 2026 | حاسِب",
+      "description": "احسب مكافأة نهاية الخدمة في القطاع الخاص بالإمارات وفق المادة 51: 21 يوماً عن أول 5 سنوات و30 يوماً بعدها على الراتب الأساسي، مع مثال وجدول جاهز.",
+      "canonical": "https://hasibcalc.com/end-of-service/",
+      "ogImage": "https://hasibcalc.com/og/end-of-service.png",
+      "h1": "كم مكافأة نهاية خدمتي؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/exit-dues/": {
+      "title": "حاسبة مستحقات ترك العمل في الإمارات: نهاية الخدمة وبدل الإجازة | حاسِب",
+      "description": "احسب مستحقاتك عند ترك العمل في القطاع الخاص بالإمارات: مكافأة نهاية الخدمة وبدل الإجازة السنوية غير المستخدمة معاً على الراتب الأساسي، بأمثلة ومصادر رسمية.",
+      "canonical": "https://hasibcalc.com/exit-dues/",
+      "ogImage": "https://hasibcalc.com/og/exit-dues.png",
+      "h1": "كم مستحقاتي كاملة عند ترك العمل؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/gosi/": {
+      "title": "حاسبة الراتب الصافي بعد خصم التأمينات GOSI 2026 | حاسِب",
+      "description": "احسب راتبك الصافي بعد خصم التأمينات الاجتماعية في السعودية، وكم يُخصم منك وكم يدفع صاحب العمل، بالنظام السابق أو الجديد، للسعودي وغير السعودي.",
+      "canonical": "https://hasibcalc.com/gosi/",
+      "ogImage": "https://hasibcalc.com/og/gosi.png",
+      "h1": "كم يُخصم من راتبي للتأمينات؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/gpa/": {
+      "title": "حساب المعدل التراكمي والفصلي للجامعة من 5 ومن 4 | حاسِب",
+      "description": "احسب معدلك الفصلي والتراكمي في الجامعة بالنظام السعودي من 5 أو من 4، أو بنظام 4 بالسالب في الإمارات، من تقديرات المواد وساعاتها ومعدلك السابق.",
+      "canonical": "https://hasibcalc.com/gpa/",
+      "ogImage": "https://hasibcalc.com/og/gpa.png",
+      "h1": "كم معدلي الجامعي؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/gpa-target/": {
+      "title": "حاسبة المعدل المطلوب: كم أحتاج في الفصل القادم لأرفع معدلي التراكمي؟ | حاسِب",
+      "description": "اكتب معدلك التراكمي وساعاتك والمعدل الذي تريده، ونحسب المعدل الفصلي الذي تحتاجه في الفصل القادم، وهل الهدف ممكن، وأعلى معدل تصل إليه عند التخرج، من 5 أو من 4.",
+      "canonical": "https://hasibcalc.com/gpa-target/",
+      "ogImage": "https://hasibcalc.com/og/gpa-target.png",
+      "h1": "كم معدل أحتاج لأرفع معدلي التراكمي؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/age-in-hijri/": {
+      "title": "كيف أحسب عمري بالهجري؟ الطريقة اليدوية وجدول أعمار المواليد في 1448 | حاسِب",
+      "description": "احسب عمرك بالهجري بأربع خطوات بمثال محسوب، مع جدول «كم عمر مواليد 1400–1430 هـ» وجدول مواليد 1980–2010 بالهجري، ولماذا العمر الهجري أكبر.",
+      "canonical": "https://hasibcalc.com/guides/age-in-hijri/",
+      "ogImage": "https://hasibcalc.com/og/g-age-in-hijri.png",
+      "h1": "كيف أحسب عمري بالهجري؟ الطريقة اليدوية وجدول أعمار المواليد في 1448",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/end-of-service-guide/": {
+      "title": "مكافأة نهاية الخدمة في الإمارات: الدليل الكامل بالأمثلة | حاسِب",
+      "description": "كيف تُحسب مكافأة نهاية الخدمة للقطاع الخاص في الإمارات وفق المادة 51: الأجر اليومي، و21 و30 يوماً، والحد الأعلى، وأمثلة محسوبة.",
+      "canonical": "https://hasibcalc.com/guides/end-of-service-guide/",
+      "ogImage": "https://hasibcalc.com/og/g-end-of-service-guide.png",
+      "h1": "مكافأة نهاية الخدمة في الإمارات: الدليل الكامل بالأمثلة",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/flat-vs-reducing-interest/": {
+      "title": "الفرق بين الفائدة الثابتة والمتناقصة وطريقة حساب الفائدة المتناقصة: مثال محسوب | حاسِب",
+      "description": "لماذا تبدو الفائدة الثابتة 4.5% أرخص وهي ليست كذلك؟ مقارنة محسوبة بين الفائدة الثابتة والمتناقصة على قرض 100,000 درهم.",
+      "canonical": "https://hasibcalc.com/guides/flat-vs-reducing-interest/",
+      "ogImage": "https://hasibcalc.com/og/g-flat-vs-reducing-interest.png",
+      "h1": "الفرق بين الفائدة الثابتة والمتناقصة وطريقة حساب الفائدة المتناقصة: مثال محسوب",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/how-to-calculate-percentage/": {
+      "title": "طريقة حساب النسبة المئوية: ثلاث حالات بأمثلة | حاسِب",
+      "description": "كيف تحسب نسبة من رقم، وكم يمثل رقم من آخر، ونسبة الزيادة أو النقص، مع أمثلة من الراتب والخصومات والدرجات.",
+      "canonical": "https://hasibcalc.com/guides/how-to-calculate-percentage/",
+      "ogImage": "https://hasibcalc.com/og/g-how-to-calculate-percentage.png",
+      "h1": "طريقة حساب النسبة المئوية: ثلاث حالات بأمثلة",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/ideal-weight-by-height/": {
+      "title": "الوزن المثالي والمناسب حسب الطول: جدول للرجال والنساء من 150 إلى 195 سم | حاسِب",
+      "description": "جدول الوزن المناسب لكل طول من 150 إلى 195 سم، وجدول لكل سنتيمتر من 150 إلى 190، بحسب مؤشر كتلة الجسم 18.5–24.9 مع طريقة الحساب.",
+      "canonical": "https://hasibcalc.com/guides/ideal-weight-by-height/",
+      "ogImage": "https://hasibcalc.com/og/g-ideal-weight-by-height.png",
+      "h1": "الوزن المثالي والمناسب حسب الطول: جدول للرجال والنساء من 150 إلى 195 سم",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/": {
+      "title": "أدلة حاسِب: شرح مبسط للحسابات اليومية | حاسِب",
+      "description": "أدلة عربية مبسطة: مكافأة نهاية الخدمة، الفائدة الثابتة والمتناقصة، ضريبة القيمة المضافة في الخليج، الزكاة، مواعيد رمضان، وأسابيع الحمل.",
+      "canonical": "https://hasibcalc.com/guides/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "أدلة تشرح الرقم قبل أن تحسبه",
+      "jsonLd": [
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/new-year-2027/": {
+      "title": "كم باقي على 2027؟ عدّاد رأس السنة الميلادية | حاسِب",
+      "description": "عدّاد الأيام الباقية على رأس السنة الميلادية 2027 (الجمعة 1 يناير)، مع موعد رأس السنة الهجرية 1449 وأهم مواعيد السنة الجديدة.",
+      "canonical": "https://hasibcalc.com/guides/new-year-2027/",
+      "ogImage": "https://hasibcalc.com/og/g-new-year-2027.png",
+      "h1": "كم باقي على 2027؟ عدّاد رأس السنة الميلادية",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/pregnancy-weeks-months/": {
+      "title": "أسابيع الحمل بالأشهر: جدول من الأسبوع 1 إلى 40، والشهر كم أسبوع؟ | حاسِب",
+      "description": "كم أسبوعاً في شهر الحمل، وفي أي شهر أنتِ حسب أسبوعك: جدول كامل يحوّل أسابيع الحمل إلى أشهر وأثلاث، مع محوّل سريع وأسئلة شائعة.",
+      "canonical": "https://hasibcalc.com/guides/pregnancy-weeks-months/",
+      "ogImage": "https://hasibcalc.com/og/g-pregnancy-weeks-months.png",
+      "h1": "أسابيع الحمل بالأشهر: جدول من الأسبوع 1 إلى 40، والشهر كم أسبوع؟",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/ramadan-1448/": {
+      "title": "كم باقي على رمضان 1448؟ موعد رمضان والعيدين بتقويم أم القرى | حاسِب",
+      "description": "عدّاد الأيام الباقية على رمضان 1448 هـ، وموعد أول رمضان وعيد الفطر وعرفة والأضحى بتقويم أم القرى، وجدول أيام الشهر، ولماذا قد يختلف الإعلان يوماً.",
+      "canonical": "https://hasibcalc.com/guides/ramadan-1448/",
+      "ogImage": "https://hasibcalc.com/og/g-ramadan-1448.png",
+      "h1": "كم باقي على رمضان 1448؟ موعد رمضان والعيدين بتقويم أم القرى",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/uae-national-day-2026/": {
+      "title": "كم باقي على اليوم الوطني الإماراتي 55؟ عدّاد عيد الاتحاد 2026 | حاسِب",
+      "description": "عدّاد الأيام الباقية على اليوم الوطني الإماراتي (عيد الاتحاد) الخامس والخمسين يوم 2 ديسمبر 2026، وموعد الإجازة الرسمية، ولماذا نحتفل في 2 ديسمبر.",
+      "canonical": "https://hasibcalc.com/guides/uae-national-day-2026/",
+      "ogImage": "https://hasibcalc.com/og/g-uae-national-day-2026.png",
+      "h1": "كم باقي على اليوم الوطني الإماراتي 55؟ عدّاد عيد الاتحاد 2026",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/vat-gulf-guide/": {
+      "title": "ضريبة القيمة المضافة في الخليج: النسب وطريقة الحساب | حاسِب",
+      "description": "نسب ضريبة القيمة المضافة في الإمارات والسعودية والبحرين وعُمان، وكيف تضيف الضريبة إلى السعر أو تستخرجها من سعر شامل، مع جداول جاهزة وطريقة فحص الفاتورة.",
+      "canonical": "https://hasibcalc.com/guides/vat-gulf-guide/",
+      "ogImage": "https://hasibcalc.com/og/g-vat-gulf-guide.png",
+      "h1": "ضريبة القيمة المضافة في الخليج: النسب وطريقة الحساب",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/white-friday-2026/": {
+      "title": "الجمعة البيضاء 2026: كيف تحسب الخصم الحقيقي وتكشف الخصم الوهمي | حاسِب",
+      "description": "الجمعة البيضاء يوم 27 نوفمبر 2026. عدّاد الأيام الباقية، وطريقة حساب الخصم الحقيقي، ولماذا لا يساوي خصمان 30% و20% خصماً واحداً 50%، وعلامات الخصم الوهمي.",
+      "canonical": "https://hasibcalc.com/guides/white-friday-2026/",
+      "ogImage": "https://hasibcalc.com/og/g-white-friday-2026.png",
+      "h1": "الجمعة البيضاء 2026: كيف تحسب الخصم الحقيقي وتكشف الخصم الوهمي",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/guides/zakat-step-by-step/": {
+      "title": "طريقة حساب زكاة المال والذهب خطوة بخطوة: النصاب بالعيارات ومثال محسوب | حاسِب",
+      "description": "كيف تحسب زكاة المال والذهب: النصاب 85 غراماً من عيار 24 وما يقابله بالعيارات الأخرى، والحول، والديون، وربع العشر 2.5%، وحكم الحلي، مع أمثلة محسوبة.",
+      "canonical": "https://hasibcalc.com/guides/zakat-step-by-step/",
+      "ogImage": "https://hasibcalc.com/og/g-zakat-step-by-step.png",
+      "h1": "طريقة حساب زكاة المال والذهب خطوة بخطوة: النصاب بالعيارات ومثال محسوب",
+      "jsonLd": [
+        "Answer",
+        "Article",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Organization",
+        "Question",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/hijri/": {
+      "title": "التاريخ الهجري اليوم وتحويل التاريخ: السنة الهجرية 1448 | حاسِب",
+      "description": "كم التاريخ الهجري اليوم؟ السنة الهجرية الحالية 1448 هـ. حوّل أي تاريخ من الميلادي إلى الهجري أو من الهجري إلى الميلادي بتقويم أم القرى، مع اسم اليوم وعدد أيام الشهر.",
+      "canonical": "https://hasibcalc.com/hijri/",
+      "ogImage": "https://hasibcalc.com/og/hijri.png",
+      "h1": "كم التاريخ بالهجري؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/hijri-age/": {
+      "title": "حساب العمر بالهجري: كم عمري بالتقويم الهجري؟ | حاسِب",
+      "description": "احسب عمرك بالسنوات والأشهر والأيام الهجرية بتقويم أم القرى، من تاريخ ميلادك الميلادي أو الهجري، مع تاريخ ميلادك بالهجري وموعد عيد ميلادك الهجري القادم.",
+      "canonical": "https://hasibcalc.com/hijri-age/",
+      "ogImage": "https://hasibcalc.com/og/hijri-age.png",
+      "h1": "كم عمري بالهجري؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/": {
+      "title": "حاسِب: أريد أن أعرف… حاسبات عربية مجانية",
+      "description": "حاسبات عربية مجانية وواضحة: مكافأة نهاية الخدمة في الإمارات، القسط الشهري، ضريبة القيمة المضافة، الزكاة، الخصم، النسبة المئوية، العمر ومؤشر كتلة الجسم.",
+      "canonical": "https://hasibcalc.com/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "أريد أن أعرف : حاسبات عربية تجيب عن أسئلتك الحسابية",
+      "jsonLd": [
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/loan/": {
+      "title": "حاسبة القرض والقسط الشهري: الفرق بين الفائدة الثابتة والمتناقصة | حاسِب",
+      "description": "احسب القسط الشهري لقرض شخصي أو تمويل سيارة أو عقار، وقارن بين الفائدة الثابتة والمتناقصة، مع جدول توزيع الأصل والفائدة.",
+      "canonical": "https://hasibcalc.com/loan/",
+      "ogImage": "https://hasibcalc.com/og/loan.png",
+      "h1": "كم قسطي الشهري؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/ovulation/": {
+      "title": "حاسبة التبويض وأيام الخصوبة وموعد الدورة القادمة | حاسِب",
+      "description": "احسبي يوم التبويض المتوقع وأيام الخصوبة وموعد الدورة الشهرية القادمة من تاريخ آخر دورة وطولها، مع جدول للأشهر الثلاثة القادمة.",
+      "canonical": "https://hasibcalc.com/ovulation/",
+      "ogImage": "https://hasibcalc.com/og/ovulation.png",
+      "h1": "متى موعد التبويض؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/percentage/": {
+      "title": "حاسبة النسبة المئوية: نسبة من رقم، ونسبة رقم لآخر، ونسبة التغير | حاسِب",
+      "description": "ثلاث حسبات للنسبة المئوية في صفحة واحدة: كم يساوي 40% من 250، وكم تمثل 40 من 250، ونسبة الزيادة أو النقص بين قيمتين.",
+      "canonical": "https://hasibcalc.com/percentage/",
+      "ogImage": "https://hasibcalc.com/og/percentage.png",
+      "h1": "كم تساوي النسبة؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/pregnancy/": {
+      "title": "حاسبة الحمل بالأسابيع والأشهر وموعد الولادة المتوقع | حاسِب",
+      "description": "احسبي موعد الولادة المتوقع من أول يوم في آخر دورة، وعمر الحمل بالأسابيع والأيام، والثلث الذي أنتِ فيه، مع مراعاة طول الدورة.",
+      "canonical": "https://hasibcalc.com/pregnancy/",
+      "ogImage": "https://hasibcalc.com/og/pregnancy.png",
+      "h1": "متى موعد ولادتي؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/privacy/": {
+      "title": "سياسة الخصوصية | حاسِب",
+      "description": "ما البيانات التي يجمعها حاسِب، وكيف تتم الحسابات داخل متصفحك، واستخدام الإعلانات وملفات تعريف الارتباط.",
+      "canonical": "https://hasibcalc.com/privacy/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "سياسة الخصوصية",
+      "jsonLd": [
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/salary-day/": {
+      "title": "كم باقي على الراتب؟ عدّاد موعد نزول الراتب | حاسِب",
+      "description": "كم يوماً باقي على راتبك؟ اختر يوم الراتب ونحسب الموعد القادم، ونقدّمه إذا وافق عطلة نهاية الأسبوع، مع مواعيد الرواتب للأشهر الاثني عشر القادمة.",
+      "canonical": "https://hasibcalc.com/salary-day/",
+      "ogImage": "https://hasibcalc.com/og/salary-day.png",
+      "h1": "كم باقي على الراتب؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/salary-saudi/": {
+      "title": "كم باقي على الراتب في السعودية؟ عدّاد رواتب 27 | حاسِب",
+      "description": "كم يوماً باقي على راتب يوم 27 في السعودية؟ عدّاد بتاريخ اليوم، مع موعد الراتب إذا وافق الجمعة أو السبت، ومواعيد رواتب الأشهر القادمة.",
+      "canonical": "https://hasibcalc.com/salary-saudi/",
+      "ogImage": "https://hasibcalc.com/og/salary-saudi.png",
+      "h1": "كم باقي على الراتب في السعودية؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/salary-uae/": {
+      "title": "كم باقي على الراتب في الإمارات؟ موعد الراتب ونظام حماية الأجور | حاسِب",
+      "description": "كم يوماً باقي على راتبك في الإمارات؟ في القطاع الخاص يجب أن يُصرف الأجر في موعد أقصاه اليوم الأول من الشهر التالي منذ يونيو 2026. اكتب يوم راتبك واعرف الأيام الباقية.",
+      "canonical": "https://hasibcalc.com/salary-uae/",
+      "ogImage": "https://hasibcalc.com/og/salary-uae.png",
+      "h1": "كم باقي على الراتب في الإمارات؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/terms/": {
+      "title": "الشروط والأحكام | حاسِب",
+      "description": "شروط استخدام حاسِب: النتائج تقديرية، وحدود المسؤولية، ومسؤولية التحقق من القرارات القانونية والمالية والطبية.",
+      "canonical": "https://hasibcalc.com/terms/",
+      "ogImage": "https://hasibcalc.com/og.png",
+      "h1": "الشروط والأحكام",
+      "jsonLd": [
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/vat/": {
+      "title": "حاسبة ضريبة القيمة المضافة 5%: إضافة واستخراج | حاسِب",
+      "description": "أضف ضريبة القيمة المضافة إلى السعر أو استخرجها من سعر شامل، بنسبة 5% الإماراتية أو أي نسبة أخرى، مع شرح الفرق بين الطريقتين.",
+      "canonical": "https://hasibcalc.com/vat/",
+      "ogImage": "https://hasibcalc.com/og/vat.png",
+      "h1": "كم الضريبة على هذا المبلغ؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    },
+    "/zakat/": {
+      "title": "حاسبة زكاة المال: كم زكاتي ونصاب الذهب اليوم؟ | حاسِب",
+      "description": "احسب زكاة المال على النقد والمدخرات والاستثمارات بعد خصم الديون، مع طريقة حساب زكاة المال خطوة بخطوة: النصاب بسعر الذهب ثم ربع العشر 2.5%.",
+      "canonical": "https://hasibcalc.com/zakat/",
+      "ogImage": "https://hasibcalc.com/og/zakat.png",
+      "h1": "كم زكاة مالي؟",
+      "jsonLd": [
+        "Answer",
+        "BreadcrumbList",
+        "FAQPage",
+        "ListItem",
+        "Offer",
+        "Question",
+        "WebApplication",
+        "WebSite"
+      ],
+      "adsScript": true
+    }
+  },
+  "sitemap": [
+    "/",
+    "/about/",
+    "/age/",
+    "/annual-leave/",
+    "/bmi/",
+    "/calories/",
+    "/category/dates/",
+    "/category/health-age/",
+    "/category/money/",
+    "/category/shopping/",
+    "/category/study/",
+    "/contact/",
+    "/days-between/",
+    "/discount/",
+    "/end-of-service/",
+    "/exit-dues/",
+    "/gosi/",
+    "/gpa-target/",
+    "/gpa/",
+    "/guides/",
+    "/guides/age-in-hijri/",
+    "/guides/end-of-service-guide/",
+    "/guides/flat-vs-reducing-interest/",
+    "/guides/how-to-calculate-percentage/",
+    "/guides/ideal-weight-by-height/",
+    "/guides/new-year-2027/",
+    "/guides/pregnancy-weeks-months/",
+    "/guides/ramadan-1448/",
+    "/guides/uae-national-day-2026/",
+    "/guides/vat-gulf-guide/",
+    "/guides/white-friday-2026/",
+    "/guides/zakat-step-by-step/",
+    "/hijri-age/",
+    "/hijri/",
+    "/loan/",
+    "/ovulation/",
+    "/percentage/",
+    "/pregnancy/",
+    "/privacy/",
+    "/salary-day/",
+    "/salary-saudi/",
+    "/salary-uae/",
+    "/terms/",
+    "/vat/",
+    "/zakat/"
+  ],
+  "files": {
+    "ads.txt": "google.com, pub-3721992325219610, DIRECT, f08c47fec0942fa0",
+    "robots.txt": "User-agent: *\nAllow: /\n\nSitemap: https://hasibcalc.com/sitemap.xml"
+  }
+}

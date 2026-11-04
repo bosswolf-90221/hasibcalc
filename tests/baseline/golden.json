@@ -1,0 +1,1790 @@
+{
+  "number: thousands": 8000,
+  "number: comma decimal (known issue, audit)": 800050,
+  "number: short comma (known issue, audit)": 35,
+  "number: arabic digits": 8000.5,
+  "number: empty": null,
+  "number: text": null,
+  "gratuity: 7.7 years": {
+    "ok": true,
+    "value": {
+      "totalDays": 2806,
+      "serviceDays": 2806,
+      "serviceYears": 7.687671,
+      "eligible": true,
+      "dailyWage": 266.666667,
+      "tier1Years": 5,
+      "tier2Years": 2.687671,
+      "tier1Amount": 28000,
+      "tier2Amount": 21501.369863,
+      "uncapped": 49501.369863,
+      "cap": 192000,
+      "capped": false,
+      "total": 49501.369863
+    }
+  },
+  "gratuity: exactly 5 calendar years": {
+    "ok": true,
+    "value": {
+      "totalDays": 1827,
+      "serviceDays": 1827,
+      "serviceYears": 5.005479,
+      "eligible": true,
+      "dailyWage": 200,
+      "tier1Years": 5,
+      "tier2Years": 0.005479,
+      "tier1Amount": 21000,
+      "tier2Amount": 32.876712,
+      "uncapped": 21032.876712,
+      "cap": 144000,
+      "capped": false,
+      "total": 21032.876712
+    }
+  },
+  "gratuity: under one year": {
+    "ok": true,
+    "value": {
+      "totalDays": 308,
+      "serviceDays": 308,
+      "serviceYears": 0.843836,
+      "eligible": false,
+      "dailyWage": 266.666667,
+      "tier1Years": 0,
+      "tier2Years": 0,
+      "tier1Amount": 0,
+      "tier2Amount": 0,
+      "uncapped": 0,
+      "cap": 192000,
+      "capped": false,
+      "total": 0
+    }
+  },
+  "gratuity: first anniversary": {
+    "ok": true,
+    "value": {
+      "totalDays": 366,
+      "serviceDays": 366,
+      "serviceYears": 1.00274,
+      "eligible": true,
+      "dailyWage": 166.666667,
+      "tier1Years": 1.00274,
+      "tier2Years": 0,
+      "tier1Amount": 3509.589041,
+      "tier2Amount": 0,
+      "uncapped": 3509.589041,
+      "cap": 120000,
+      "capped": false,
+      "total": 3509.589041
+    }
+  },
+  "gratuity: with absence": {
+    "ok": true,
+    "value": {
+      "totalDays": 1279,
+      "serviceDays": 1249,
+      "serviceYears": 3.421918,
+      "eligible": true,
+      "dailyWage": 233.333333,
+      "tier1Years": 3.421918,
+      "tier2Years": 0,
+      "tier1Amount": 16767.39726,
+      "tier2Amount": 0,
+      "uncapped": 16767.39726,
+      "cap": 168000,
+      "capped": false,
+      "total": 16767.39726
+    }
+  },
+  "gratuity: capped": {
+    "ok": true,
+    "value": {
+      "totalDays": 13457,
+      "serviceDays": 13457,
+      "serviceYears": 36.868493,
+      "eligible": true,
+      "dailyWage": 333.333333,
+      "tier1Years": 5,
+      "tier2Years": 31.868493,
+      "tier1Amount": 35000,
+      "tier2Amount": 318684.931507,
+      "uncapped": 353684.931507,
+      "cap": 240000,
+      "capped": true,
+      "total": 240000
+    }
+  },
+  "gratuity: end before start": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "endDate",
+        "message": "تاريخ نهاية العمل يجب أن يكون بعد تاريخ البداية"
+      }
+    ]
+  },
+  "gratuity: empty salary": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "basicSalary",
+        "message": "أدخل الراتب الأساسي"
+      }
+    ]
+  },
+  "leave: first year": {
+    "ok": true,
+    "value": {
+      "months": 9,
+      "extraDays": 4,
+      "fullYears": 0,
+      "eligible": true,
+      "entitled": 18,
+      "taken": 0,
+      "remaining": 18,
+      "overdrawn": 0,
+      "dailyWage": 200,
+      "amount": 3600,
+      "years": [
+        {
+          "n": 1,
+          "from": "2026-02-01",
+          "to": "2026-11-04",
+          "earned": 18,
+          "partial": true
+        }
+      ]
+    }
+  },
+  "leave: several years": {
+    "ok": true,
+    "value": {
+      "months": 65,
+      "extraDays": 26,
+      "fullYears": 5,
+      "eligible": true,
+      "entitled": 164.64,
+      "taken": 40,
+      "remaining": 124.64,
+      "overdrawn": 0,
+      "dailyWage": 300,
+      "amount": 37392,
+      "years": [
+        {
+          "n": 1,
+          "from": "2021-05-10",
+          "to": "2022-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 2,
+          "from": "2022-05-10",
+          "to": "2023-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 3,
+          "from": "2023-05-10",
+          "to": "2024-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 4,
+          "from": "2024-05-10",
+          "to": "2025-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 5,
+          "from": "2025-05-10",
+          "to": "2026-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 6,
+          "from": "2026-05-10",
+          "to": "2026-11-04",
+          "earned": 14.64,
+          "partial": true
+        }
+      ]
+    }
+  },
+  "leave: 365 divisor": {
+    "ok": true,
+    "value": {
+      "months": 65,
+      "extraDays": 26,
+      "fullYears": 5,
+      "eligible": true,
+      "entitled": 164.64,
+      "taken": 40,
+      "remaining": 124.64,
+      "overdrawn": 0,
+      "dailyWage": 295.890411,
+      "amount": 36879.78,
+      "years": [
+        {
+          "n": 1,
+          "from": "2021-05-10",
+          "to": "2022-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 2,
+          "from": "2022-05-10",
+          "to": "2023-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 3,
+          "from": "2023-05-10",
+          "to": "2024-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 4,
+          "from": "2024-05-10",
+          "to": "2025-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 5,
+          "from": "2025-05-10",
+          "to": "2026-05-09",
+          "earned": 30,
+          "partial": false
+        },
+        {
+          "n": 6,
+          "from": "2026-05-10",
+          "to": "2026-11-04",
+          "earned": 14.64,
+          "partial": true
+        }
+      ]
+    }
+  },
+  "dues: typical": {
+    "ok": true,
+    "value": {
+      "gratuity": {
+        "totalDays": 2806,
+        "serviceDays": 2806,
+        "serviceYears": 7.687671,
+        "eligible": true,
+        "dailyWage": 266.666667,
+        "tier1Years": 5,
+        "tier2Years": 2.687671,
+        "tier1Amount": 28000,
+        "tier2Amount": 21501.369863,
+        "uncapped": 49501.369863,
+        "cap": 192000,
+        "capped": false,
+        "total": 49501.369863
+      },
+      "leave": {
+        "months": 92,
+        "extraDays": 4,
+        "fullYears": 7,
+        "eligible": true,
+        "entitled": 230.33,
+        "taken": 120,
+        "remaining": 110.33,
+        "overdrawn": 0,
+        "dailyWage": 266.666667,
+        "amount": 29421.33,
+        "years": [
+          {
+            "n": 1,
+            "from": "2019-03-01",
+            "to": "2020-02-29",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 2,
+            "from": "2020-03-01",
+            "to": "2021-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 3,
+            "from": "2021-03-01",
+            "to": "2022-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 4,
+            "from": "2022-03-01",
+            "to": "2023-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 5,
+            "from": "2023-03-01",
+            "to": "2024-02-29",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 6,
+            "from": "2024-03-01",
+            "to": "2025-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 7,
+            "from": "2025-03-01",
+            "to": "2026-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 8,
+            "from": "2026-03-01",
+            "to": "2026-11-04",
+            "earned": 20.33,
+            "partial": true
+          }
+        ]
+      },
+      "total": 78922.7,
+      "gratuityShare": 0.627213
+    }
+  },
+  "dues: absence": {
+    "ok": true,
+    "value": {
+      "gratuity": {
+        "totalDays": 2806,
+        "serviceDays": 2706,
+        "serviceYears": 7.413699,
+        "eligible": true,
+        "dailyWage": 266.666667,
+        "tier1Years": 5,
+        "tier2Years": 2.413699,
+        "tier1Amount": 28000,
+        "tier2Amount": 19309.589041,
+        "uncapped": 47309.589041,
+        "cap": 192000,
+        "capped": false,
+        "total": 47309.589041
+      },
+      "leave": {
+        "months": 92,
+        "extraDays": 4,
+        "fullYears": 7,
+        "eligible": true,
+        "entitled": 230.33,
+        "taken": 0,
+        "remaining": 230.33,
+        "overdrawn": 0,
+        "dailyWage": 266.666667,
+        "amount": 61421.33,
+        "years": [
+          {
+            "n": 1,
+            "from": "2019-03-01",
+            "to": "2020-02-29",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 2,
+            "from": "2020-03-01",
+            "to": "2021-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 3,
+            "from": "2021-03-01",
+            "to": "2022-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 4,
+            "from": "2022-03-01",
+            "to": "2023-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 5,
+            "from": "2023-03-01",
+            "to": "2024-02-29",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 6,
+            "from": "2024-03-01",
+            "to": "2025-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 7,
+            "from": "2025-03-01",
+            "to": "2026-02-28",
+            "earned": 30,
+            "partial": false
+          },
+          {
+            "n": 8,
+            "from": "2026-03-01",
+            "to": "2026-11-04",
+            "earned": 20.33,
+            "partial": true
+          }
+        ]
+      },
+      "total": 108730.92,
+      "gratuityShare": 0.435107
+    }
+  },
+  "gosi: saudi new": {
+    "ok": true,
+    "value": {
+      "wage": 10000,
+      "rawWage": 10000,
+      "capped": null,
+      "pensionRate": 10,
+      "employeeRate": 10.75,
+      "employerRate": 12.75,
+      "employee": 1075,
+      "employer": 1275,
+      "total": 2350,
+      "gross": 10500,
+      "netAfterDeduction": 9425
+    }
+  },
+  "gosi: saudi legacy": {
+    "ok": true,
+    "value": {
+      "wage": 10000,
+      "rawWage": 10000,
+      "capped": null,
+      "pensionRate": 9,
+      "employeeRate": 9.75,
+      "employerRate": 11.75,
+      "employee": 975,
+      "employer": 1175,
+      "total": 2150,
+      "gross": 10000,
+      "netAfterDeduction": 9025
+    }
+  },
+  "gosi: saudi new July 2027": {
+    "ok": true,
+    "value": {
+      "wage": 10000,
+      "rawWage": 10000,
+      "capped": null,
+      "pensionRate": 10.5,
+      "employeeRate": 11.25,
+      "employerRate": 13.25,
+      "employee": 1125,
+      "employer": 1325,
+      "total": 2450,
+      "gross": 10000,
+      "netAfterDeduction": 8875
+    }
+  },
+  "gosi: non-saudi": {
+    "ok": true,
+    "value": {
+      "wage": 6000,
+      "rawWage": 6000,
+      "capped": null,
+      "pensionRate": 0,
+      "employeeRate": 0,
+      "employerRate": 2,
+      "employee": 0,
+      "employer": 120,
+      "total": 120,
+      "gross": 6000,
+      "netAfterDeduction": 6000
+    }
+  },
+  "gosi: non-saudi low wage (known issue, audit)": {
+    "ok": true,
+    "value": {
+      "wage": 1500,
+      "rawWage": 1000,
+      "capped": "min",
+      "pensionRate": 0,
+      "employeeRate": 0,
+      "employerRate": 2,
+      "employee": 0,
+      "employer": 30,
+      "total": 30,
+      "gross": 1000,
+      "netAfterDeduction": 1000
+    }
+  },
+  "gosi: above ceiling": {
+    "ok": true,
+    "value": {
+      "wage": 45000,
+      "rawWage": 60000,
+      "capped": "max",
+      "pensionRate": 10,
+      "employeeRate": 10.75,
+      "employerRate": 12.75,
+      "employee": 4837.5,
+      "employer": 5737.5,
+      "total": 10575,
+      "gross": 60000,
+      "netAfterDeduction": 55162.5
+    }
+  },
+  "payday: 27 before, fri-sat": {
+    "ok": true,
+    "value": {
+      "next": {
+        "nominal": "2026-11-27",
+        "actual": "2026-11-26",
+        "weekday": "الخميس",
+        "shifted": true
+      },
+      "daysLeft": 22,
+      "isToday": false,
+      "upcoming": [
+        {
+          "nominal": "2026-11-27",
+          "actual": "2026-11-26",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2026-12-27",
+          "actual": "2026-12-27",
+          "weekday": "الأحد",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-01-27",
+          "actual": "2027-01-27",
+          "weekday": "الأربعاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-02-27",
+          "actual": "2027-02-25",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-03-27",
+          "actual": "2027-03-25",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-04-27",
+          "actual": "2027-04-27",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-05-27",
+          "actual": "2027-05-27",
+          "weekday": "الخميس",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-06-27",
+          "actual": "2027-06-27",
+          "weekday": "الأحد",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-07-27",
+          "actual": "2027-07-27",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-08-27",
+          "actual": "2027-08-26",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-09-27",
+          "actual": "2027-09-27",
+          "weekday": "الاثنين",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-10-27",
+          "actual": "2027-10-27",
+          "weekday": "الأربعاء",
+          "shifted": false
+        }
+      ]
+    }
+  },
+  "payday: Saturday 27 Feb 2027 (known issue, audit)": {
+    "ok": true,
+    "value": {
+      "next": {
+        "nominal": "2027-02-27",
+        "actual": "2027-02-25",
+        "weekday": "الخميس",
+        "shifted": true
+      },
+      "daysLeft": 24,
+      "isToday": false,
+      "upcoming": [
+        {
+          "nominal": "2027-02-27",
+          "actual": "2027-02-25",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-03-27",
+          "actual": "2027-03-25",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-04-27",
+          "actual": "2027-04-27",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-05-27",
+          "actual": "2027-05-27",
+          "weekday": "الخميس",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-06-27",
+          "actual": "2027-06-27",
+          "weekday": "الأحد",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-07-27",
+          "actual": "2027-07-27",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-08-27",
+          "actual": "2027-08-26",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-09-27",
+          "actual": "2027-09-27",
+          "weekday": "الاثنين",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-10-27",
+          "actual": "2027-10-27",
+          "weekday": "الأربعاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-11-27",
+          "actual": "2027-11-25",
+          "weekday": "الخميس",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-12-27",
+          "actual": "2027-12-27",
+          "weekday": "الاثنين",
+          "shifted": false
+        },
+        {
+          "nominal": "2028-01-27",
+          "actual": "2028-01-27",
+          "weekday": "الخميس",
+          "shifted": false
+        }
+      ]
+    }
+  },
+  "payday: 1st, no shift": {
+    "ok": true,
+    "value": {
+      "next": {
+        "nominal": "2026-12-01",
+        "actual": "2026-12-01",
+        "weekday": "الثلاثاء",
+        "shifted": false
+      },
+      "daysLeft": 27,
+      "isToday": false,
+      "upcoming": [
+        {
+          "nominal": "2026-12-01",
+          "actual": "2026-12-01",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-01-01",
+          "actual": "2027-01-01",
+          "weekday": "الجمعة",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-02-01",
+          "actual": "2027-02-01",
+          "weekday": "الاثنين",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-03-01",
+          "actual": "2027-03-01",
+          "weekday": "الاثنين",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-04-01",
+          "actual": "2027-04-01",
+          "weekday": "الخميس",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-05-01",
+          "actual": "2027-05-01",
+          "weekday": "السبت",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-06-01",
+          "actual": "2027-06-01",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-07-01",
+          "actual": "2027-07-01",
+          "weekday": "الخميس",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-08-01",
+          "actual": "2027-08-01",
+          "weekday": "الأحد",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-09-01",
+          "actual": "2027-09-01",
+          "weekday": "الأربعاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-10-01",
+          "actual": "2027-10-01",
+          "weekday": "الجمعة",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-11-01",
+          "actual": "2027-11-01",
+          "weekday": "الاثنين",
+          "shifted": false
+        }
+      ]
+    }
+  },
+  "payday: 31st in short month": {
+    "ok": true,
+    "value": {
+      "next": {
+        "nominal": "2027-01-31",
+        "actual": "2027-02-01",
+        "weekday": "الاثنين",
+        "shifted": true
+      },
+      "daysLeft": 0,
+      "isToday": true,
+      "upcoming": [
+        {
+          "nominal": "2027-01-31",
+          "actual": "2027-02-01",
+          "weekday": "الاثنين",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-02-28",
+          "actual": "2027-03-01",
+          "weekday": "الاثنين",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-03-31",
+          "actual": "2027-03-31",
+          "weekday": "الأربعاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-04-30",
+          "actual": "2027-04-30",
+          "weekday": "الجمعة",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-05-31",
+          "actual": "2027-05-31",
+          "weekday": "الاثنين",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-06-30",
+          "actual": "2027-06-30",
+          "weekday": "الأربعاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-07-31",
+          "actual": "2027-08-02",
+          "weekday": "الاثنين",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-08-31",
+          "actual": "2027-08-31",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-09-30",
+          "actual": "2027-09-30",
+          "weekday": "الخميس",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-10-31",
+          "actual": "2027-11-01",
+          "weekday": "الاثنين",
+          "shifted": true
+        },
+        {
+          "nominal": "2027-11-30",
+          "actual": "2027-11-30",
+          "weekday": "الثلاثاء",
+          "shifted": false
+        },
+        {
+          "nominal": "2027-12-31",
+          "actual": "2027-12-31",
+          "weekday": "الجمعة",
+          "shifted": false
+        }
+      ]
+    }
+  },
+  "vat: add 5": {
+    "ok": true,
+    "value": {
+      "base": 1000,
+      "tax": 50,
+      "total": 1050,
+      "rate": 5
+    }
+  },
+  "vat: extract 5": {
+    "ok": true,
+    "value": {
+      "base": 1000,
+      "tax": 50,
+      "total": 1050,
+      "rate": 5
+    }
+  },
+  "vat: add 15": {
+    "ok": true,
+    "value": {
+      "base": 200,
+      "tax": 30,
+      "total": 230,
+      "rate": 15
+    }
+  },
+  "vat: extract 10": {
+    "ok": true,
+    "value": {
+      "base": 100,
+      "tax": 10,
+      "total": 110,
+      "rate": 10
+    }
+  },
+  "loan: reducing": {
+    "ok": true,
+    "value": {
+      "payment": 2280.348608,
+      "totalInterest": 9456.733172,
+      "totalPaid": 109456.733172,
+      "months": 48,
+      "years": [
+        {
+          "year": 1,
+          "principal": 23341.701782,
+          "interest": 4022.481511,
+          "balance": 76658.298218
+        },
+        {
+          "year": 2,
+          "principal": 24414.015478,
+          "interest": 2950.167815,
+          "balance": 52244.282741
+        },
+        {
+          "year": 3,
+          "principal": 25535.591077,
+          "interest": 1828.592216,
+          "balance": 26708.691664
+        },
+        {
+          "year": 4,
+          "principal": 26708.691664,
+          "interest": 655.491629,
+          "balance": 0
+        }
+      ]
+    }
+  },
+  "loan: flat": {
+    "ok": true,
+    "value": {
+      "payment": 2458.333333,
+      "totalInterest": 18000,
+      "totalPaid": 118000,
+      "months": 48,
+      "years": [
+        {
+          "year": 1,
+          "principal": 25000,
+          "interest": 4500,
+          "balance": 75000
+        },
+        {
+          "year": 2,
+          "principal": 25000,
+          "interest": 4500,
+          "balance": 50000
+        },
+        {
+          "year": 3,
+          "principal": 25000,
+          "interest": 4500,
+          "balance": 25000
+        },
+        {
+          "year": 4,
+          "principal": 25000,
+          "interest": 4500,
+          "balance": 0
+        }
+      ]
+    }
+  },
+  "loan: zero rate": {
+    "ok": true,
+    "value": {
+      "payment": 1000,
+      "totalInterest": 0,
+      "totalPaid": 12000,
+      "months": 12,
+      "years": [
+        {
+          "year": 1,
+          "principal": 12000,
+          "interest": 0,
+          "balance": 0
+        }
+      ]
+    }
+  },
+  "percent: of": {
+    "ok": true,
+    "value": {
+      "value": 100
+    }
+  },
+  "percent: what": {
+    "ok": true,
+    "value": {
+      "value": 16
+    }
+  },
+  "percent: change up": {
+    "ok": true,
+    "value": {
+      "value": 25,
+      "direction": "up"
+    }
+  },
+  "percent: change down": {
+    "ok": true,
+    "value": {
+      "value": -20,
+      "direction": "down"
+    }
+  },
+  "percent: from zero": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "from",
+        "message": "لا يمكن حساب التغير من قيمة أصلية تساوي صفراً"
+      }
+    ]
+  },
+  "discount: single": {
+    "ok": true,
+    "value": {
+      "price": 1000,
+      "afterFirst": 700,
+      "final": 700,
+      "saved": 300,
+      "effectivePercent": 30
+    }
+  },
+  "discount: double": {
+    "ok": true,
+    "value": {
+      "price": 1000,
+      "afterFirst": 500,
+      "final": 400,
+      "saved": 600,
+      "effectivePercent": 60
+    }
+  },
+  "discount: over 100": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "first",
+        "message": "نسبة الخصم لا يمكن أن يتجاوز 100"
+      }
+    ]
+  },
+  "zakat: above nisab": {
+    "ok": true,
+    "value": {
+      "net": 75000,
+      "nisab": 34000,
+      "reachesNisab": true,
+      "zakat": 1875
+    }
+  },
+  "zakat: below nisab": {
+    "ok": true,
+    "value": {
+      "net": 20000,
+      "nisab": 34000,
+      "reachesNisab": false,
+      "zakat": 0
+    }
+  },
+  "zakat: no gold price": {
+    "ok": true,
+    "value": {
+      "net": 50000,
+      "nisab": null,
+      "reachesNisab": null,
+      "zakat": 1250
+    }
+  },
+  "zakat: debts exceed": {
+    "ok": true,
+    "value": {
+      "net": 0,
+      "nisab": 34000,
+      "reachesNisab": false,
+      "zakat": 0
+    }
+  },
+  "age: typical": {
+    "ok": true,
+    "value": {
+      "years": 31,
+      "months": 10,
+      "days": 3,
+      "totalDays": 11630,
+      "totalWeeks": 1661,
+      "nextBirthday": "2027-01-01",
+      "daysToNextBirthday": 58,
+      "isBirthday": false
+    }
+  },
+  "age: leap birthday": {
+    "ok": true,
+    "value": {
+      "years": 27,
+      "months": 0,
+      "days": 0,
+      "totalDays": 9861,
+      "totalWeeks": 1408,
+      "nextBirthday": "2027-02-28",
+      "daysToNextBirthday": 0,
+      "isBirthday": true
+    }
+  },
+  "age: birthday today": {
+    "ok": true,
+    "value": {
+      "years": 36,
+      "months": 0,
+      "days": 0,
+      "totalDays": 13149,
+      "totalWeeks": 1878,
+      "nextBirthday": "2026-11-04",
+      "daysToNextBirthday": 0,
+      "isBirthday": true
+    }
+  },
+  "age: future": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "birthDate",
+        "message": "تاريخ الميلاد بعد تاريخ اليوم"
+      }
+    ]
+  },
+  "bmi: normal": {
+    "ok": true,
+    "value": {
+      "bmi": 24.221453,
+      "category": "normal",
+      "normalMinKg": 53.465,
+      "normalMaxKg": 72.25
+    }
+  },
+  "bmi: obese": {
+    "ok": true,
+    "value": {
+      "bmi": 38.062284,
+      "category": "obese",
+      "normalMinKg": 53.465,
+      "normalMaxKg": 72.25
+    }
+  },
+  "bmi: tiny values (known issue, audit)": {
+    "ok": true,
+    "value": {
+      "bmi": 8,
+      "category": "under",
+      "normalMinKg": 4.625,
+      "normalMaxKg": 6.25
+    }
+  },
+  "calories: male moderate": {
+    "ok": true,
+    "value": {
+      "bmr": 1767.5,
+      "maintenance": 2739.625,
+      "factor": 1.55,
+      "byActivity": [
+        {
+          "key": "sedentary",
+          "label": "قليل الحركة",
+          "kcal": 2121
+        },
+        {
+          "key": "light",
+          "label": "نشاط خفيف",
+          "kcal": 2430.3125
+        },
+        {
+          "key": "moderate",
+          "label": "نشاط متوسط",
+          "kcal": 2739.625
+        },
+        {
+          "key": "active",
+          "label": "نشاط عالٍ",
+          "kcal": 3048.9375
+        },
+        {
+          "key": "very",
+          "label": "نشاط عالٍ جداً",
+          "kcal": 3358.25
+        }
+      ]
+    }
+  },
+  "calories: female light": {
+    "ok": true,
+    "value": {
+      "bmr": 1337.75,
+      "maintenance": 1839.40625,
+      "factor": 1.375,
+      "byActivity": [
+        {
+          "key": "sedentary",
+          "label": "قليل الحركة",
+          "kcal": 1605.3
+        },
+        {
+          "key": "light",
+          "label": "نشاط خفيف",
+          "kcal": 1839.40625
+        },
+        {
+          "key": "moderate",
+          "label": "نشاط متوسط",
+          "kcal": 2073.5125
+        },
+        {
+          "key": "active",
+          "label": "نشاط عالٍ",
+          "kcal": 2307.61875
+        },
+        {
+          "key": "very",
+          "label": "نشاط عالٍ جداً",
+          "kcal": 2541.725
+        }
+      ]
+    }
+  },
+  "pregnancy: week 10": {
+    "ok": true,
+    "value": {
+      "dueDate": "2027-06-02",
+      "weeks": 10,
+      "days": 0,
+      "gestationDays": 70,
+      "daysToDue": 210,
+      "trimester": 1,
+      "conception": "2026-09-09",
+      "firstTrimesterEnds": "2026-12-01",
+      "secondTrimesterEnds": "2027-03-09"
+    }
+  },
+  "pregnancy: 13w3d (known issue, audit)": {
+    "ok": true,
+    "value": {
+      "dueDate": "2027-05-09",
+      "weeks": 13,
+      "days": 3,
+      "gestationDays": 94,
+      "daysToDue": 186,
+      "trimester": 1,
+      "conception": "2026-08-16",
+      "firstTrimesterEnds": "2026-11-07",
+      "secondTrimesterEnds": "2027-02-13"
+    }
+  },
+  "pregnancy: long cycle": {
+    "ok": true,
+    "value": {
+      "dueDate": "2027-06-09",
+      "weeks": 9,
+      "days": 0,
+      "gestationDays": 63,
+      "daysToDue": 217,
+      "trimester": 1,
+      "conception": "2026-09-16",
+      "firstTrimesterEnds": "2026-12-08",
+      "secondTrimesterEnds": "2027-03-16"
+    }
+  },
+  "ovulation: 28 days": {
+    "ok": true,
+    "value": {
+      "cycleDay": 16,
+      "current": {
+        "start": "2026-10-20",
+        "periodEnd": "2026-10-24",
+        "fertileStart": "2026-10-28",
+        "ovulation": "2026-11-02",
+        "fertileEnd": "2026-11-02",
+        "nextStart": "2026-11-17"
+      },
+      "focus": {
+        "start": "2026-11-17",
+        "periodEnd": "2026-11-21",
+        "fertileStart": "2026-11-25",
+        "ovulation": "2026-11-30",
+        "fertileEnd": "2026-11-30",
+        "nextStart": "2026-12-15"
+      },
+      "daysToOvulation": 26,
+      "daysToNextPeriod": 13,
+      "fertileToday": false,
+      "periodToday": false,
+      "upcoming": [
+        {
+          "start": "2026-11-17",
+          "periodEnd": "2026-11-21",
+          "fertileStart": "2026-11-25",
+          "ovulation": "2026-11-30",
+          "fertileEnd": "2026-11-30",
+          "nextStart": "2026-12-15"
+        },
+        {
+          "start": "2026-12-15",
+          "periodEnd": "2026-12-19",
+          "fertileStart": "2026-12-23",
+          "ovulation": "2026-12-28",
+          "fertileEnd": "2026-12-28",
+          "nextStart": "2027-01-12"
+        },
+        {
+          "start": "2027-01-12",
+          "periodEnd": "2027-01-16",
+          "fertileStart": "2027-01-20",
+          "ovulation": "2027-01-25",
+          "fertileEnd": "2027-01-25",
+          "nextStart": "2027-02-09"
+        }
+      ]
+    }
+  },
+  "ovulation: 21 days": {
+    "ok": true,
+    "value": {
+      "cycleDay": 16,
+      "current": {
+        "start": "2026-10-20",
+        "periodEnd": "2026-10-29",
+        "fertileStart": "2026-10-21",
+        "ovulation": "2026-10-26",
+        "fertileEnd": "2026-10-26",
+        "nextStart": "2026-11-10"
+      },
+      "focus": {
+        "start": "2026-11-10",
+        "periodEnd": "2026-11-19",
+        "fertileStart": "2026-11-11",
+        "ovulation": "2026-11-16",
+        "fertileEnd": "2026-11-16",
+        "nextStart": "2026-12-01"
+      },
+      "daysToOvulation": 12,
+      "daysToNextPeriod": 6,
+      "fertileToday": false,
+      "periodToday": false,
+      "upcoming": [
+        {
+          "start": "2026-11-10",
+          "periodEnd": "2026-11-19",
+          "fertileStart": "2026-11-11",
+          "ovulation": "2026-11-16",
+          "fertileEnd": "2026-11-16",
+          "nextStart": "2026-12-01"
+        },
+        {
+          "start": "2026-12-01",
+          "periodEnd": "2026-12-10",
+          "fertileStart": "2026-12-02",
+          "ovulation": "2026-12-07",
+          "fertileEnd": "2026-12-07",
+          "nextStart": "2026-12-22"
+        },
+        {
+          "start": "2026-12-22",
+          "periodEnd": "2026-12-31",
+          "fertileStart": "2026-12-23",
+          "ovulation": "2026-12-28",
+          "fertileEnd": "2026-12-28",
+          "nextStart": "2027-01-12"
+        }
+      ]
+    }
+  },
+  "hijri: to hijri": {
+    "ok": true,
+    "value": {
+      "gregorian": "2026-11-04",
+      "hijri": {
+        "year": 1448,
+        "month": 5,
+        "day": 24
+      },
+      "weekday": "الأربعاء",
+      "hijriMonthLength": 30
+    }
+  },
+  "hijri: Ramadan 1448": {
+    "ok": true,
+    "value": {
+      "gregorian": "2027-02-08",
+      "hijri": {
+        "year": 1448,
+        "month": 9,
+        "day": 1
+      },
+      "weekday": "الاثنين",
+      "hijriMonthLength": 29
+    }
+  },
+  "hijri: lower bound (known issue, audit)": {
+    "ok": true,
+    "value": {
+      "gregorian": "1924-01-01",
+      "hijri": {
+        "year": 1342,
+        "month": 5,
+        "day": 24
+      },
+      "weekday": "الثلاثاء",
+      "hijriMonthLength": 30
+    }
+  },
+  "hijri age: gregorian birth": {
+    "ok": true,
+    "value": {
+      "years": 32,
+      "months": 9,
+      "days": 25,
+      "birthHijri": {
+        "year": 1415,
+        "month": 7,
+        "day": 29
+      },
+      "birthGregorian": "1995-01-01",
+      "gregorianYears": 31,
+      "gregorianMonths": 10,
+      "totalDays": 11630,
+      "nextBirthday": "2027-01-07",
+      "nextBirthdayHijriYear": 1448,
+      "daysToNextBirthday": 64,
+      "isBirthday": false
+    }
+  },
+  "hijri age: hijri birth": {
+    "ok": true,
+    "value": {
+      "years": 32,
+      "months": 9,
+      "days": 25,
+      "birthHijri": {
+        "year": 1415,
+        "month": 7,
+        "day": 29
+      },
+      "birthGregorian": "1995-01-01",
+      "gregorianYears": 31,
+      "gregorianMonths": 10,
+      "totalDays": 11630,
+      "nextBirthday": "2027-01-07",
+      "nextBirthdayHijriYear": 1448,
+      "daysToNextBirthday": 64,
+      "isBirthday": false
+    }
+  },
+  "dates: inclusive sat-sun": {
+    "ok": true,
+    "value": {
+      "days": 365,
+      "weeks": 52,
+      "weekRemainder": 1,
+      "months": 11,
+      "monthRemainderDays": 31,
+      "workingDays": 261,
+      "weekendDays": 104,
+      "reversed": false
+    }
+  },
+  "dates: reversed": {
+    "ok": true,
+    "value": {
+      "days": 364,
+      "weeks": 52,
+      "weekRemainder": 0,
+      "months": 11,
+      "monthRemainderDays": 30,
+      "workingDays": 260,
+      "weekendDays": 104,
+      "reversed": true
+    }
+  },
+  "dates: Jan 1 to 31 (known issue, audit)": {
+    "ok": true,
+    "value": {
+      "days": 31,
+      "weeks": 4,
+      "weekRemainder": 3,
+      "months": 0,
+      "monthRemainderDays": 31,
+      "workingDays": 22,
+      "weekendDays": 9,
+      "reversed": false
+    }
+  },
+  "gpa: s5": {
+    "ok": true,
+    "value": {
+      "system": "s5",
+      "max": 5,
+      "courses": [
+        {
+          "n": 1,
+          "grade": "A+",
+          "hours": 3,
+          "weight": 5,
+          "points": 15
+        },
+        {
+          "n": 2,
+          "grade": "A",
+          "hours": 3,
+          "weight": 4.75,
+          "points": 14.25
+        },
+        {
+          "n": 3,
+          "grade": "B+",
+          "hours": 4,
+          "weight": 4.5,
+          "points": 18
+        },
+        {
+          "n": 4,
+          "grade": "C",
+          "hours": 2,
+          "weight": 3,
+          "points": 6
+        }
+      ],
+      "semHours": 12,
+      "semPoints": 53.25,
+      "semGpa": 4.4375,
+      "prevHours": 0,
+      "prevGpa": 0,
+      "hasPrev": false,
+      "totalHours": 12,
+      "cumGpa": 4.4375
+    }
+  },
+  "gpa: s5 cumulative": {
+    "ok": true,
+    "value": {
+      "system": "s5",
+      "max": 5,
+      "courses": [
+        {
+          "n": 1,
+          "grade": "A",
+          "hours": 3,
+          "weight": 4.75,
+          "points": 14.25
+        },
+        {
+          "n": 2,
+          "grade": "B",
+          "hours": 3,
+          "weight": 4,
+          "points": 12
+        }
+      ],
+      "semHours": 6,
+      "semPoints": 26.25,
+      "semGpa": 4.375,
+      "prevHours": 60,
+      "prevGpa": 4.2,
+      "hasPrev": true,
+      "totalHours": 66,
+      "cumGpa": 4.215909
+    }
+  },
+  "gpa: s4": {
+    "ok": true,
+    "value": {
+      "system": "s4",
+      "max": 4,
+      "courses": [
+        {
+          "n": 1,
+          "grade": "A",
+          "hours": 3,
+          "weight": 3.75,
+          "points": 11.25
+        },
+        {
+          "n": 2,
+          "grade": "B+",
+          "hours": 3,
+          "weight": 3.5,
+          "points": 10.5
+        },
+        {
+          "n": 3,
+          "grade": "C",
+          "hours": 3,
+          "weight": 2,
+          "points": 6
+        }
+      ],
+      "semHours": 9,
+      "semPoints": 27.75,
+      "semGpa": 3.083333,
+      "prevHours": 0,
+      "prevGpa": 0,
+      "hasPrev": false,
+      "totalHours": 9,
+      "cumGpa": 3.083333
+    }
+  },
+  "gpa: us4": {
+    "ok": true,
+    "value": {
+      "system": "us4",
+      "max": 4,
+      "courses": [
+        {
+          "n": 1,
+          "grade": "A-",
+          "hours": 3,
+          "weight": 3.7,
+          "points": 11.1
+        },
+        {
+          "n": 2,
+          "grade": "B+",
+          "hours": 3,
+          "weight": 3.3,
+          "points": 9.9
+        },
+        {
+          "n": 3,
+          "grade": "A",
+          "hours": 3,
+          "weight": 4,
+          "points": 12
+        },
+        {
+          "n": 4,
+          "grade": "B",
+          "hours": 3,
+          "weight": 3,
+          "points": 9
+        }
+      ],
+      "semHours": 12,
+      "semPoints": 42,
+      "semGpa": 3.5,
+      "prevHours": 45,
+      "prevGpa": 3.1,
+      "hasPrev": true,
+      "totalHours": 57,
+      "cumGpa": 3.184211
+    }
+  },
+  "gpa target: reachable": {
+    "ok": true,
+    "value": {
+      "max": 5,
+      "min": 1,
+      "needed": 4.75,
+      "status": "reachable",
+      "bestAfterNext": 3.8,
+      "hoursAtMax": 12,
+      "leftHours": null,
+      "bestAtGraduation": null,
+      "byLoad": [
+        {
+          "hours": 12,
+          "needed": 5
+        },
+        {
+          "hours": 15,
+          "needed": 4.75
+        },
+        {
+          "hours": 18,
+          "needed": 4.583333
+        },
+        {
+          "hours": 21,
+          "needed": 4.464286
+        }
+      ]
+    }
+  },
+  "gpa target: with graduation": {
+    "ok": true,
+    "value": {
+      "max": 4,
+      "min": 0,
+      "needed": 5.68,
+      "status": "impossible",
+      "bestAfterNext": 3.46,
+      "hoursAtMax": 118.8,
+      "leftHours": 72,
+      "bestAtGraduation": 3.622,
+      "byLoad": [
+        {
+          "hours": 12,
+          "needed": 6.67
+        },
+        {
+          "hours": 15,
+          "needed": 6.076
+        },
+        {
+          "hours": 18,
+          "needed": 5.68
+        },
+        {
+          "hours": 21,
+          "needed": 5.397143
+        }
+      ]
+    }
+  },
+  "gpa target: impossible": {
+    "ok": true,
+    "value": {
+      "max": 5,
+      "min": 1,
+      "needed": 4.2,
+      "status": "reachable",
+      "bestAfterNext": 3.56,
+      "hoursAtMax": 7.5,
+      "leftHours": null,
+      "bestAtGraduation": null,
+      "byLoad": [
+        {
+          "hours": 12,
+          "needed": 4.4
+        },
+        {
+          "hours": 15,
+          "needed": 4.2
+        },
+        {
+          "hours": 18,
+          "needed": 4.066667
+        },
+        {
+          "hours": 21,
+          "needed": 3.971429
+        }
+      ]
+    }
+  }
+}
