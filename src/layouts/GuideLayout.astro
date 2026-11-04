@@ -30,7 +30,7 @@ const others = GUIDES.filter((x) => x.slug !== g.slug).slice(0, 3);
     </div>
   </div>
   <div class="container">
-    <div class="calc-grid">
+    <div class="calc-grid guide-page">
       <article class="article card guide">
         <slot />
         <p class="reviewed">نُشر في {arDate(g.date)}{g.updated ? `، وحُدّث في ${arDate(g.updated)}` : ''}. المعلومات للتوعية العامة، وراجع الجهة المختصة قبل أي قرار.</p>

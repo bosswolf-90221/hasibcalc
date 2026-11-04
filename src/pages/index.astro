@@ -95,21 +95,22 @@ const chips = ['end-of-service', 'hijri', 'loan', 'vat', 'pregnancy', 'calories'
 </Base>
 
 <style>
-  .hero { padding-bottom: 150px; }
+  .hero { padding-bottom: 72px; }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: center; padding-top: 40px; }
   .hero-copy { min-width: 0; }
-  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); line-height: 1.1; margin-top: 14px; color: #fff; }
-  .ask { position: relative; display: inline-flex; align-items: center; max-width: 100%; margin-top: 14px; background: #fff; color: var(--em); border-radius: 99px; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .6); }
-  .ask select { appearance: none; font: inherit; font-weight: 600; font-size: clamp(1.15rem, 3.4vw, 1.9rem); color: inherit; background: transparent; border: 0; border-radius: 99px; padding: 12px 26px; padding-inline-end: 58px; max-width: 100%; text-overflow: ellipsis; cursor: pointer; }
-  .ask select:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); line-height: 1.1; margin-top: 14px; color: var(--stage-ink); }
+  .ask { position: relative; display: inline-flex; align-items: center; max-width: 100%; margin-top: 14px; background: #fff; color: var(--stage-ink); border: 2px solid var(--stage-ink); border-radius: 4px; box-shadow: 6px 6px 0 var(--stage-ink); }
+  .ask select { appearance: none; font: inherit; font-weight: 600; font-size: clamp(1.15rem, 3.4vw, 1.9rem); color: inherit; background: transparent; border: 0; border-radius: 0; padding: 12px 26px; padding-inline-end: 58px; max-width: 100%; text-overflow: ellipsis; cursor: pointer; }
+  .ask select:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
   .ask svg { position: absolute; inset-inline-end: 22px; pointer-events: none; }
-  .hero .lede { color: var(--on-deep-soft); margin-top: 22px; }
+  .hero .lede { color: var(--stage-soft); margin-top: 22px; }
   .chips { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-  .chips a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 16px; border-radius: 99px; border: 1px solid rgba(255, 255, 255, .2); color: #e0f3ec; font-size: .9rem; transition: background-color .2s; }
-  .chips a::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--t); box-shadow: 0 0 0 2px rgba(255, 255, 255, .5); }
-  .chips a:hover { background: rgba(255, 255, 255, .1); }
+  .chips a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 16px; border-radius: 4px; border: 2px solid var(--stage-ink); color: var(--stage-ink); font-weight: 500; font-size: .9rem; transition: background-color .2s; }
+  .chips a::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--stage-ink); }
+  .chips a:hover { background: #fff; }
   .hero .machine .sentence { font-size: clamp(1.15rem, 2.2vw, 1.4rem); }
-  .shelf { margin-top: -84px; position: relative; z-index: 2; }
+  .shelf { margin-top: 0; position: relative; z-index: 2; }
+  .shelf :global(.tiles) { border-top: 0; }
   .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .steps li { padding: 24px; display: flex; flex-direction: column; gap: 6px; }
   .steps .n { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: var(--deep); color: var(--mint); font-weight: 600; margin-bottom: 6px; }
