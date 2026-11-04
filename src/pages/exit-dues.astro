@@ -1,0 +1,130 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import DateIn from '../components/DateIn.astro';
+import FieldErrors from '../components/FieldErrors.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcDues } from '../lib/calc/exit-dues';
+import { duesView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { duesBar } from '../lib/exhibits-extra';
+import { toISODate } from '../lib/calc/core';
+import { money } from '../lib/format';
+
+const today = toISODate(new Date());
+const d = { basicSalary: 8000, startDate: '2019-03-01', endDate: today, unpaidAbsenceDays: 0, takenDays: 150 };
+const r = calcDues(d);
+const view = r.ok ? duesView(r.value) : errorView(r, 'مستحقاتك عند ترك العمل')!;
+const ex1 = calcDues({ basicSalary: 8000, startDate: '2019-03-01', endDate: '2026-02-28', unpaidAbsenceDays: 0, takenDays: 150 });
+const ex2 = calcDues({ basicSalary: 5000, startDate: '2026-01-01', endDate: '2026-09-30', unpaidAbsenceDays: 0, takenDays: 0 });
+const a = ex1.ok ? ex1.value : null;
+const b = ex2.ok ? ex2.value : null;
+---
+<CalcLayout slug="exit-dues" lede="لموظفي القطاع الخاص غير المواطنين في الإمارات. نجمع لك مكافأة نهاية الخدمة وبدل الإجازة غير المستخدمة في رقم واحد، على الراتب الأساسي.">
+  <div data-calc="exit-dues">
+    <div class="sentence-wrap">
+      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
+      <form class="sentence" onsubmit="return false" aria-label="بيانات مستحقات ترك العمل">
+        راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
+        بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+        وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />،
+        وغبت بدون أجر <NumIn name="unpaidAbsenceDays" label="أيام الغياب بدون أجر" value={d.unpaidAbsenceDays} width={3} /> يوماً،
+        وأخذت من إجازاتي طوال خدمتي <NumIn name="takenDays" label="مجموع أيام الإجازة التي أخذتها" value={d.takenDays} width={3} /> يوماً.
+      </form>
+      <FieldErrors names={['basicSalary', 'startDate', 'endDate', 'unpaidAbsenceDays', 'takenDays']} />
+      <p class="hint">الراتب الأساسي فقط كما في عقدك، بدون البدلات. الإجازة محسوبة على 30 يوماً في السنة وهو الحد الأدنى في القانون.</p>
+    </div>
+
+    <ResultCard view={view} sensitive notes={[
+      'المجموع مكوّن من أمرين فقط: مكافأة نهاية الخدمة (المادة 51) وبدل الإجازة السنوية غير المستخدمة (المادة 29)، وكلاهما على الراتب الأساسي والأجر اليومي = الأساسي ÷ 30.',
+      'لا يشمل راتب آخر شهر عمل، ولا بدل الإنذار، ولا تذكرة العودة، ولا أي مبالغ مستحقة بحسب عقدك.',
+      'يجوز لصاحب العمل خصم ما يكون مستحقاً له على العامل من المستحقات.',
+      'لا ينطبق على المواطنين ولا موظفي الحكومة ولا المناطق الحرة ذات القوانين الخاصة.',
+    ]}>
+      <p class="formula" slot="formula"><code>المستحقات = مكافأة نهاية الخدمة + (أيام الإجازة المتبقية × الأساسي ÷ 30)</code></p>
+    </ResultCard>
+
+    <section class="exhibit" aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title"><b>02</b> من أين يأتي مبلغك؟</h2>
+      <div data-x="bar" set:html={duesBar(r.ok ? r.value : null)} />
+    </section>
+  </div>
+
+  <Fragment slot="article">
+    <div class="example">
+      <p><strong>الجواب المختصر:</strong> مستحقاتك عند ترك العمل في القطاع الخاص بالإمارات = <strong>مكافأة نهاية الخدمة</strong> (أجر 21 يوماً عن كل سنة من أول 5 سنوات، و30 يوماً عن كل سنة بعدها) + <strong>بدل أيام الإجازة السنوية غير المستخدمة</strong>، وكلاهما على الراتب الأساسي والأجر اليومي = الأساسي ÷ 30.</p>
+    </div>
+
+    <h2>ما الذي تشمله الحاسبة وما الذي لا تشمله؟</h2>
+    <p>تجمع هذه الحاسبة أكبر بندين يسأل عنهما من يترك عمله، بالقواعد نفسها المستخدمة في <a href="/end-of-service/">حاسبة نهاية الخدمة</a> و<a href="/annual-leave/">حاسبة الإجازة السنوية وبدلها</a>:</p>
+    <ul>
+      <li><strong>تشمل:</strong> مكافأة نهاية الخدمة، وبدل الإجازة السنوية المتبقية.</li>
+      <li><strong>لا تشمل:</strong> راتب الأيام التي عملتها في الشهر الأخير، وبدل الإنذار إن لم تُكمل مدته، والتذكرة، وأي عمولات أو مكافآت وردت في عقدك. هذه تختلف من عقد إلى آخر، فأضفها بنفسك.</li>
+    </ul>
+
+    <h2>مثال محسوب: سبع سنوات وراتب 8,000</h2>
+    <div class="example">
+      <p>راتب أساسي 8,000 درهم، من 1 مارس 2019 إلى 28 فبراير 2026 (7 سنوات)، وأخذ الموظف 150 يوماً إجازة طوال خدمته.</p>
+      <p>الأجر اليومي = 8,000 ÷ 30 = 266.67 درهم. أول 5 سنوات: 5 × 21 يوماً، وسنتان بعدهما: 2 × 30 يوماً. مكافأة نهاية الخدمة <strong class="num">{money(a?.gratuity.total)}</strong> درهم.</p>
+      <p>الإجازة المستحقة 7 × 30 = 210 أيام، أخذ منها 150، فبقي 60 يوماً × 266.67 = <strong class="num">{money(a?.leave.amount)}</strong> درهم.</p>
+      <p>المجموع: <strong class="num">{money(a?.total)}</strong> درهم.</p>
+    </div>
+
+    <h2>مثال: خدمة أقل من سنة</h2>
+    <div class="example">
+      <p>راتب أساسي 5,000 درهم، من 1 يناير إلى 30 سبتمبر 2026 (9 أشهر). لا مكافأة نهاية خدمة قبل إكمال سنة. أما الإجازة فيستحق الموظف يومين عن كل شهر كامل بعد 6 أشهر: 9 × 2 = 18 يوماً × (5,000 ÷ 30) = <strong class="num">{money(b?.leave.amount)}</strong> درهم، وهي المجموع كله.</p>
+    </div>
+
+    <h2>متى تُدفع المستحقات؟</h2>
+    <p>بحسب بوابة حكومة الإمارات تُدفع مستحقات نهاية الخدمة خلال 14 يوماً من انتهاء العقد. وإذا لم تصلك فللعامل الشكوى إلى وزارة الموارد البشرية والتوطين.</p>
+
+    <Faq title="أسئلة شائعة" items={[
+      { q: "ما الذي أستحقه عند ترك العمل في الإمارات؟", a: "مكافأة نهاية الخدمة إن أكملت سنة، وبدل الإجازة السنوية غير المستخدمة، وراتب الأيام التي عملتها، وما نص عليه عقدك. هذه الحاسبة تجمع الأولين." },
+      { q: "هل أستحق مكافأة إن استقلت؟", a: "المادة 51 في قانون 2021 تربط المكافأة بمدة الخدمة والراتب الأساسي، ولا تحدد خفضاً بحسب سبب انتهاء العقد كما كان في القانون السابق. وللحالات الخاصة راجع وزارة الموارد البشرية والتوطين." },
+      { q: "هل يُحسب بدل الإجازة على الراتب الإجمالي؟", a: "بحسب القانون يُحسب على الراتب الأساسي، وبعض الشركات تحسبه على الراتب الكامل. اكتب في الحاسبة الرقم الذي ينص عليه عقدك." },
+      { q: "ماذا لو أخذت إجازات أكثر من رصيدي؟", a: "لا يبقى لك بدل إجازة، لكن مكافأة نهاية الخدمة لا تتأثر. وتُظهر الحاسبة بدل الإجازة صفراً في هذه الحالة." },
+      { q: "هل تدخل أيام الغياب بدون أجر؟", a: "تُخصم من مدة الخدمة في حساب المكافأة، فتقل بنسبتها." },
+      { q: "هل تصلح الحاسبة لموظفي الحكومة أو المناطق الحرة؟", a: "لا. موظفو الحكومة والمواطنون وبعض المناطق الحرة مثل مركز دبي المالي العالمي لهم أنظمة مختلفة." },
+    ]} />
+
+    <h2>المصادر</h2>
+    <ul class="sources">
+      <li><a href="https://u.ae/en/information-and-services/jobs/end-of-service-benefits-for-employees-in-the-private-sector" rel="noopener" target="_blank">البوابة الرسمية لحكومة الإمارات: مكافأة نهاية الخدمة</a></li>
+      <li><a href="https://u.ae/en/information-and-services/jobs/employment-in-the-private-sector/types-of-leaves-and-entitlements-in-the-private-sector/annual-leave" rel="noopener" target="_blank">البوابة الرسمية لحكومة الإمارات: الإجازة السنوية في القطاع الخاص</a></li>
+      <li><a href="https://www.mohre.gov.ae/" rel="noopener" target="_blank">وزارة الموارد البشرية والتوطين</a></li>
+    </ul>
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcDues } from '../lib/calc/exit-dues';
+  import { duesView } from '../lib/views-extra';
+  import { duesBar } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="exit-dues"]')!;
+  const end = root.querySelector<HTMLInputElement>('#f-endDate')!;
+  if (!new URLSearchParams(location.search).has('endDate')) {
+    end.value = localTodayISO();
+    end.dataset.default = end.value;
+  }
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcDues({ basicSalary: num(f.basicSalary), startDate: f.startDate, endDate: f.endDate, unpaidAbsenceDays: num(f.unpaidAbsenceDays) ?? 0, takenDays: num(f.takenDays) ?? 0 });
+      return { result, view: result.ok ? duesView(result.value) : null };
+    },
+    extras: (o) => { root.querySelector<HTMLElement>('[data-x="bar"]')!.innerHTML = duesBar(o); },
+  });
+</script>
+
+<style is:global>
+  .dues-bar { display: flex; height: 22px; border: 1.5px solid var(--ink); border-radius: 4px; overflow: hidden; background: var(--card); }
+  .dues-bar .g { background: var(--ink); }
+  .dues-bar .l { background: #c94a2b; }
+  .dues-key { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+  .dues-key li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dues-key i { width: 14px; height: 14px; border: 1.5px solid var(--ink); border-radius: 3px; display: inline-block; }
+  .dues-key i.g { background: var(--ink); } .dues-key i.l { background: #c94a2b; }
+  .dues-key small { color: var(--soft); }
+</style>

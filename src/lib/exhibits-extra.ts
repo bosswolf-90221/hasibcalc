@@ -272,3 +272,14 @@ export function salaryShortAnswer(iso: string): string {
   };
   return `<ul>${line(27, 'fri-sat', 'before', 'راتب يوم 27')}${line(1, 'sat-sun', 'none', 'راتب يوم 1 من الشهر')}</ul>`;
 }
+
+import type { Dues } from './calc/exit-dues';
+/** One bar split into the two parts of the dues, with their amounts. */
+export function duesBar(d: Dues | null): string {
+  if (!d || d.total <= 0) return '<p class="hint">لا توجد مستحقات لعرضها بهذه المدخلات.</p>';
+  const gp = Math.round(d.gratuityShare * 1000) / 10;
+  const lp = Math.round((100 - gp) * 10) / 10;
+  const f = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return `<div class="dues-bar" role="img" aria-label="مكافأة نهاية الخدمة ${gp}% وبدل الإجازة ${lp}% من المستحقات"><span class="g" style="flex:${Math.max(gp, 0.5)}"></span><span class="l" style="flex:${Math.max(lp, 0.5)}"></span></div>
+<ul class="dues-key"><li><i class="g"></i>مكافأة نهاية الخدمة <b class="nums">${f(d.gratuity.total)}</b> <small class="nums">(${gp}%)</small></li><li><i class="l"></i>بدل الإجازة <b class="nums">${f(d.leave.amount)}</b> <small class="nums">(${lp}%)</small></li></ul>`;
+}

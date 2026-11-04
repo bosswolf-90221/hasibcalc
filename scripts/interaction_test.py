@@ -160,6 +160,14 @@ with sync_playwright() as p:
     pg.fill('#f-annualDays', '20'); pg.wait_for_timeout(300)
     check('annual-leave: under 30 days flagged', pg.locator('#f-annualDays-err').is_visible())
 
+    pg.goto(B + '/exit-dues/?basicSalary=8000&startDate=2019-03-01&endDate=2026-02-28&unpaidAbsenceDays=0&takenDays=150'); pg.wait_for_timeout(500)
+    check('exit-dues: total 60,043.84', val(pg).replace(',', '') == '60043.84', val(pg))
+    check('exit-dues: bar shows two parts', pg.locator('[data-x="bar"] .dues-key li').count() == 2)
+    pg.fill('#f-takenDays', '210'); pg.wait_for_timeout(300)
+    check('exit-dues: no leave left leaves gratuity only', val(pg).replace(',', '') == '44043.84', val(pg))
+    pg.fill('#f-basicSalary', '-5'); pg.wait_for_timeout(300)
+    check('exit-dues: negative salary flagged', pg.locator('#f-basicSalary-err').is_visible())
+
     pg.goto(B + '/gpa/'); pg.wait_for_timeout(500)
     check('gpa: default cumulative 4.24', val(pg) == '4.24', val(pg))
     pg.fill('#f-prevGpa', ''); pg.fill('#f-prevHours', ''); pg.wait_for_timeout(300)

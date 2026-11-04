@@ -297,3 +297,25 @@ export function loanWhatIf(input: { principal: number | null; annualRatePercent:
   }
   return out;
 }
+
+import type { Dues } from './calc/exit-dues';
+export function duesView(d: Dues): View {
+  const g = d.gratuity;
+  const l = d.leave;
+  return {
+    label: 'مستحقاتك عند ترك العمل تقريباً',
+    value: d.total,
+    decimals: 2,
+    unit: 'درهم',
+    sentence: g.eligible
+      ? `مكافأة نهاية الخدمة وبدل الإجازة معاً، عن خدمة ${days(g.serviceDays)}.`
+      : `لم تكمل سنة خدمة فلا مكافأة، وبدل الإجازة وحده ${l.eligible ? 'مستحق' : 'غير مستحق بعد (أقل من 6 أشهر)'}.`,
+    rows: [
+      ['مكافأة نهاية الخدمة', `${moneyFmt(g.total)} درهم`],
+      [`بدل الإجازة (${fmt1(l.remaining)} يوماً × ${moneyFmt(l.dailyWage)})`, `${moneyFmt(l.amount)} درهم`],
+      ['الأجر اليومي (الأساسي ÷ 30)', `${moneyFmt(g.dailyWage)} درهم`],
+      ['رصيد الإجازة المتبقي', leaveDays(l.remaining)],
+    ],
+    whatif: l.remaining > 0 ? [`لو لم يبقَ لك رصيد إجازة، لانخفضت المستحقات بمقدار ${moneyFmt(l.amount)} درهم.`] : undefined,
+  };
+}

@@ -308,3 +308,25 @@ describe('hijri years table', () => {
     expect(hijriYearsTable(1343, 1450).match(/<tr>/g)!.length).toBe(109);
   });
 });
+
+import { calcDues } from '../src/lib/calc/exit-dues';
+describe('exit dues', () => {
+  test('7 years at 8,000 with 150 leave days taken: gratuity + 60 days of leave', () => {
+    const d = val(calcDues({ basicSalary: 8000, startDate: '2019-03-01', endDate: '2026-02-28', unpaidAbsenceDays: 0, takenDays: 150 }));
+    expect(d.leave.remaining).toBe(60);
+    expect(d.leave.amount).toBe(16000);
+    expect(d.total).toBeCloseTo(d.gratuity.total + 16000, 2);
+    expect(Math.round(d.total * 100) / 100).toBe(60043.84);
+  });
+  test('under a year: no gratuity, leave only', () => {
+    const d = val(calcDues({ basicSalary: 5000, startDate: '2026-01-01', endDate: '2026-09-30', unpaidAbsenceDays: 0, takenDays: 0 }));
+    expect(d.gratuity.total).toBe(0);
+    expect(d.leave.amount).toBe(3000);
+    expect(d.gratuityShare).toBe(0);
+  });
+  test('validation errors name the page fields', () => {
+    const r = calcDues({ basicSalary: null, startDate: '2026-01-01', endDate: '2026-09-30', unpaidAbsenceDays: 0, takenDays: 0 });
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.errors[0].field).toBe('basicSalary');
+  });
+});
