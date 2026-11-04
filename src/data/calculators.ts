@@ -34,7 +34,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['نهاية الخدمة', 'مكافأة', 'المكافأة', 'استقالة', 'قانون العمل', 'الإمارات', 'راتب أساسي', 'gratuity'],
     related: ['exit-dues', 'annual-leave', 'loan', 'zakat'],
-    updated: '2026-10-28',
+    updated: '2026-11-04',
   },
   {
     slug: 'annual-leave',
@@ -48,7 +48,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['الإجازة السنوية', 'بدل الإجازة', 'رصيد الإجازة', 'إجازة', 'قانون العمل', 'الإمارات', 'نهاية الخدمة', 'استقالة', 'leave salary'],
     related: ['exit-dues', 'end-of-service', 'salary-uae', 'gosi'],
-    updated: '2026-10-25',
+    updated: '2026-11-04',
   },
   {
     slug: 'exit-dues',
@@ -76,7 +76,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money', 'shopping'],
     terms: ['ضريبة', 'الضريبة', 'القيمة المضافة', 'vat', '5%', 'شامل الضريبة', 'فاتورة'],
     related: ['discount', 'percentage', 'loan', 'zakat'],
-    updated: '2026-11-01',
+    updated: '2026-11-04',
   },
   {
     slug: 'loan',
@@ -90,7 +90,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['قرض', 'القرض', 'قسط', 'تمويل', 'سيارة', 'فائدة', 'بنك', 'عقار'],
     related: ['end-of-service', 'percentage', 'vat', 'zakat'],
-    updated: '2026-10-25',
+    updated: '2026-11-04',
   },
   {
     slug: 'percentage',
@@ -145,6 +145,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['وزن', 'الوزن', 'وزني', 'طول', 'bmi', 'كتلة الجسم', 'سمنة', 'رجيم', 'صحة'],
     related: ['age', 'percentage', 'discount', 'loan'],
+    updated: '2026-11-04',
   },
   {
     slug: 'zakat',
@@ -158,7 +159,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['زكاة', 'الزكاة', 'نصاب', 'ذهب', 'مدخرات', 'ربع العشر', 'رمضان'],
     related: ['end-of-service', 'loan', 'percentage', 'vat'],
-    updated: '2026-11-01',
+    updated: '2026-11-04',
   },
   {
     slug: 'hijri',
@@ -172,7 +173,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['dates'],
     terms: ['السنة الهجرية', 'هجري', 'الهجري', 'ميلادي', 'تحويل التاريخ', 'تاريخ اليوم', 'أم القرى', 'التقويم', 'رمضان', 'hijri'],
     related: ['hijri-age', 'days-between', 'age', 'pregnancy'],
-    updated: '2026-11-03',
+    updated: '2026-11-04',
   },
   {
     slug: 'hijri-age',
@@ -186,7 +187,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['dates', 'health-age'],
     terms: ['العمر بالهجري', 'عمري بالهجري', 'حساب العمر', 'هجري', 'تاريخ الميلاد', 'ميلادي', 'أم القرى', 'عمر'],
     related: ['hijri', 'age', 'days-between', 'salary-day'],
-    updated: '2026-10-25',
+    updated: '2026-11-04',
   },
   {
     slug: 'salary-day',
@@ -196,25 +197,25 @@ export const CALCULATORS: CalculatorMeta[] = [
     tone: '#0b1020',
     sample: '2',
     seoTitle: 'كم باقي على الراتب؟ عدّاد موعد نزول الراتب',
-    description: 'كم يوماً باقي على راتبك؟ اختر يوم الراتب ونحسب الموعد القادم، ونقدّمه إذا وافق عطلة نهاية الأسبوع، مع مواعيد الرواتب للأشهر الاثني عشر القادمة.',
+    description: 'كم يوماً باقي على راتبك؟ اختر يوم الراتب ونحسب الموعد القادم، وننقله إذا وافق عطلة نهاية الأسبوع، مع مواعيد الرواتب للأشهر الاثني عشر القادمة.',
     categories: ['money', 'dates'],
     terms: ['الراتب', 'راتب', 'كم باقي على الراتب', 'موعد الراتب', 'نزول الراتب', 'يوم 27', 'الرواتب', 'عداد'],
     related: ['salary-saudi', 'salary-uae', 'gosi', 'end-of-service'],
-    updated: '2026-10-31',
+    updated: '2026-11-04',
   },
   {
     slug: 'salary-saudi',
     question: 'كم باقي على الراتب في السعودية؟',
     short: 'راتب السعودية',
-    blurb: 'يوم 27 للقطاع الحكومي، ويُقدَّم للخميس إذا وافق العطلة',
+    blurb: 'يوم 27 للقطاع الحكومي: الجمعة إلى الخميس والسبت إلى الأحد',
     tone: '#b03606',
     sample: '27',
     seoTitle: 'كم باقي على الراتب في السعودية؟ عدّاد رواتب 27',
-    description: 'كم يوماً باقي على راتب يوم 27 في السعودية؟ عدّاد بتاريخ اليوم، مع موعد الراتب إذا وافق الجمعة أو السبت، ومواعيد رواتب الأشهر القادمة.',
+    description: 'كم يوماً باقي على راتب يوم 27 في السعودية؟ عدّاد بقاعدة وزارة المالية: إذا وافق الجمعة فالخميس قبله، وإذا وافق السبت فالأحد بعده، مع مواعيد الأشهر القادمة.',
     categories: ['money', 'dates'],
     terms: ['راتب السعودية', 'رواتب 27', 'كم باقي على الراتب', 'نزول الرواتب', 'الرواتب الحكومية', 'السعودية', 'الراتب'],
     related: ['gosi', 'salary-day', 'salary-uae', 'hijri'],
-    updated: '2026-10-25',
+    updated: '2026-11-04',
   },
   {
     slug: 'salary-uae',
@@ -228,7 +229,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money', 'dates'],
     terms: ['راتب الإمارات', 'نظام حماية الأجور', 'wps', 'كم باقي على الراتب', 'موعد الراتب', 'الإمارات', 'الراتب'],
     related: ['end-of-service', 'salary-day', 'salary-saudi', 'vat'],
-    updated: '2026-10-25',
+    updated: '2026-11-04',
   },
   {
     slug: 'days-between',
@@ -256,7 +257,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['حمل', 'الحمل', 'ولادة', 'موعد الولادة', 'حاسبة الحمل', 'أسابيع الحمل', 'حامل', 'الدورة'],
     related: ['ovulation', 'days-between', 'hijri', 'calories'],
-    updated: '2026-10-27',
+    updated: '2026-11-04',
   },
   {
     slug: 'ovulation',
@@ -270,7 +271,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['التبويض', 'حاسبة التبويض', 'أيام الخصوبة', 'الدورة الشهرية', 'موعد الدورة', 'الحمل', 'الإباضة', 'خصوبة'],
     related: ['pregnancy', 'days-between', 'calories', 'bmi'],
-    updated: '2026-10-27',
+    updated: '2026-11-04',
   },
   {
     slug: 'calories',
@@ -284,7 +285,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['سعرات', 'السعرات', 'سعرة', 'حرارية', 'رجيم', 'دايت', 'تخسيس', 'calories', 'حرق'],
     related: ['bmi', 'age', 'pregnancy', 'percentage'],
-    updated: '2026-10-21',
+    updated: '2026-11-04',
   },
   {
     slug: 'gosi',
@@ -298,7 +299,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['الراتب الصافي', 'صافي الراتب', 'تأمينات', 'التأمينات', 'gosi', 'جوسي', 'ساند', 'خصم الراتب', 'معاش', 'التقاعد', 'السعودية', 'استقطاع'],
     related: ['end-of-service', 'loan', 'zakat', 'percentage'],
-    updated: '2026-10-23',
+    updated: '2026-11-04',
   },
   {
     slug: 'gpa',
@@ -312,7 +313,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['study'],
     terms: ['المعدل', 'المعدل التراكمي', 'المعدل الفصلي', 'gpa', 'جي بي ايه', 'الجامعة', 'حساب المعدل', 'من 5', 'من 4', 'ساعات', 'تقدير'],
     related: ['gpa-target', 'percentage', 'age', 'days-between'],
-    updated: '2026-10-27',
+    updated: '2026-11-04',
   },
   {
     slug: 'gpa-target',
@@ -326,7 +327,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['study'],
     terms: ['المعدل المطلوب', 'رفع المعدل', 'المعدل المستهدف', 'المعدل التراكمي', 'كيف ارفع معدلي', 'gpa', 'الجامعة', 'التخرج'],
     related: ['gpa', 'percentage', 'days-between', 'age'],
-    updated: '2026-11-01',
+    updated: '2026-11-04',
   },
 ];
 
@@ -340,7 +341,7 @@ export const CATEGORIES: { key: CategoryKey; name: string; seoTitle: string; int
     faq: [
       { q: 'هل تدخل البدلات في مكافأة نهاية الخدمة؟', a: 'لا. تُحسب المكافأة في القطاع الخاص بالإمارات على الراتب الأساسي فقط: 21 يوماً عن كل سنة من أول خمس سنوات، و30 يوماً عن كل سنة بعدها. التفاصيل والمصادر في <a href="/end-of-service/">حاسبة نهاية الخدمة</a>.' },
       { q: 'ما الفرق بين الفائدة الثابتة والمتناقصة؟', a: 'الثابتة تُحسب على أصل القرض كاملاً طوال المدة، والمتناقصة تُحسب على الرصيد المتبقي فقط، فتقل الفائدة كلما سددت. ولذلك تبدو النسبة الثابتة أصغر وهي أغلى فعلياً. اقرأ <a href="/guides/flat-vs-reducing-interest/">المقارنة بمثال محسوب</a>.' },
-      { q: 'كم نسبة زكاة المال؟', a: 'ربع العشر، أي 2.5% من المال الصافي، إذا بلغ النصاب (قيمة 85 غراماً من الذهب عيار 24) ومرّ عليه حول قمري كامل. احسبها في <a href="/zakat/">حاسبة الزكاة</a>.' },
+      { q: 'كم نسبة زكاة المال؟', a: 'ربع العشر، أي 2.5% من المال الصافي، إذا بلغ النصاب ومرّ عليه حول قمري كامل. والنصاب عند مجلس الإمارات للإفتاء قيمة 85 غراماً من الذهب، وعند دليل هيئة الزكاة السعودية الأقل من نصاب الذهب أو الفضة. احسبها في <a href="/zakat/">حاسبة الزكاة</a>.' },
     ],
   },
   {

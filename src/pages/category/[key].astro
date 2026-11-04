@@ -4,6 +4,7 @@ import CalcIndex from '../../components/CalcIndex.astro';
 import Faq from '../../components/Faq.astro';
 import { CATEGORIES, inCategory, CALCULATORS } from '../../data/calculators';
 import { GUIDES } from '../../data/guides';
+import { plural } from '../../lib/format';
 
 export function getStaticPaths() {
   return CATEGORIES.map((c) => ({ params: { key: c.key } }));
@@ -18,7 +19,7 @@ const guides = GUIDES.filter((g) => slugs.has(g.calc));
   <div class="stage calc-stage">
     <div class="container calc-title">
       <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">{cat.name}</li></ol></nav>
-      <p class="kick">{items.length} حاسبات</p>
+      <p class="kick">{plural(items.length, { one: 'حاسبة واحدة', two: 'حاسبتان', few: 'حاسبات', many: 'حاسبة' })}</p>
       <h1>{cat.name}</h1>
       <p class="lede">{cat.intro}</p>
     </div>

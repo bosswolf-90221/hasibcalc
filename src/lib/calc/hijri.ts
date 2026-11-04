@@ -58,7 +58,8 @@ function describe(d: Date): Conversion {
 export function gregorianToHijri(input: { date: string }): CalcResult<Conversion> {
   const v = new Validator();
   const d = v.date('date', input.date, 'التاريخ الميلادي');
-  if (d && (d.getUTCFullYear() < 1924 || d.getUTCFullYear() > 2076)) v.add('date', 'اختر تاريخاً بين 1924 و2076');
+  const first = fromHijri({ year: 1343, month: 1, day: 1 });
+  if (d && ((first && d < first) || d.getUTCFullYear() > 2076)) v.add('date', 'اختر تاريخاً من أغسطس 1924 (1343 هـ) إلى 2076');
   if (!v.valid || !d) return fail(v.errors);
   return ok(describe(d));
 }

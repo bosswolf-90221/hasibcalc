@@ -18,8 +18,8 @@ export function bmiCategory(bmi: number): BmiCategory {
 
 export function calcBmi(input: BmiInput): CalcResult<Bmi> {
   const v = new Validator();
-  const w = v.number('weightKg', input.weightKg, { min: 2, max: 400, label: 'الوزن' });
-  const h = v.number('heightCm', input.heightCm, { min: 50, max: 250, label: 'الطول' });
+  const w = v.number('weightKg', input.weightKg, { min: 20, max: 400, label: 'الوزن' });
+  const h = v.number('heightCm', input.heightCm, { min: 100, max: 250, label: 'الطول' });
   if (!v.valid) return fail(v.errors);
   const m = h / 100;
   const bmi = w / (m * m);

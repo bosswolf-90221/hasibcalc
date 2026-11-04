@@ -55,7 +55,7 @@ export function calcGpa(input: GpaInput): CalcResult<Gpa> {
   const prevHours = input.prevHours ?? 0;
   if (input.prevHours !== null) v.number('prevHours', input.prevHours, { min: 0, max: 400, label: 'الساعات السابقة' });
   let prevGpa = 0;
-  if (prevHours > 0) prevGpa = v.number('prevGpa', input.prevGpa, { min: 0, max: scale.max, label: 'المعدل التراكمي السابق' });
+  if (prevHours > 0) prevGpa = v.number('prevGpa', input.prevGpa, { min: Math.min(...Object.values(scale.points)), max: scale.max, label: 'المعدل التراكمي السابق' });
   if (courses.length === 0 && v.valid) v.add('h1', 'اكتب ساعات مادة واحدة على الأقل');
   if (!v.valid) return fail(v.errors);
 

@@ -240,11 +240,14 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       for (const k of Object.keys(f)) if (f[k] !== '') q.set(prefix + k, f[k]);
       copy(`${cleanUrl()}?${q.toString()}`, btn.dataset.sensitive ? 'نسخنا الرابط، وفيه أرقامك المالية' : 'نسخنا الرابط مع أرقامك');
     } else if (act === 'reset') {
-      // Clear the typed numbers; dates, lists and choices keep their values.
-      for (const el of fieldEls()) if (el instanceof HTMLInputElement && el.type !== 'date') el.value = '';
+      // Clear the typed numbers and return dates to where they started; lists and choices keep their values.
+      for (const el of fieldEls()) {
+        if (!(el instanceof HTMLInputElement)) continue;
+        el.value = el.type === 'date' ? (el.dataset.default ?? '') : '';
+      }
       update();
       root.querySelector<HTMLInputElement>('[data-field] input:not([type=date]):not([type=radio]), input[data-field]:not([type=date])')?.focus();
-      toast('صفّرنا الخانات');
+      toast('أعدنا الخانات إلى بدايتها');
     } else if (act === 'clear-url') {
       history.replaceState(null, '', location.pathname);
       $('from-url').hidden = true;

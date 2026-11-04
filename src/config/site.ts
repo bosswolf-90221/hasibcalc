@@ -9,7 +9,7 @@ export const SITE = {
   locale: 'ar_AE',
   contactEmail: env.PUBLIC_CONTACT_EMAIL || 'contact@hasibcalc.com',
   contactFormEndpoint: env.PUBLIC_CONTACT_FORM_ENDPOINT || '',
-  /** Date the formulas were last checked against the cited sources. Update when you re-check. */
+  /** Fallback edit date for pages with no `updated` field. Source checks live in data/verification.ts. */
   lastReviewed: '2026-10-17',
 };
 

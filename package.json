@@ -9,7 +9,9 @@
     "preview": "astro preview",
     "test": "vitest run",
     "check:site": "node scripts/check-site.mjs",
-    "verify": "npm run test && npm run build && npm run check:site"
+    "check:baseline": "node scripts/check-baseline.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "verify": "npm run test && npm run build && npm run check:site && npm run check:baseline"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",

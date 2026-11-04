@@ -41,7 +41,7 @@ const chips = ['end-of-service', 'hijri', 'loan', 'vat', 'pregnancy', 'calories'
           </select>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
         </label>
-        <p class="lede">اختر سؤالك، واكتب أرقامك في جملة. تظهر الإجابة فوراً مع طريقة الحساب ومصدرها الرسمي، بلا تسجيل، ولا تغادر أرقامك جهازك.</p>
+        <p class="lede">اختر سؤالك، واكتب أرقامك في جملة. تظهر الإجابة فوراً مع طريقة الحساب، ومعها المصادر حين تعتمد على قاعدة، بلا تسجيل، ولا تغادر أرقامك جهازك.</p>
         <ul class="chips" aria-label="أسئلة شائعة">
           {chips.map((c) => <li><a href={`/${c.slug}/`} style={`--t:${c.tone}`}>{c.short}</a></li>)}
         </ul>
@@ -87,7 +87,7 @@ const chips = ['end-of-service', 'hijri', 'loan', 'vat', 'pregnancy', 'calories'
         <ol class="steps">
           <li class="card"><span class="n">1</span><h3>اختر سؤالك</h3><p>من «أريد أن أعرف…» في الأعلى، أو من البحث.</p><div class="demo">أريد أن أعرف <u>كم قسطي الشهري؟</u></div></li>
           <li class="card"><span class="n">2</span><h3>اكتب أرقامك داخل الجملة</h3><p>الأرقام نفسها هي الخانات.</p><div class="demo">قرض بقيمة <u class="num">100,000</u> لمدة <u class="num">48</u> شهراً</div></li>
-          <li class="card"><span class="n">3</span><h3>احصل على الإجابة وطريقتها</h3><p>تظهر النتيجة فوراً، ومعها المعادلة والمصدر. <a href="/about/">كيف نحسب</a></p><div class="demo">قسطك: <b class="num">2,280.35</b> درهم</div></li>
+          <li class="card"><span class="n">3</span><h3>احصل على الإجابة وطريقتها</h3><p>تظهر النتيجة فوراً، ومعها طريقة الحساب. <a href="/about/">كيف نحسب</a></p><div class="demo">قسطك: <b class="num">2,280.35</b> درهم</div></li>
         </ol>
       </Reveal>
     </section>

@@ -24,7 +24,8 @@ export type Gosi = {
   netAfterDeduction: number; // gross − employee share (take-home before any other deductions)
 };
 
-export const WAGE_MIN = 1500;
+export const WAGE_MIN = 1500; // Saudi floor: GOSI employer FAQ (undated); the 2024 law leaves the number to the competent authority
+export const WAGE_MIN_NON_SAUDI = 400; // occupational hazards floor: GOSI employer FAQ
 export const WAGE_MAX = 45000;
 export const SANED = 0.75;
 export const HAZARDS = 2;
@@ -53,9 +54,10 @@ export function calcGosi(input: GosiInput): CalcResult<Gosi> {
   if (!v.valid) return fail(v.errors);
 
   const rawWage = basic + housing;
-  const wage = Math.min(WAGE_MAX, Math.max(WAGE_MIN, rawWage));
-  const capped = rawWage > WAGE_MAX ? 'max' : rawWage < WAGE_MIN ? 'min' : null;
   const saudi = input.nationality === 'saudi';
+  const floor = saudi ? WAGE_MIN : WAGE_MIN_NON_SAUDI;
+  const wage = Math.min(WAGE_MAX, Math.max(floor, rawWage));
+  const capped = rawWage > WAGE_MAX ? 'max' : rawWage < floor ? 'min' : null;
   const p = saudi ? pensionRate(input.system, input.onDate) : 0;
   const employeeRate = saudi ? p + SANED : 0;
   const employerRate = saudi ? p + SANED + HAZARDS : HAZARDS;

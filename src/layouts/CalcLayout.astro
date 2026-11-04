@@ -7,6 +7,7 @@ import { bySlug, CALCULATORS, CATEGORIES } from '../data/calculators';
 import { SITE } from '../config/site';
 import { GUIDES } from '../data/guides';
 import { arDate } from '../lib/format';
+import { BASIS_LABEL, VERIFICATION } from '../data/verification';
 
 export interface Props { slug: string; lede: string }
 const { slug, lede } = Astro.props;
@@ -14,7 +15,8 @@ const c = bySlug(slug);
 const cat = CATEGORIES.find((x) => x.key === c.categories[0])!;
 const path = `/${slug}/`;
 const guides = GUIDES.filter((g) => g.calc === slug);
-const reviewed = [SITE.lastReviewed, c.updated ?? ''].sort().pop()!;
+const check = VERIFICATION[slug] ?? { basis: 'partial' as const };
+const edited = c.updated ?? SITE.lastReviewed;
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -48,7 +50,7 @@ const jsonLd = [
         <p class="ask-line" aria-hidden="true">أريد أن أعرف…</p>
         <h1>{c.question}</h1>
         <p class="lede">{lede}</p>
-        <p class="seal"><span class="seal-mark" aria-hidden="true"></span><span>آخر مراجعة للمعادلة والأرقام · <time datetime={reviewed}>{arDate(reviewed)}</time></span></p>
+        <p class="seal"><span class="seal-mark" aria-hidden="true"></span><span>{BASIS_LABEL[check.basis]}{check.verified && <> · <time datetime={check.verified}>{arDate(check.verified)}</time></>}</span></p>
         <label class="switcher"><span class="sr-only">اختر سؤالاً آخر</span>
           <select data-switch aria-label="اختر سؤالاً آخر">
             {CALCULATORS.map((x) => <option value={`/${x.slug}/`} selected={x.slug === slug}>{x.question}</option>)}
@@ -68,7 +70,7 @@ const jsonLd = [
         <AdSlot position="afterCalculator" />
         <article class="article card" id="explain">
           <slot name="article" />
-          <p class="reviewed">آخر مراجعة للمعادلة مقابل المصادر المذكورة: {arDate(reviewed)}.</p>
+          <p class="reviewed">{BASIS_LABEL[check.basis]}{check.verified ? `: ${arDate(check.verified)}` : ''}. وآخر تعديل لنص الصفحة: {arDate(edited)}.</p>
         </article>
         <section class="related" id="related" aria-labelledby="rel-h">
           <div class="related-head"><h2 id="rel-h">حاسبات قريبة</h2><a href="/#index">كل الحاسبات</a></div>
@@ -80,9 +82,9 @@ const jsonLd = [
           <h2>لماذا تثق بالنتيجة؟</h2>
           <ul class="trust">
             <li>المعادلة مكتوبة تحت «كيف حسبناها؟»</li>
-            <li>المصادر الرسمية في آخر الشرح</li>
+            {check.basis === 'math' ? <li>حساب رياضي لا يحتاج إلى مصدر قانوني</li> : <li>مصادر القواعد في آخر الشرح</li>}
             <li>الحساب في متصفحك، ولا تغادر أرقامك جهازك</li>
-            <li>آخر مراجعة: {arDate(reviewed)}</li>
+            {check.verified && <li>آخر تحقق من المصادر: {arDate(check.verified)}</li>}
           </ul>
         </div>
         {guides.length > 0 && (

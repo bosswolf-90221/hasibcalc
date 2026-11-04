@@ -2,6 +2,7 @@
 import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
+import Pills from '../components/Pills.astro';
 import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcZakat } from '../lib/calc/zakat';
@@ -24,17 +25,21 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 
       عندي نقد ومدخرات <NumIn name="cash" label="النقد والمدخرات" value={d.cash} width={7} />،
       واستثمارات تجب فيها الزكاة <NumIn name="investments" label="الاستثمارات الخاضعة للزكاة" value={d.investments} width={7} />،
       وعليّ ديون حالّة <NumIn name="debts" label="الديون الحالّة التي تُخصم" value={d.debts} width={6} />،
-      وسعر غرام الذهب عيار 24 اليوم <NumIn name="goldPricePerGram" label="سعر غرام الذهب عيار 24" value="" placeholder="؟" width={4} /> درهماً.
+      وسعر غرام الذهب عيار 24 اليوم <NumIn name="goldPricePerGram" label="سعر غرام الذهب عيار 24" value="" placeholder="؟" width={4} />،
+      وسعر غرام الفضة <NumIn name="silverPricePerGram" label="سعر غرام الفضة، يلزم لخيار الأقل من الذهب والفضة" value="" placeholder="؟" width={4} />،
+      وأعتمد في النصاب <Pills name="basis" legend="أساس النصاب" selected="gold" options={[{ value: 'gold', label: 'الذهب' }, { value: 'lower', label: 'الأقل من الذهب والفضة' }]} />.
     </form>
-    <FieldErrors names={['cash', 'investments', 'debts', 'goldPricePerGram']} />
+    <FieldErrors names={['cash', 'investments', 'debts', 'goldPricePerGram', 'silverPricePerGram']} />
+    <p class="hint">اختلفت الجهات في نصاب النقود: مجلس الإمارات للإفتاء الشرعي يعتمد 85 غراماً من الذهب، ودليل هيئة الزكاة السعودية يعتمد الأقل من نصاب الذهب أو الفضة. اكتب المبالغ والأسعار بالعملة نفسها.</p>
     </div>
 
     <ResultCard view={view} sensitive notes={[
       'تجب الزكاة إذا بلغ المال النصاب وحال عليه الحول الهجري.',
+      'لا نرجّح بين قولَي النصاب. إن لم تعرف ما يلزمك فاسأل جهة الإفتاء في بلدك.',
       'طريقة احتساب الأسهم والصناديق والعقارات المعدّة للتجارة والديون تختلف بحسب نوعها، وفيها تفاصيل فقهية.',
       'نخصم الديون الحالّة المستحقة عليك، وهو قول معتبر وفيه خلاف. اسأل جهة الإفتاء إن كان دينك مؤجلاً.',
     ]}>
-      <p class="formula" slot="formula"><code>الصافي = النقد + الاستثمارات − الديون</code> · <code>النصاب = 85 × سعر الغرام</code> · <code>الزكاة = الصافي × 2.5%</code></p>
+      <p class="formula" slot="formula"><code>الصافي = النقد + الاستثمارات − الديون</code> · <code>نصاب الذهب = 85 × سعر الغرام</code> · <code>نصاب الفضة = 595 × سعر الغرام</code> · <code>الزكاة = الصافي × 2.5%</code></p>
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="nisab-title">
@@ -88,9 +93,10 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 
     ]} />
     <h2>المصادر</h2>
     <ul class="sources">
+      <li><a href="https://www.wam.ae/ar/article/b2kivtk-%D8%A7%D9%84%D8%A5%D9%81%D8%AA%D8%A7%D8%A1-%D8%A7%D9%84%D8%B4%D8%B1%D8%B9%D9%8A-%D9%8A%D8%B5%D8%AF%D8%B1-%D8%A8%D9%8A%D8%A7%D9%86%D8%A7-%D9%8A%D9%88%D8%B6%D8%AD-%D9%81%D9%8A%D9%87-%D8%A3%D9%86%D9%88%D8%A7%D8%B9-%D8%B2%D9%83%D8%A7%D8%A9" rel="noopener" target="_blank">وكالة أنباء الإمارات: بيان مجلس الإمارات للإفتاء الشرعي عن الزكاة</a></li>
+      <li><a href="https://zatca.gov.sa/ar/HelpCenter/guidelines/Documents/Zakat_Individual.pdf" rel="noopener" target="_blank">هيئة الزكاة والضريبة والجمارك: الدليل الإرشادي لزكاة الأفراد (إرشادي غير ملزم)</a></li>
       <li><a href="https://www.aletihad.ae/news/4477821" rel="noopener" target="_blank">صحيفة الاتحاد: بيان مجلس الإمارات للإفتاء الشرعي حول زكاة النقود (النصاب 85 غراماً من الذهب الخالص)</a></li>
       <li><a href="https://www.emaratalyoum.com/local-section/other/2024-04-09-1.1842420" rel="noopener" target="_blank">الإمارات اليوم: بيان مجلس الإمارات للإفتاء الشرعي عن زكاة الذهب والفضة (النصاب بالعيارات، والحلي المتخذ للزينة)</a></li>
-      <li><a href="https://islamqa.info/en/answers/214221" rel="noopener" target="_blank">IslamQA: كيف تُحسب زكاة الذهب ونصابه</a></li>
       <li>للفتوى في حالتك: المركز الرسمي للإفتاء في الهيئة العامة للشؤون الإسلامية والأوقاف بالإمارات.</li>
     </ul>
   </Fragment>
@@ -111,6 +117,8 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 
         investments: num(f.investments) ?? 0,
         debts: num(f.debts) ?? 0,
         goldPricePerGram: f.goldPricePerGram.trim() === '' ? null : gold ?? NaN,
+        silverPricePerGram: f.silverPricePerGram.trim() === '' ? null : num(f.silverPricePerGram) ?? NaN,
+        basis: f.basis === 'lower' ? 'lower' : 'gold',
       });
       return { result, view: result.ok ? zakatView(result.value) : null };
     },

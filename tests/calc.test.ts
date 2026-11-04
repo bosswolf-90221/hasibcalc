@@ -8,6 +8,9 @@ import { calcDiscount } from '../src/lib/calc/discount';
 import { calcAge } from '../src/lib/calc/age';
 import { calcBmi, bmiCategory } from '../src/lib/calc/bmi';
 import { calcZakat } from '../src/lib/calc/zakat';
+import { calcPayday } from '../src/lib/calc/payday';
+import { calcGosi } from '../src/lib/calc/gosi';
+import { calcLeave } from '../src/lib/calc/annual-leave';
 
 const val = <T>(r: { ok: boolean } & ({ value: T } | { errors: unknown })) => {
   if (!r.ok) throw new Error('expected ok: ' + JSON.stringify((r as any).errors));
@@ -19,6 +22,25 @@ describe('core', () => {
   it('parses Arabic-Indic digits, commas and decimals', () => {
     expect(toNumber('١٢٬٣٤٥٫٥')).toBe(12345.5);
     expect(toNumber('1,000')).toBe(1000);
+    expect(toNumber('1,234,567.5')).toBe(1234567.5);
+  });
+  it('reads a comma as a decimal mark instead of inflating the number', () => {
+    expect(toNumber('8000,50')).toBe(8000.5);
+    expect(toNumber('3,5')).toBe(3.5);
+    expect(toNumber('٨٠٠٠٬٥٠')).toBe(8000.5);
+    expect(toNumber('1.234,56')).toBe(1234.56);
+  });
+  it('refuses numbers it cannot read with certainty', () => {
+    expect(toNumber('8000,500')).toBeNull();
+    expect(toNumber('1,23,456')).toBeNull();
+    expect(toNumber('12a')).toBeNull();
+    expect(toNumber('1e5')).toBeNull();
+  });
+  it('keeps numbers valid while they are being typed', () => {
+    expect(toNumber('8000,')).toBe(8000);
+    expect(toNumber('8000.')).toBe(8000);
+    expect(toNumber('-5')).toBe(-5);
+    expect(toNumber('-')).toBeNull();
     expect(toNumber('')).toBeNull();
     expect(toNumber('abc')).toBeNull();
     expect(toNumber(Infinity)).toBeNull();
@@ -37,9 +59,8 @@ describe('core', () => {
 
 describe('gratuity (UAE Art. 51)', () => {
   it('pays nothing before one full year', () => {
-    const g = val(calcGratuity({ basicSalary: 10000, startDate: '2024-01-01', endDate: '2024-12-30' }));
-    // 2024 is a leap year: 1 Jan – 30 Dec is 365 days but not yet a full calendar year
-    expect(g.serviceDays).toBe(365);
+    const g = val(calcGratuity({ basicSalary: 10000, startDate: '2024-01-01', endDate: '2024-12-29' }));
+    expect(g.serviceDays).toBe(364);
     expect(g.eligible).toBe(false);
     expect(g.total).toBe(0);
   });
@@ -232,5 +253,40 @@ describe('zakat', () => {
   });
   it('debts larger than assets give zero, not negative', () => {
     expect(val(calcZakat({ cash: 100, investments: 0, debts: 500, goldPricePerGram: 300 })).net).toBe(0);
+  });
+});
+
+describe('rules confirmed against official sources (November 2026)', () => {
+  it('UAE Article 67: a year of service is 365 days, leap year or not', () => {
+    expect(val(calcGratuity({ basicSalary: 6000, startDate: '2024-01-01', endDate: '2024-12-30' })).eligible).toBe(true);
+    expect(val(calcGratuity({ basicSalary: 6000, startDate: '2024-01-01', endDate: '2024-12-29' })).eligible).toBe(false);
+  });
+  it('UAE Article 51: unpaid absence can pull service below one year', () => {
+    expect(val(calcGratuity({ basicSalary: 6000, startDate: '2024-01-01', endDate: '2024-12-30', unpaidAbsenceDays: 1 })).eligible).toBe(false);
+  });
+  it('UAE Article 29: leave starts after more than six months', () => {
+    const at = (endDate: string) => val(calcLeave({ salary: 6000, startDate: '2026-01-01', endDate, annualDays: 30, takenDays: 0, divisor: '30' })).eligible;
+    expect(at('2026-06-30')).toBe(false);
+    expect(at('2026-07-01')).toBe(true);
+  });
+  it('Saudi MoF: Friday pays on Thursday before, Saturday pays on Sunday after', () => {
+    const next = (onDate: string) => val(calcPayday({ payDay: 27, weekend: 'fri-sat', rule: 'nearest', onDate })).next;
+    expect(next('2026-11-20').actual).toBe('2026-11-26');
+    expect(next('2026-06-20').actual).toBe('2026-06-28');
+    expect(next('2027-02-20').actual).toBe('2027-02-28');
+    expect(next('2026-12-20').actual).toBe('2026-12-27');
+  });
+  it('GOSI floors: 1,500 for Saudis, 400 for non-Saudis', () => {
+    expect(val(calcGosi({ nationality: 'saudi', system: 'new', basic: 1000, housing: 0, onDate: '2026-11-04' })).wage).toBe(1500);
+    expect(val(calcGosi({ nationality: 'non-saudi', system: 'new', basic: 300, housing: 0, onDate: '2026-11-04' })).wage).toBe(400);
+    expect(val(calcGosi({ nationality: 'non-saudi', system: 'new', basic: 1000, housing: 0, onDate: '2026-11-04' })).employer).toBe(20);
+  });
+  it('zakat: the nisab follows the basis the user picks', () => {
+    const money = { cash: 20000, investments: 0, debts: 0, goldPricePerGram: 400, silverPricePerGram: 5 };
+    const gold = val(calcZakat({ ...money, basis: 'gold' }));
+    const lower = val(calcZakat({ ...money, basis: 'lower' }));
+    expect([gold.nisab, gold.reachesNisab, gold.zakat]).toEqual([34000, false, 0]);
+    expect([lower.nisab, lower.reachesNisab, lower.zakat]).toEqual([2975, true, 500]);
+    expect(val(calcZakat({ ...money, silverPricePerGram: null, basis: 'lower' })).reachesNisab).toBeNull();
   });
 });

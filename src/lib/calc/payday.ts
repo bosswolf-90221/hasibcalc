@@ -8,7 +8,8 @@ import { WEEKDAYS } from './hijri';
  * Public holidays are not known in advance and are not considered.
  */
 export type Weekend = 'fri-sat' | 'sat-sun';
-export type ShiftRule = 'before' | 'after' | 'none';
+/** nearest: the first weekend day moves back, the second moves forward (Saudi MoF: Friday → Thursday, Saturday → Sunday). */
+export type ShiftRule = 'before' | 'after' | 'nearest' | 'none';
 export type PaydayInput = { payDay: number | null; weekend: Weekend; rule: ShiftRule; onDate: string };
 export type Payday = { nominal: string; actual: string; weekday: string; shifted: boolean };
 export type PaydayResult = {
@@ -24,7 +25,7 @@ function payFor(year: number, month: number, day: number, weekend: Weekend, rule
   const nominal = clampedDate(year, month, day);
   let actual = nominal;
   if (rule !== 'none') {
-    const step = rule === 'before' ? -1 : 1;
+    const step = rule === 'before' ? -1 : rule === 'after' ? 1 : actual.getUTCDay() === OFF[weekend][0] ? -1 : 1;
     while (OFF[weekend].includes(actual.getUTCDay())) actual = new Date(actual.getTime() + step * 86_400_000);
   }
   return { nominal: toISODate(nominal), actual: toISODate(actual), weekday: WEEKDAYS[actual.getUTCDay()], shifted: actual.getTime() !== nominal.getTime() };

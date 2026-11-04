@@ -29,10 +29,12 @@ export function calcDateSpan(input: DatesInput): CalcResult<DateSpan> {
   const days = raw + (input.includeEnd ? 1 : 0);
 
   // whole calendar months from a
+  // (when the last day counts, the span really ends one day later: 1–31 January is one full month)
+  const stop = new Date(b.getTime() + (input.includeEnd ? 86_400_000 : 0));
   let months = 0;
-  while (clampedDate(a.getUTCFullYear(), a.getUTCMonth() + months + 1, a.getUTCDate()) <= b) months++;
+  while (clampedDate(a.getUTCFullYear(), a.getUTCMonth() + months + 1, a.getUTCDate()) <= stop) months++;
   const anchor = clampedDate(a.getUTCFullYear(), a.getUTCMonth() + months, a.getUTCDate());
-  const monthRemainderDays = daysBetween(anchor, b) + (input.includeEnd ? 1 : 0);
+  const monthRemainderDays = daysBetween(anchor, stop);
 
   // weekend days in the counted range: full weeks contribute 2 each, then the tail
   const off = WEEKEND[input.weekend];

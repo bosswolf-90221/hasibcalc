@@ -22,15 +22,15 @@ const view = r.ok ? paydayView(r.value, d.payDay) : errorView(r, 'باقي عل�
       <form class="sentence" onsubmit="return false" aria-label="موعد الراتب">
         راتبي ينزل يوم <NumIn name="payDay" label="يوم الراتب في الشهر الميلادي" value={d.payDay} width={2} /> من كل شهر ميلادي،
         وعطلتي <Pills name="weekend" legend="عطلة نهاية الأسبوع" selected={d.weekend} options={[{ value: 'fri-sat', label: 'الجمعة والسبت' }, { value: 'sat-sun', label: 'السبت والأحد' }]} />،
-        وإذا وافق العطلة <Pills name="rule" legend="إذا وافق يوم الراتب العطلة" selected={d.rule} options={[{ value: 'before', label: 'يُقدَّم' }, { value: 'after', label: 'يُؤخَّر' }, { value: 'none', label: 'لا يتغير' }]} />
+        وإذا وافق العطلة <Pills name="rule" legend="إذا وافق يوم الراتب العطلة" selected={d.rule} options={[{ value: 'nearest', label: 'ينتقل لأقرب يوم عمل' }, { value: 'before', label: 'يُقدَّم' }, { value: 'after', label: 'يُؤخَّر' }, { value: 'none', label: 'لا يتغير' }]} />
       </form>
       <FieldErrors names={['payDay']} />
       <p class="hint">{hint}</p>
     </div>
     <ResultCard view={view} notes={['العطل الرسمية والأعياد لا تُحسب، لأن الجهات قد تعلن تقديم الرواتب قبلها بإعلان خاص.', 'التاريخ المستخدم هو تاريخ اليوم بحسب جهازك.']}>
-      <p class="formula" slot="formula">نأخذ يوم الراتب في الشهر الحالي، وإن مضى نأخذ الشهر التالي. إذا وافق الجمعة أو السبت (أو السبت أو الأحد) ننقله إلى أقرب يوم عمل قبله أو بعده بحسب اختيارك.</p>
+      <p class="formula" slot="formula">نأخذ يوم الراتب في الشهر الحالي، وإن مضى نأخذ الشهر التالي. إذا وافق الجمعة أو السبت (أو السبت أو الأحد) ننقله بحسب اختيارك: إلى يوم العمل قبله، أو بعده، أو أقرب يوم عمل. وأقرب يوم عمل مع عطلة الجمعة والسبت يعني أن الجمعة تنتقل إلى الخميس والسبت إلى الأحد، وهي قاعدة وزارة المالية السعودية للرواتب الحكومية.</p>
     </ResultCard>
-    <AddToCalendar title="يوم الراتب" dates={r.ok ? r.value.upcoming.map((u) => u.actual) : []} details="موعد الراتب المتوقع (يُقدَّم أو يُؤخَّر حسب العطلة). المصدر: hasibcalc.com/salary-day/" file="salary-days" label="أضف مواعيد راتبك (12 شهراً) إلى تقويمك" />
+    <AddToCalendar title="يوم الراتب" dates={r.ok ? r.value.upcoming.map((u) => u.actual) : []} details="موعد الراتب المتوقع (قد ينتقل بسبب العطلة). المصدر: hasibcalc.com/salary-day/" file="salary-days" label="أضف مواعيد راتبك (12 شهراً) إلى تقويمك" />
     <section class="exhibit" aria-labelledby="x-t">
       <h2 id="x-t" class="exhibit-title"><b>02</b> مواعيد رواتبك في الأشهر القادمة</h2>
       <div data-x="table" set:html={paydayTable(r.ok ? r.value : null)} />

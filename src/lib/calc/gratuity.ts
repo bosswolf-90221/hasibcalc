@@ -8,7 +8,9 @@ import { type CalcResult, Validator, daysBetween, fail, ok } from './core';
  *  - Fractions of a year are paid pro rata once one year is completed.
  *  - Unpaid absence days are excluded from the service period.
  *  - Total may not exceed two years' wage (taken here as 24 × monthly basic).
- * Daily wage assumption: monthly basic ÷ 30 (the common practice; the law does not spell the divisor out).
+ * Year and month: Article 67 counts a Gregorian year as 365 days and a month as 30 days.
+ * Daily wage: monthly basic ÷ 30. No article states this for monthly-paid workers; it is inferred from Article 67.
+ * Cap: Article 51(6) says two years' wage and does not say basic; applying it to basic is an assumption, disclosed on the page.
  */
 export type GratuityInput = {
   basicSalary: number | null;
@@ -51,10 +53,8 @@ export function calcGratuity(input: GratuityInput): CalcResult<Gratuity> {
   const serviceDays = totalDays - absence;
   const serviceYears = serviceDays / DAYS_PER_YEAR;
   const dailyWage = salary / DAILY_DIVISOR;
-  // One full year by the calendar (a leap year has 366 days): end + 1 day − absence must reach the first anniversary.
-  const firstAnniversary = Date.UTC(start.getUTCFullYear() + 1, start.getUTCMonth(), start.getUTCDate());
-  const effectiveEnd = end.getTime() + (1 - absence) * 86_400_000;
-  const eligible = effectiveEnd >= firstAnniversary;
+  // One year of service = 365 days (Article 67), counted after removing unpaid absence.
+  const eligible = serviceDays >= DAYS_PER_YEAR;
 
   const tier1Years = eligible ? Math.min(serviceYears, 5) : 0;
   const tier2Years = eligible ? Math.max(0, serviceYears - 5) : 0;

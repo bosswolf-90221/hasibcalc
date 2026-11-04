@@ -71,7 +71,7 @@ export function pregnancyView(p: Pregnancy): View {
     decimals: 0,
     unit: `${G_MONTHS[m - 1]} ${y}`,
     sentence: `عمر الحمل ${int(p.weeks)} أسبوعاً${p.days ? ` و${days(p.days)}` : ''}، في الثلث ${TRIMESTER[p.trimester - 1]}. ${left}.`,
-    badge: `الأسبوع ${p.weeks + 1} من الحمل`,
+    badge: `${int(p.weeks)} أسبوعاً مكتملاً`,
     rows: [
       ['عمر الحمل', `${int(p.weeks)} أسبوعاً و${days(p.days)}`],
       ['الشهر من الحمل', `الشهر ${['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن','التاسع'][pregnancyMonth(p.weeks + 1) - 1]}`],
@@ -92,7 +92,7 @@ export function caloriesView(c: Calories): View {
     rows: [
       ['معدل الأيض الأساسي (BMR)', `${int(Math.round(c.bmr))} سعرة`],
       ['معامل النشاط', String(c.factor)],
-      ['خسارة تدريجية (نحو نصف كيلو أسبوعياً)', `${int(Math.round(Math.max(c.maintenance - 500, c.bmr)))} سعرة`],
+      [c.maintenance - 500 >= c.bmr ? 'خسارة تدريجية (نحو نصف كيلو أسبوعياً)' : 'أدنى ما نعرضه للخسارة التدريجية (الأيض الأساسي)', `${int(Math.round(Math.max(c.maintenance - 500, c.bmr)))} سعرة`],
       ['زيادة تدريجية', `${int(Math.round(c.maintenance + 300))} سعرة`],
     ],
   };
@@ -103,7 +103,7 @@ import { money } from './format';
 const pctTxt = (n: number) => `${String(n).replace(/\.0+$/, '')}%`;
 export function gosiView(g: Gosi, nationality: Nationality, system: GosiSystem): View {
   const saudi = nationality === 'saudi';
-  const capNote = g.capped === 'max' ? ' (حُسب على الحد الأعلى 45,000 ريال)' : g.capped === 'min' ? ' (حُسب على الحد الأدنى 1,500 ريال)' : '';
+  const capNote = g.capped === 'max' ? ' (حُسب على الحد الأعلى 45,000 ريال)' : g.capped === 'min' ? ` (حُسب على الحد الأدنى ${saudi ? '1,500' : '400'} ريال)` : '';
   return {
     label: 'يُخصم من راتبك شهرياً',
     value: g.employee,

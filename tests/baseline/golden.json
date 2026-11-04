@@ -1,7 +1,7 @@
 {
   "number: thousands": 8000,
-  "number: comma decimal (known issue, audit)": 800050,
-  "number: short comma (known issue, audit)": 35,
+  "number: comma decimal": 8000.5,
+  "number: short comma": 3.5,
   "number: arabic digits": 8000.5,
   "number: empty": null,
   "number: text": null,
@@ -127,7 +127,7 @@
     "errors": [
       {
         "field": "basicSalary",
-        "message": "أدخل الراتب الأساسي"
+        "message": "أدخل الراتب الأساسي رقماً واضحاً، بلا فواصل إضافية"
       }
     ]
   },
@@ -521,18 +521,18 @@
       "netAfterDeduction": 6000
     }
   },
-  "gosi: non-saudi low wage (known issue, audit)": {
+  "gosi: non-saudi low wage": {
     "ok": true,
     "value": {
-      "wage": 1500,
+      "wage": 1000,
       "rawWage": 1000,
-      "capped": "min",
+      "capped": null,
       "pensionRate": 0,
       "employeeRate": 0,
       "employerRate": 2,
       "employee": 0,
-      "employer": 30,
-      "total": 30,
+      "employer": 20,
+      "total": 20,
       "gross": 1000,
       "netAfterDeduction": 1000
     }
@@ -640,7 +640,7 @@
       ]
     }
   },
-  "payday: Saturday 27 Feb 2027 (known issue, audit)": {
+  "payday: Saturday 27 Feb 2027, user picks move earlier": {
     "ok": true,
     "value": {
       "next": {
@@ -1092,6 +1092,9 @@
     "ok": true,
     "value": {
       "net": 75000,
+      "basis": "gold",
+      "nisabGold": 34000,
+      "nisabSilver": null,
       "nisab": 34000,
       "reachesNisab": true,
       "zakat": 1875
@@ -1101,6 +1104,9 @@
     "ok": true,
     "value": {
       "net": 20000,
+      "basis": "gold",
+      "nisabGold": 34000,
+      "nisabSilver": null,
       "nisab": 34000,
       "reachesNisab": false,
       "zakat": 0
@@ -1110,6 +1116,9 @@
     "ok": true,
     "value": {
       "net": 50000,
+      "basis": "gold",
+      "nisabGold": null,
+      "nisabSilver": null,
       "nisab": null,
       "reachesNisab": null,
       "zakat": 1250
@@ -1119,6 +1128,9 @@
     "ok": true,
     "value": {
       "net": 0,
+      "basis": "gold",
+      "nisabGold": 34000,
+      "nisabSilver": null,
       "nisab": 34000,
       "reachesNisab": false,
       "zakat": 0
@@ -1190,14 +1202,18 @@
       "normalMaxKg": 72.25
     }
   },
-  "bmi: tiny values (known issue, audit)": {
-    "ok": true,
-    "value": {
-      "bmi": 8,
-      "category": "under",
-      "normalMinKg": 4.625,
-      "normalMaxKg": 6.25
-    }
+  "bmi: tiny values": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "weightKg",
+        "message": "الوزن لا يمكن أن يكون أقل من 20"
+      },
+      {
+        "field": "heightCm",
+        "message": "الطول لا يمكن أن يكون أقل من 100"
+      }
+    ]
   },
   "calories: male moderate": {
     "ok": true,
@@ -1283,7 +1299,7 @@
       "secondTrimesterEnds": "2027-03-09"
     }
   },
-  "pregnancy: 13w3d (known issue, audit)": {
+  "pregnancy: 13w3d": {
     "ok": true,
     "value": {
       "dueDate": "2027-05-09",
@@ -1441,18 +1457,14 @@
       "hijriMonthLength": 29
     }
   },
-  "hijri: lower bound (known issue, audit)": {
-    "ok": true,
-    "value": {
-      "gregorian": "1924-01-01",
-      "hijri": {
-        "year": 1342,
-        "month": 5,
-        "day": 24
-      },
-      "weekday": "الثلاثاء",
-      "hijriMonthLength": 30
-    }
+  "hijri: lower bound": {
+    "ok": false,
+    "errors": [
+      {
+        "field": "date",
+        "message": "اختر تاريخاً من أغسطس 1924 (1343 هـ) إلى 2076"
+      }
+    ]
   },
   "hijri age: gregorian birth": {
     "ok": true,
@@ -1502,8 +1514,8 @@
       "days": 365,
       "weeks": 52,
       "weekRemainder": 1,
-      "months": 11,
-      "monthRemainderDays": 31,
+      "months": 12,
+      "monthRemainderDays": 0,
       "workingDays": 261,
       "weekendDays": 104,
       "reversed": false
@@ -1522,14 +1534,14 @@
       "reversed": true
     }
   },
-  "dates: Jan 1 to 31 (known issue, audit)": {
+  "dates: Jan 1 to 31": {
     "ok": true,
     "value": {
       "days": 31,
       "weeks": 4,
       "weekRemainder": 3,
-      "months": 0,
-      "monthRemainderDays": 31,
+      "months": 1,
+      "monthRemainderDays": 0,
       "workingDays": 22,
       "weekendDays": 9,
       "reversed": false

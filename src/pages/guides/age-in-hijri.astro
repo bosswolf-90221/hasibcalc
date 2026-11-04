@@ -17,7 +17,8 @@ const HROWS = Array.from({ length: 31 }, (_, i) => 1400 + i).map((y) => {
 const GROWS = Array.from({ length: 31 }, (_, i) => 1980 + i).map((g) => {
   const a = toHijri(new Date(Date.UTC(g, 0, 1))).year;
   const b = toHijri(new Date(Date.UTC(g, 11, 31))).year;
-  const ages = [NOW_H - b, NOW_H - a].filter((v, i, arr) => arr.indexOf(v) === i);
+  // A Gregorian year can touch three Hijri years (2008 does), so list every age in the span.
+  const ages = Array.from({ length: b - a + 1 }, (_, i) => NOW_H - b + i);
   return { g, hy: a === b ? `${a}` : `${a}–${b}`, age: ages.join(' أو ') };
 });
 ---
@@ -41,7 +42,7 @@ const GROWS = Array.from({ length: 31 }, (_, i) => 1980 + i).map((g) => {
     <li><strong>اقرأ النتيجة</strong> سنواتٍ وأشهراً وأياماً.</li>
   </ol>
   <div class="example">
-    <p>مولود في 29 رجب 1415 هـ (1 يناير 1995)، واليوم 14 جمادى الأولى 1448 هـ:</p>
+    <p>مولود في 29 رجب 1415 هـ (1 يناير 1995)، ونحسب عمره بتاريخ 14 جمادى الأولى 1448 هـ:</p>
     <p>الأيام: 14 أصغر من 29، فنستلف شهراً: 14 + 30 − 29 = <strong>15 يوماً</strong>. الأشهر: بعد الاستلاف صار الشهر 4، وهو أصغر من 7، فنستلف سنة: 4 + 12 − 7 = <strong>9 أشهر</strong>. السنين: 1447 − 1415 = <strong>32 سنة</strong>.</p>
     <p>العمر بالهجري: <strong>32 سنة و9 أشهر و15 يوماً</strong>، بينما عمره بالميلادي 31 سنة.</p>
   </div>
@@ -59,7 +60,7 @@ const GROWS = Array.from({ length: 31 }, (_, i) => 1980 + i).map((g) => {
     <thead><tr><th>سنة الميلاد الميلادية</th><th>تقع في السنة الهجرية</th><th>العمر في 1448 هـ</th></tr></thead>
     <tbody>{GROWS.map((r) => <tr><td class="num">{r.g}</td><td>{r.hy} هـ</td><td>{r.age} سنة</td></tr>)}</tbody>
   </table></div>
-  <p>كل سنة ميلادية تمتد على سنتين هجريتين، فيختلف العمر بحسب شهر ميلادك. لمعرفته بالضبط اكتب تاريخك في <a href="/hijri-age/">حاسبة العمر بالهجري</a>.</p>
+  <p>كل سنة ميلادية تمتد على سنتين هجريتين، وأحياناً ثلاث سنوات مثل 2008، فيختلف العمر بحسب شهر ميلادك. لمعرفته بالضبط اكتب تاريخك في <a href="/hijri-age/">حاسبة العمر بالهجري</a>.</p>
 
   <h2>متى أحتاج العمر الهجري؟</h2>
   <ul>
@@ -76,6 +77,7 @@ const GROWS = Array.from({ length: 31 }, (_, i) => 1980 + i).map((g) => {
     { q: "ما السنة الهجرية الحالية؟", a: "1448 هـ، وبدأت في منتصف يونيو 2026 وتنتهي في أوائل يونيو 2027 بتقويم أم القرى." },
   ]} />
 
+  <p class="src-note">التواريخ الهجرية هنا محسوبة بتقويم أم القرى في المتصفح. طابقنا مواعيد رمضان والعيد لسنة 1448 مع مرجعه السنوي، ولم نطابق بقية التواريخ يوماً بيوم، وقد يختلف الإعلان الرسمي للأشهر يوماً.</p>
   <h2>المصادر</h2>
   <ul class="sources">
     <li><a href="https://ummulqura.org.sa/" rel="noopener" target="_blank">تقويم أم القرى (ummulqura.org.sa)</a></li>

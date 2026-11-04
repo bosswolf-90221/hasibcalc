@@ -28,7 +28,7 @@ const view = r.ok ? caloriesView(r.value) : errorView(r, 'سعراتك اليو�
       <FieldErrors names={['age', 'weightKg', 'heightCm', 'activity']} />
       <p class="hint">{ACTIVITY.map((a) => `${a.label}: ${a.hint}`).join(' · ')}</p>
     </div>
-    <ResultCard view={view} notes={['الأرقام تقديرية، وقد يختلف احتياجك الفعلي بنحو 10% بحسب كتلة العضلات والوراثة.', 'لا ننصح بأقل من معدل الأيض الأساسي دون إشراف مختص. الحامل والمرضعة ومن لديه حالة صحية يراجع الطبيب أو أخصائي التغذية.']}>
+    <ResultCard view={view} sensitive notes={['الأرقام تقديرية، وقد يختلف احتياجك الفعلي بحسب كتلة العضلات والوراثة. ومعاملات النشاط تقريبية وشائعة الاستخدام، ولم نجد لها مصدراً رسمياً واحداً.', 'لا ننصح بأقل من معدل الأيض الأساسي دون إشراف مختص. الحامل والمرضعة ومن لديه حالة صحية يراجع الطبيب أو أخصائي التغذية.']}>
       <p class="formula" slot="formula"><code>الأيض الأساسي = 10 × الوزن + 6.25 × الطول − 5 × العمر + 5</code> للرجل، و<code>− 161</code> بدل <code>+ 5</code> للمرأة. ثم <code>الاحتياج اليومي = الأيض الأساسي × معامل النشاط</code>.</p>
     </ResultCard>
     <section class="exhibit" aria-labelledby="x-t">
@@ -51,9 +51,11 @@ const view = r.ok ? caloriesView(r.value) : errorView(r, 'سعراتك اليو�
       { q: "أي مستوى نشاط أختار؟", a: "اختر المستوى الأقل إذا ترددت بين اثنين، فأغلب الناس يبالغون في تقدير نشاطهم." },
       { q: "لماذا تختلف النتيجة عن ساعتي الذكية؟", a: "الساعة تقيس حركتك الفعلية، والحاسبة تعتمد متوسطاً لكل مستوى نشاط. كلاهما تقدير." },
     ]} />
+    <p class="src-note">هذه الصفحة للمعلومات العامة وليست استشارة طبية. وطريقة مراجعتنا للمعلومات الصحية مشروحة في <a href="/about/">من نحن</a>.</p>
     <h2>المصادر</h2>
     <ul class="sources">
       <li><a href="https://pubmed.ncbi.nlm.nih.gov/2305711/" rel="noopener" target="_blank">Mifflin MD, St Jeor ST وآخرون (1990): معادلة جديدة لمعدل الأيض الأساسي</a></li>
+      <li><a href="https://www.cdc.gov/healthy-weight-growth/losing-weight/index.html" rel="noopener" target="_blank">المراكز الأمريكية لمكافحة الأمراض: فقدان الوزن بمعدل آمن</a></li>
       <li><a href="https://www.who.int/news-room/fact-sheets/detail/healthy-diet" rel="noopener" target="_blank">منظمة الصحة العالمية: النظام الغذائي الصحي</a></li>
     </ul>
   </Fragment>

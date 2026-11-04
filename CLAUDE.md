@@ -34,7 +34,10 @@
 | القوالب العامة (meta، OG، JSON-LD، التنقل) | `src/layouts/Base.astro`، `CalcLayout.astro`، `GuideLayout.astro` |
 | تشغيل الحاسبة في المتصفح (قراءة الحقول، روابط URL، المشاركة) | `src/scripts/runtime.ts` (`mountCalculator`، `num`) |
 | الأنماط | `src/styles/global.css` (+ `<style>` محلي في الصفحة عند الحاجة؛ استخدم `:global()` لعناصر المكونات الفرعية) |
-| إعدادات الموقع وتاريخ المراجعة العام | `src/config/site.ts` |
+| إعدادات الموقع | `src/config/site.ts` |
+| ما تحققنا منه لكل صفحة وتاريخه (منفصل عن `updated`، وهو تاريخ تعديل النص فقط) | `src/data/verification.ts` |
+| سجل كل تغيير يمس نتيجة حاسبة، بسببه ومصدره | `FORMULA_CHANGES.md` (قبل تحديث `tests/baseline/golden.json`) |
+| فحص الروابط الخارجية، وفحص بقاء كل الصفحات والروابط | `scripts/check-links.mjs`، `scripts/check-baseline.mjs` |
 | اختبارات المعادلات | `tests/*.test.ts` (الجديدة في `tests/new.test.ts`) |
 | فحص التفاعل في المتصفح | `scripts/interaction_test.py` |
 | فحص كل صفحات dist (عناوين، أوصاف، canonical، H1، روابط، sitemap) | `scripts/check-site.mjs` |

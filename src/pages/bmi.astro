@@ -24,7 +24,7 @@ const view = r.ok ? bmiView(r.value) : errorView(r, 'مؤشر كتلة جسمك'
     <FieldErrors names={['weightKg', 'heightCm']} />
     </div>
 
-    <ResultCard view={view} notes={['مؤشر كتلة الجسم أداة فحص أولي وليس تشخيصاً، ولا يفرّق بين العضلات والدهون.', 'تصنيفات البالغين لا تنطبق على الأطفال والمراهقين، ولا على الحوامل.']}>
+    <ResultCard view={view} sensitive notes={['مؤشر كتلة الجسم أداة فحص أولي وليس تشخيصاً، ولا يفرّق بين العضلات والدهون.', 'تصنيفات البالغين لا تنطبق على الأطفال والمراهقين، ولا على الحوامل.', 'لأصحاب الأصول الآسيوية والشرق أوسطية وبعض الأصول الأفريقية توصي إرشادات NICE البريطانية بعتبات أقل: زيادة الوزن من 23، والسمنة من 27.5.']}>
       <p class="formula" slot="formula"><code>BMI = الوزن بالكيلوغرام ÷ (الطول بالمتر)²</code></p>
     </ResultCard>
 
@@ -59,6 +59,7 @@ const view = r.ok ? bmiView(r.value) : errorView(r, 'مؤشر كتلة جسمك'
     <p class="src-note">هذه الصفحة للمعلومات العامة وليست استشارة طبية. للتفاصيل انظر <a href="/about/">من نحن</a>.</p>
     <h2>المصادر</h2>
     <ul class="sources">
+      <li><a href="https://www.nice.org.uk/guidance/ng246/chapter/Identifying-and-assessing-overweight-obesity-and-central-adiposity" rel="noopener" target="_blank">NICE البريطانية: تحديد زيادة الوزن والسمنة (NG246)</a></li>
       <li><a href="https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html" rel="noopener" target="_blank">CDC: تصنيفات مؤشر كتلة الجسم للبالغين</a></li>
       <li><a href="https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index" rel="noopener" target="_blank">منظمة الصحة العالمية: مؤشر كتلة الجسم</a></li>
     </ul>

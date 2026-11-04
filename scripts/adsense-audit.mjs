@@ -3,11 +3,11 @@
 //   set -a; . ./.env.production; set +a; node scripts/adsense-audit.mjs
 // FAIL = likely to block approval; WARN = worth fixing. Exit code 1 on any FAIL.
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 
 const DIST = 'dist';
 const walk = (d) => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
-const pages = walk(DIST).filter((f) => f.endsWith('.html') && !f.includes('/404'));
+const pages = walk(DIST).map((f) => f.split(sep).join('/')).filter((f) => f.endsWith('.html') && !f.includes('/404'));
 const fail = [];
 const warn = [];
 const client = process.env.PUBLIC_ADSENSE_CLIENT_ID || '';

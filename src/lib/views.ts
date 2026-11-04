@@ -149,12 +149,12 @@ export function zakatView(z: Zakat): View {
       value: z.zakat,
       decimals: 2,
       unit: '',
-      sentence: 'أدخل سعر غرام الذهب اليوم لنعرف هل بلغ مالك النصاب.',
+      sentence: z.basis === 'gold' ? 'أدخل سعر غرام الذهب اليوم لنعرف هل بلغ مالك النصاب.' : 'أدخل سعر غرام الذهب والفضة اليوم لنعرف هل بلغ مالك النصاب.',
       badge: 'النصاب غير محدد بعد',
       rows: [['صافي المال الزكوي', money(z.net)]],
     };
   return {
-    label: z.reachesNisab ? 'زكاتك المبدئية' : 'لا زكاة عليك حالياً',
+    label: z.reachesNisab ? 'زكاتك المبدئية' : 'مالك دون النصاب الذي اخترته',
     value: z.zakat,
     decimals: 2,
     unit: '',
@@ -162,7 +162,9 @@ export function zakatView(z: Zakat): View {
     badge: z.reachesNisab ? 'بلغ النصاب' : 'دون النصاب',
     rows: [
       ['صافي المال الزكوي', money(z.net)],
-      [`النصاب (${NISAB_GOLD_GRAMS} غراماً من الذهب)`, money(z.nisab)],
+      ...(z.nisabGold === null ? [] : [[`قيمة ${NISAB_GOLD_GRAMS} غراماً من الذهب`, money(z.nisabGold)] as [string, string]]),
+      ...(z.nisabSilver === null ? [] : [[`قيمة ${NISAB_SILVER_GRAMS} غراماً من الفضة`, money(z.nisabSilver)] as [string, string]]),
+      ['النصاب المعتمد في حسابك', money(z.nisab)],
       ['النسبة', '2.5%'],
     ],
   };

@@ -3,11 +3,11 @@ import { type CalcResult, Validator, clampedDate, daysBetween, fail, ok, toISODa
 /**
  * UAE private-sector annual leave balance and its cash value on leaving.
  * Source: Federal Decree-Law No. 33 of 2021, Article 29, as summarised by u.ae:
- *  - Under 6 months of service: no annual leave.
- *  - 6 months to 1 year: 2 days for each complete month.
+ *  - Article 29 grants leave after more than 6 months; it does not state in words that less earns none.
+ *  - More than 6 months up to 1 year: 2 days for each complete month.
  *  - After 1 year: 30 days a year (a contract may give more, never less); the last part-year is pro rata.
  *  - Unused days are paid on leaving, on the basic wage.
- * Daily wage: basic ÷ 30 (common practice) or basic × 12 ÷ 365; the law does not fix the divisor.
+ * Daily wage: basic ÷ 30 or basic × 12 ÷ 365. Article 67 counts a month as 30 days; no article states the daily wage for monthly pay.
  * Taken days are all leave days used over the whole service, so carried-over days are already in the balance.
  */
 export type LeaveInput = {
@@ -23,7 +23,7 @@ export type Leave = {
   months: number; // complete months of service
   extraDays: number; // days after the last complete month
   fullYears: number;
-  eligible: boolean; // at least 6 complete months
+  eligible: boolean; // more than 6 months of service
   entitled: number; // leave days earned over the whole service
   taken: number;
   remaining: number; // never below 0
@@ -58,7 +58,7 @@ export function calcLeave(input: LeaveInput): CalcResult<Leave> {
   while (months > 0 && addMonths(start, months) > after) months--;
   const extraDays = daysBetween(addMonths(start, months), after);
   const fullYears = Math.floor(months / 12);
-  const eligible = months >= 6;
+  const eligible = months > 6 || (months === 6 && extraDays > 0);
 
   const years: LeaveYear[] = [];
   const row = (n: number, from: Date, to: Date, earned: number, partial: boolean) =>

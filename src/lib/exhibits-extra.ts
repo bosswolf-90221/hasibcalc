@@ -267,7 +267,7 @@ export function salaryShortAnswer(iso: string): string {
     const r = calcPayday({ payDay, weekend, rule, onDate: iso });
     if (!r.ok) return '';
     const n = r.value.next;
-    const moved = n.shifted ? ` (قُدِّم من يوم ${payDay} لأنه يوافق العطلة)` : '';
+    const moved = n.shifted ? ` (نُقل من يوم ${payDay} لأنه يوافق العطلة)` : '';
     return `<li><strong>${who}:</strong> ${dayWord(r.value.daysLeft)}، والموعد ${n.weekday} ${arDate(n.actual)}${moved}.</li>`;
   };
   return `<ul>${line(27, 'fri-sat', 'before', 'راتب يوم 27')}${line(1, 'sat-sun', 'none', 'راتب يوم 1 من الشهر')}</ul>`;

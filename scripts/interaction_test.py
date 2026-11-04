@@ -2,6 +2,7 @@
 import re, sys
 from playwright.sync_api import sync_playwright
 import os
+sys.stdout.reconfigure(encoding='utf-8')
 B = os.environ.get('BASE_URL', 'http://localhost:4321')
 fails = []
 def check(name, cond, detail=''):
@@ -11,7 +12,7 @@ def val(pg, root='[data-calc]'):
     pg.wait_for_timeout(700)
     return pg.locator(f'{root} [data-r="value"] .sr-only').first.text_content().strip()
 with sync_playwright() as p:
-    b = p.chromium.launch(); ctx = b.new_context(viewport={'width': 390, 'height': 844}, permissions=['clipboard-read', 'clipboard-write'])
+    b = p.chromium.launch(executable_path=os.environ.get('CHROME') or None); ctx = b.new_context(viewport={'width': 390, 'height': 844}, permissions=['clipboard-read', 'clipboard-write'])
     pg = ctx.new_page(); errs = []; pg.on('pageerror', lambda e: errs.append(str(e)))
 
     pg.goto(B + '/loan/')
