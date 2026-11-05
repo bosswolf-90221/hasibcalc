@@ -4,7 +4,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import Pills from '../components/Pills.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcVat } from '../lib/calc/vat';
 import { vatView, errorView } from '../lib/views';
@@ -17,14 +16,13 @@ const v = r.ok ? r.value : null;
 ---
 <CalcLayout slug="vat" lede="اختر هل تريد إضافة الضريبة إلى السعر أو استخراجها من سعر شامل، ثم اكتب المبلغ.">
   <div data-calc="vat">
-    <div class="sentence-wrap">
-    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-    <form class="sentence" onsubmit="return false" aria-label="بيانات حساب الضريبة">
-      أريد <Pills name="mode" legend="نوع الحساب" selected={d.mode} options={[{ value: 'add', label: 'إضافة' }, { value: 'extract', label: 'استخراج' }]} />
-      ضريبة <Pills name="ratePercent" legend="نسبة الضريبة" selected={d.ratePercent} options={[{ value: '5', label: '5%' }, { value: '15', label: '15%' }, { value: '10', label: '10%' }]} />
-      على مبلغ <NumIn name="amount" label="المبلغ" value={d.amount} width={7} />.
-    </form>
-    <FieldErrors names={['amount', 'ratePercent', 'mode']} />
+    <div class="calc-input">
+    <h2 class="input-title">بياناتك</h2>
+    <form class="calc-fields" onsubmit="return false" aria-label="بيانات حساب الضريبة">
+        <Pills name="mode" legend="نوع الحساب" selected={d.mode} options={[{ value: 'add', label: 'إضافة' }, { value: 'extract', label: 'استخراج' }]} />
+        <Pills name="ratePercent" legend="نسبة الضريبة" selected={d.ratePercent} options={[{ value: '5', label: '5%' }, { value: '15', label: '15%' }, { value: '10', label: '10%' }]} />
+        <NumIn name="amount" label="المبلغ" value={d.amount} />
+      </form>
     <p class="hint">النسبة الأساسية لضريبة القيمة المضافة 5% في الإمارات وعُمان، و15% في السعودية، و10% في البحرين.</p>
     </div>
 
@@ -33,7 +31,7 @@ const v = r.ok ? r.value : null;
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="split-title">
-      <h2 id="split-title" class="exhibit-title"><b>02</b> المعادلة بأرقامك</h2>
+      <h2 id="split-title" class="exhibit-title">المعادلة بأرقامك</h2>
       <div data-x="eq" set:html={vatEquation(v)} />
     </section>
   </div>

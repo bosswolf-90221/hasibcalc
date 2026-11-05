@@ -109,7 +109,7 @@ import { gpaAfterSemesters, type GpaTarget } from './calc/gpa-target';
 export function gpaTargetTable(t: GpaTarget | null): string {
   if (!t) return '';
   const f = (n: number) => (n > t.max ? 'غير ممكن' : n <= t.min ? 'محقق بأي درجة' : (Math.round(n * 100) / 100).toFixed(2));
-  const rows = t.byLoad.map((r) => `<tr><td class="nums">${r.hours} ساعة</td><td>${f(r.needed)}</td></tr>`).join('');
+  const rows = t.byLoad.map((r) => `<tr><td>${r.hours} ساعة</td><td>${f(r.needed)}</td></tr>`).join('');
   return `<div class="scroll-x"><table class="ledger"><thead><tr><th>ساعات الفصل القادم</th><th>المعدل الفصلي المطلوب</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 

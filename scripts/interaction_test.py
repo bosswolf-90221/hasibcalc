@@ -27,9 +27,9 @@ with sync_playwright() as p:
     check('loan: no NaN on screen', 'NaN' not in pg.content())
     pg.click('[data-act="reset"]'); pg.wait_for_timeout(300)
     check('loan: reset clears the numbers', pg.input_value('#f-months') == '' and pg.input_value('#f-principal') == '')
-    check('loan: reset shows 0 and no red errors', val(pg) == '0.00' and not pg.locator('#f-months-err').is_visible() and not pg.locator('[data-r="error"]').is_visible(), val(pg))
+    check('loan: reset shows a blank result and no red errors', val(pg) == '—' and not pg.locator('#f-months-err').is_visible() and not pg.locator('[data-r="error"]').is_visible(), val(pg))
     pg.fill('#f-principal', '50000'); pg.fill('#f-annualRatePercent', '4.5'); pg.fill('#f-months', '48'); pg.wait_for_timeout(400)
-    check('loan: typing after reset computes again', val(pg) != '0.00', val(pg))
+    check('loan: typing after reset computes again', val(pg) not in ('0.00', '—'), val(pg))
 
     pg.goto(B + '/end-of-service/?basicSalary=10000&startDate=2015-01-01&endDate=2024-12-31&unpaidAbsenceDays=0')
     check('eos: inputs filled from URL', pg.input_value('#f-basicSalary') == '10000')
@@ -94,9 +94,42 @@ with sync_playwright() as p:
     pg.locator('input[name="country"][value="uae"]').check(force=True); pg.wait_for_timeout(100)
     check('moment: GOSI fields hide for the UAE', not pg.locator('#f-basic').is_visible())
 
-    pg.goto(B + '/bmi/'); pg.keyboard.press('Tab'); pg.keyboard.press('Tab')
-    focused = pg.evaluate('document.activeElement && document.activeElement.textContent.trim().slice(0,20)')
-    check('keyboard: skip link then header reachable', bool(focused))
+    pg.goto(B + '/bmi/'); pg.keyboard.press('Tab')
+    check('keyboard: skip link comes first', pg.evaluate('document.activeElement.classList.contains("skip")'))
+    pg.keyboard.press('Tab')
+    check('keyboard: then the named logo link', bool(pg.evaluate('document.activeElement.getAttribute("aria-label")')))
+
+    # Example numbers are marked, the mark goes with the first edit, and nothing stale stays on screen
+    pg.goto(B + '/bmi/')
+    check('example: marked on arrival', pg.locator('[data-example]').is_visible())
+    pg.fill('#f-weightKg', '80'); pg.wait_for_timeout(100)
+    check('example: mark gone after first edit', not pg.locator('[data-example]').is_visible())
+    pg.click('[data-act="reset"]'); pg.wait_for_timeout(100)
+    check('blank: no exhibit, copy or print without a result', not pg.locator('.exhibit').first.is_visible() and not pg.locator('[data-act="copy"]').is_visible() and not pg.locator('[data-act="print"]').is_visible())
+    pg.fill('#f-weightKg', '80'); pg.fill('#f-heightCm', '180'); pg.wait_for_timeout(100)
+    check('blank: result and exhibit return with numbers', pg.locator('.exhibit').first.is_visible() and pg.locator('[data-act="copy"]').is_visible())
+    # Every number sits under its column heading, and no cell mixes Arabic words into a left-to-right run
+    TABLES_JS = r'''() => { const box = (el) => { const r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); }; const out = [];
+      document.querySelectorAll('table').forEach((t) => { const ths = [...t.querySelectorAll('thead th')]; if (!ths.length || !t.getBoundingClientRect().width) return;
+        t.querySelectorAll('tbody tr').forEach((tr) => { const tds = [...tr.children]; if (tds.length !== ths.length) return;
+          tds.forEach((td, i) => { if (!td.textContent.trim()) return; const a = box(ths[i]), c = box(td);
+            if (Math.min(a.right, c.right) - Math.max(a.left, c.left) <= 0) out.push('off ' + td.textContent.trim().slice(0, 12));
+            if (getComputedStyle(td).direction === 'ltr' && /[\u0600-\u06FF]/.test(td.textContent)) out.push('mixed ' + td.textContent.trim().slice(0, 12)); }); }); });
+      return out.slice(0, 4); }'''
+    for slug, q in (('annual-leave', ''), ('gosi', ''), ('gpa', ''), ('gpa-target', ''), ('pregnancy', '?lmpDate=2026-08-26'), ('zakat', ''), ('loan', ''), ('vat', '')):
+        pg.goto(f'{B}/{slug}/{q}')
+        bad = pg.evaluate(TABLES_JS)
+        check(f'{slug}: table numbers under their headings', not bad, str(bad))
+
+    pg.goto(B + '/bmi/?weightKg=80&heightCm=180')
+    check('example: no mark on numbers from a link', not pg.locator('[data-example]').is_visible())
+    for slug, field in (('age', 'birthDate'), ('pregnancy', 'lmpDate'), ('ovulation', 'lmpDate')):
+        pg.goto(f'{B}/{slug}/')
+        check(f'{slug}: starts empty with no made-up result', pg.input_value(f'#f-{field}') == '' and val(pg) == '—' and not pg.locator('[data-example]').is_visible() and not pg.locator('[data-r="error"]').is_visible() and not pg.locator('.exhibit').first.is_visible(), val(pg))
+    for slug in 'age annual-leave bmi calories days-between discount end-of-service exit-dues gosi gpa-target gpa hijri-age hijri loan ovulation percentage pregnancy salary-day salary-saudi salary-uae vat zakat'.split():
+        pg.goto(f'{B}/{slug}/')
+        unlabeled = pg.evaluate('''[...document.querySelectorAll('[data-calc] input[data-field], [data-calc] select[data-field]')].filter((i) => !i.labels || !i.labels.length || !i.labels[0].textContent.trim()).length''')
+        check(f'{slug}: every field has a label, one h1, old look gone', unlabeled == 0 and pg.locator('h1').count() == 1 and pg.locator('.sentence, .machine, .ask-line').count() == 0, str(unlabeled))
 
     pg.goto(B + '/hijri/')
     pg.fill('#f-date', '2026-10-21')
@@ -143,7 +176,7 @@ with sync_playwright() as p:
     pg.fill('#f-payDay', '31'); pg.click('label:has(input[value="after"])'); pg.wait_for_timeout(400)
     check('salary-day: rule change recomputes, no NaN', 'NaN' not in pg.content() and val(pg).isdigit())
 
-    pg.goto(B + '/pregnancy/')
+    pg.goto(B + '/pregnancy/?lmpDate=2026-08-26'); pg.wait_for_timeout(200)
     check('pregnancy: month row shown', 'الشهر من الحمل' in pg.locator('[data-result]').inner_text())
     check('pregnancy: weeks/months table has 9 rows', pg.locator('.article .data-table tbody tr').count() == 9)
 

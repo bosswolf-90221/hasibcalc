@@ -4,7 +4,7 @@ import CalcLayout from '../layouts/CalcLayout.astro';
 import SalaryDayCalc from '../components/SalaryDayCalc.astro';
 ---
 <CalcLayout slug="salary-uae" lede="منذ 1 يونيو 2026 يجب أن يُصرف أجر القطاع الخاص في الإمارات في موعد أقصاه اليوم الأول من الشهر التالي. العدّاد مضبوط على هذا الموعد، ويمكنك كتابة يوم راتبك إذا كانت شركتك تصرفه قبله.">
-  <SalaryDayCalc payDay={1} weekend="sat-sun" rule="none" hint="كثير من الشركات تصرف قبل الموعد الأقصى، مثلاً يوم 25 أو آخر الشهر؛ اكتب يوم راتبك أنت." />
+  <SalaryDayCalc example={false} payDay={1} weekend="sat-sun" rule="none" hint="كثير من الشركات تصرف قبل الموعد الأقصى، مثلاً يوم 25 أو آخر الشهر؛ اكتب يوم راتبك أنت." />
 
   <Fragment slot="article">
     <h2>متى ينزل الراتب في الإمارات؟</h2>

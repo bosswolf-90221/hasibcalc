@@ -3,38 +3,36 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import DateIn from '../components/DateIn.astro';
 import NumIn from '../components/NumIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcPregnancy, MONTH_WEEKS } from '../lib/calc/pregnancy';
 import { pregnancyView } from '../lib/views-extra';
-import { errorView } from '../lib/views';
+import { blankView } from '../lib/views';
 import { pregnancyRuler } from '../lib/exhibits-extra';
 import { toISODate } from '../lib/calc/core';
 
 const now = new Date();
 const today = toISODate(now);
-const lmp = toISODate(new Date(now.getTime() - 70 * 86_400_000));
+const lmp = '';
 const r = calcPregnancy({ lmpDate: lmp, cycleDays: 28, onDate: today });
-const view = r.ok ? pregnancyView(r.value) : errorView(r, 'موعد الولادة المتوقع')!;
+const view = blankView('موعد الولادة المتوقع');
 const ORD = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع'];
 const tri = (to: number) => (to <= 13 ? 'الأول' : to <= 27 ? 'الثاني' : 'الثالث');
 ---
 <CalcLayout slug="pregnancy" lede="اكتبي تاريخ أول يوم من آخر دورة شهرية وطول دورتك المعتاد، ونحسب موعد الولادة المتوقع وعمر الحمل اليوم.">
   <div data-calc="pregnancy">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتبي التاريخ في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات الحمل">
-        أول يوم من آخر دورة كان <DateIn name="lmpDate" label="أول يوم من آخر دورة شهرية" value={lmp} max={today} />،
-        ودورتي عادة <NumIn name="cycleDays" label="طول الدورة بالأيام" value={28} width={2} /> يوماً.
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات الحمل">
+        <DateIn name="lmpDate" label="أول يوم من آخر دورة شهرية" value={lmp} max={today} />
+        <NumIn name="cycleDays" label="طول الدورة بالأيام" value={28} />
       </form>
-      <FieldErrors names={['lmpDate', 'cycleDays']} />
       <p class="hint">إذا لم تعرفي طول دورتك فاتركيه 28 يوماً، وهو المتوسط الشائع.</p>
     </div>
-    <ResultCard view={view} sensitive notes={['النتيجة تقدير. نحو ولادة واحدة من كل 20 تحدث في الموعد المتوقع بالضبط، بحسب الكلية الأمريكية لأطباء النساء والتوليد.', 'إذا أجريتِ تصوير الموجات فوق الصوتية في الثلث الأول، فموعده المقدّر أدق من هذا الحساب.', 'هذه الحاسبة للمعلومات العامة، ومتابعة الحمل تكون مع طبيبتك.']}>
+    <ResultCard example={false} view={view} sensitive notes={['النتيجة تقدير. نحو ولادة واحدة من كل 20 تحدث في الموعد المتوقع بالضبط، بحسب الكلية الأمريكية لأطباء النساء والتوليد.', 'إذا أجريتِ تصوير الموجات فوق الصوتية في الثلث الأول، فموعده المقدّر أدق من هذا الحساب.', 'هذه الحاسبة للمعلومات العامة، ومتابعة الحمل تكون مع طبيبتك.']}>
       <p class="formula" slot="formula"><code>موعد الولادة = أول يوم من آخر دورة + 280 يوماً + (طول الدورة − 28)</code>. إضافة 280 يوماً هي الحساب المعتاد، وتعديل طول الدورة تقريب.</p>
     </ResultCard>
-    <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> أين أنتِ من الأسابيع الأربعين؟</h2>
+    <section class="exhibit" hidden aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title">أين أنتِ من الأسابيع الأربعين؟</h2>
       <div data-x="ruler" set:html={pregnancyRuler(r.ok ? r.value : null)} />
     </section>
   </div>

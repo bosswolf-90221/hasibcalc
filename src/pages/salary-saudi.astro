@@ -4,7 +4,7 @@ import CalcLayout from '../layouts/CalcLayout.astro';
 import SalaryDayCalc from '../components/SalaryDayCalc.astro';
 ---
 <CalcLayout slug="salary-saudi" lede="رواتب القطاع الحكومي في السعودية تُصرف يوم 27 من كل شهر ميلادي. وبحسب وزارة المالية، إذا وافق الجمعة فالصرف الخميس قبله، وإذا وافق السبت فالصرف الأحد بعده. العدّاد أدناه مضبوط على هذه القاعدة، ويمكنك تغيير اليوم إذا كان راتبك في موعد آخر.">
-  <SalaryDayCalc payDay={27} weekend="fri-sat" rule="nearest" hint="القطاع الخاص يصرف بحسب عقد العمل؛ اكتب يوم راتبك إذا كان غير 27." />
+  <SalaryDayCalc example={false} payDay={27} weekend="fri-sat" rule="nearest" hint="القطاع الخاص يصرف بحسب عقد العمل؛ اكتب يوم راتبك إذا كان غير 27." />
 
   <Fragment slot="article">
     <h2>متى ينزل الراتب في السعودية؟</h2>

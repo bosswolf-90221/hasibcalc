@@ -3,7 +3,6 @@ import { bmiClassTable, bmiHeightTable } from '../lib/exhibits-extra';
 import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcBmi } from '../lib/calc/bmi';
 import { bmiView, errorView } from '../lib/views';
@@ -15,13 +14,12 @@ const view = r.ok ? bmiView(r.value) : errorView(r, 'مؤشر كتلة جسمك'
 ---
 <CalcLayout slug="bmi" lede="للبالغين من عمر 20 سنة فأكثر. اكتب وزنك بالكيلوغرام وطولك بالسنتيمتر.">
   <div data-calc="bmi">
-    <div class="sentence-wrap">
-    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-    <form class="sentence" onsubmit="return false" aria-label="الوزن والطول">
-      وزني <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} width={3} /> كجم
-      وطولي <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} width={3} /> سم.
-    </form>
-    <FieldErrors names={['weightKg', 'heightCm']} />
+    <div class="calc-input">
+    <h2 class="input-title">بياناتك</h2>
+    <form class="calc-fields" onsubmit="return false" aria-label="الوزن والطول">
+        <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} />
+        <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} />
+      </form>
     </div>
 
     <ResultCard view={view} sensitive notes={['مؤشر كتلة الجسم أداة فحص أولي وليس تشخيصاً، ولا يفرّق بين العضلات والدهون.', 'تصنيفات البالغين لا تنطبق على الأطفال والمراهقين، ولا على الحوامل.', 'لأصحاب الأصول الآسيوية والشرق أوسطية وبعض الأصول الأفريقية توصي إرشادات NICE البريطانية بعتبات أقل: زيادة الوزن من 23، والسمنة من 27.5.']}>
@@ -29,7 +27,7 @@ const view = r.ok ? bmiView(r.value) : errorView(r, 'مؤشر كتلة جسمك'
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="scale-title">
-      <h2 id="scale-title" class="exhibit-title"><b>02</b> أين يقع مؤشرك على المقياس</h2>
+      <h2 id="scale-title" class="exhibit-title">أين يقع مؤشرك على المقياس</h2>
       <div data-x="scale" set:html={bmiScale(r.ok ? r.value.bmi : null)} />
     </section>
   </div>

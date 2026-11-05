@@ -26,14 +26,14 @@
 | صفحة الدليل | `src/pages/guides/<slug>.astro` بـ `GuideLayout slug="<slug>"` |
 | صفحات التصنيف | `src/pages/category/[key].astro` (تلقائية من CATEGORIES) |
 | خريطة الموقع وrobots وads.txt | `src/pages/sitemap.xml.ts`، `robots.txt.ts`، `ads.txt.ts` (تلقائية؛ lastmod من حقل `updated`) |
-| مكونات الحقول | `src/components/NumIn.astro`، `DateIn.astro`، `SelIn.astro`، `Pills.astro`، `FieldErrors.astro` |
+| مكونات الحقول | `src/components/NumIn.astro`، `DateIn.astro`، `SelIn.astro`، `Pills.astro` |
 | بطاقة النتيجة وأزرارها (واتساب، نسخ، تصفير) | `src/components/ResultCard.astro` (`sensitive` لنتائج المال والصحة: واتساب يشارك السؤال فقط) |
 | الأسئلة الشائعة مع FAQPage JSON-LD | `src/components/Faq.astro` |
 | عدّاد المناسبات وعدّاد الراتب | `src/components/Countdown.astro`، `SalaryDayCalc.astro` |
 | بطاقات الحاسبات والرمز في كل بطاقة | `src/components/CalcIndex.astro` (`GLYPH`) |
 | القوالب العامة (meta، OG، JSON-LD، التنقل) | `src/layouts/Base.astro`، `CalcLayout.astro`، `GuideLayout.astro` |
 | تشغيل الحاسبة في المتصفح (قراءة الحقول، روابط URL، المشاركة) | `src/scripts/runtime.ts` (`mountCalculator`، `num`) |
-| الأنماط | `src/styles/global.css` (+ `<style>` محلي في الصفحة عند الحاجة؛ استخدم `:global()` لعناصر المكونات الفرعية) |
+| الأنماط | `src/styles/site.css` (الرأس والتذييل والرئيسية والمواقف) و`src/styles/calc.css` (الحاسبات وجداولها ورسومها). `src/styles/global.css` للصفحات التي لم تنتقل بعد فقط |
 | إعدادات الموقع | `src/config/site.ts` |
 | ما تحققنا منه لكل صفحة وتاريخه (منفصل عن `updated`، وهو تاريخ تعديل النص فقط) | `src/data/verification.ts` |
 | سجل كل تغيير يمس نتيجة حاسبة، بسببه ومصدره | `FORMULA_CHANGES.md` (قبل تحديث `tests/baseline/golden.json`) |
@@ -51,7 +51,7 @@
 1. `src/lib/calc/<slug>.ts`: المعادلة مع التحقق من المدخلات، وتعليق في الأعلى بالمصدر الرسمي.
 2. View في `src/lib/views-extra.ts` وجدول في `src/lib/exhibits-extra.ts` إن لزم.
 3. مدخل في `CALCULATORS` (question = H1 كما يسأل الناس، seoTitle، description 120–160 حرفاً، categories، terms، related، updated = اليوم). أضف رمزاً في `GLYPH` إن أردت.
-4. `src/pages/<slug>.astro`: الجملة بالحقول، `ResultCard`، الجدول، ثم المقال: جواب مختصر أعلى المقال، شرح، مثال محسوب، أسئلة شائعة، «المصادر».
+4. `src/pages/<slug>.astro`: خانات بعناوين داخل `.calc-input`، `ResultCard`، الجدول، ثم المقال: جواب مختصر أعلى المقال، شرح، مثال محسوب، أسئلة شائعة، «المصادر».
 5. اختبارات في `tests/new.test.ts`، وفحص في `scripts/interaction_test.py`.
 6. اربطها من صفحة قريبة (related أو فقرة في المقال).
 7. صور OG، ثم الفحص الكامل أدناه.

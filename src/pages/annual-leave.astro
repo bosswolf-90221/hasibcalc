@@ -4,7 +4,6 @@ import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import DateIn from '../components/DateIn.astro';
 import SelIn from '../components/SelIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcLeave } from '../lib/calc/annual-leave';
 import { leaveView } from '../lib/views-extra';
@@ -25,17 +24,16 @@ const DIVS = [{ value: '30', label: '÷ 30' }, { value: '365', label: '× 12 ÷ 
 ---
 <CalcLayout slug="annual-leave" lede="لموظفي القطاع الخاص في الإمارات وفق المادة 29 من قانون العمل. اكتب راتبك الأساسي وتاريخي العمل وما أخذته من إجازات، ونحسب رصيدك وقيمة بدله عند ترك العمل.">
   <div data-calc="annual-leave">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات الإجازة السنوية">
-        راتبي الأساسي <NumIn name="salary" label="الراتب الأساسي الشهري بالدرهم" value={d.salary} width={6} /> درهم،
-        بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
-        وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />،
-        وإجازتي <NumIn name="annualDays" label="أيام الإجازة السنوية في العقد" value={d.annualDays} width={2} /> يوماً في السنة،
-        وأخذت منها طوال خدمتي <NumIn name="takenDays" label="مجموع أيام الإجازة التي أخذتها" value={d.takenDays} width={3} /> يوماً،
-        وأجر اليوم = الراتب <SelIn name="divisor" label="طريقة حساب أجر اليوم" options={DIVS} value={d.divisor} />.
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات الإجازة السنوية">
+        <NumIn name="salary" label="الراتب الأساسي الشهري بالدرهم" value={d.salary} />
+        <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+        <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />
+        <NumIn name="annualDays" label="أيام الإجازة السنوية في العقد" value={d.annualDays} />
+        <NumIn name="takenDays" label="مجموع أيام الإجازة التي أخذتها" value={d.takenDays} />
+        <SelIn name="divisor" label="طريقة حساب أجر اليوم" options={DIVS} value={d.divisor} />
       </form>
-      <FieldErrors names={['salary', 'startDate', 'endDate', 'annualDays', 'takenDays']} />
       <p class="hint">الراتب الأساسي كما في عقدك المسجّل لدى وزارة الموارد البشرية والتوطين. إذا كان العقد يذكر راتباً واحداً بدون بدلات فاكتبه كاملاً. القانون يعطي 30 يوماً على الأقل؛ ارفع الرقم إذا كان عقدك يعطيك أكثر.</p>
     </div>
 
@@ -50,7 +48,7 @@ const DIVS = [{ value: '30', label: '÷ 30' }, { value: '365', label: '× 12 ÷ 
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> إجازتك سنة بسنة</h2>
+      <h2 id="x-t" class="exhibit-title">إجازتك سنة بسنة</h2>
       <div data-x="table" set:html={leaveTable(r.ok ? r.value : null)} />
     </section>
   </div>

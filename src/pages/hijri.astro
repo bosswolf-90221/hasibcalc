@@ -4,7 +4,6 @@ import CalcLayout from '../layouts/CalcLayout.astro';
 import DateIn from '../components/DateIn.astro';
 import NumIn from '../components/NumIn.astro';
 import SelIn from '../components/SelIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { gregorianToHijri, hijriToGregorian, toHijri, fromHijri, HIJRI_MONTHS } from '../lib/calc/hijri';
 import { HIJRI_YEAR_NOW } from '../data/calculators';
@@ -26,20 +25,24 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
 ---
 <CalcLayout slug="hijri" lede={`السنة الهجرية الآن ${HIJRI_YEAR_NOW} هـ. اختر اتجاه التحويل: من الميلادي إلى الهجري، أو من الهجري إلى الميلادي، بتقويم أم القرى الرسمي في السعودية.`}>
   <section class="pq" data-calc="to-hijri" aria-labelledby="q1">
-    <h2 id="q1" class="step"><b>01</b> من الميلادي إلى الهجري</h2>
-    <form class="sentence" onsubmit="return false">التاريخ الميلادي <DateIn name="date" label="التاريخ الميلادي" value={today} /> يوافق بالهجري…</form>
-    <FieldErrors names={['date']} />
-    <ResultCard small uid="r1" view={v1} notes={['بداية الشهر الهجري في تقويم أم القرى محسوبة فلكياً، وقد يختلف إعلان بداية رمضان والأعياد بالرؤية يوماً واحداً.']}>
+    <h2 id="q1" class="pq-title">من الميلادي إلى الهجري</h2>
+    <div class="calc-input"><form class="calc-fields" onsubmit="return false">
+        <DateIn name="date" label="التاريخ الميلادي" value={today} />
+      </form></div>
+    <ResultCard example={false} small uid="r1" view={v1} notes={['بداية الشهر الهجري في تقويم أم القرى محسوبة فلكياً، وقد يختلف إعلان بداية رمضان والأعياد بالرؤية يوماً واحداً.']}>
       <p class="formula" slot="formula">نحوّل التاريخ بتقويم <code>islamic-umalqura</code> المدمج في متصفحك، وطابقنا مواعيد رمضان والعيد لسنة 1448 مع المرجع السنوي لأم القرى، ولم نطابق كل التواريخ يوماً بيوم.</p>
     </ResultCard>
-    <div class="exhibit"><h3 class="exhibit-title"><b>02</b> ورقتا التقويم</h3><div data-x="leaves" set:html={calendarLeaves(r1.ok ? r1.value : null)} /></div>
+    <div class="exhibit"><h3 class="exhibit-title">ورقتا التقويم</h3><div data-x="leaves" set:html={calendarLeaves(r1.ok ? r1.value : null)} /></div>
   </section>
 
   <section class="pq" data-calc="to-greg" aria-labelledby="q2">
-    <h2 id="q2" class="step"><b>03</b> من الهجري إلى الميلادي</h2>
-    <form class="sentence" onsubmit="return false">اليوم <NumIn name="hDay" label="اليوم الهجري" value={1} width={2} /> من شهر <SelIn name="hMonth" label="الشهر الهجري" options={months} value="9" /> سنة <NumIn name="hYear" label="السنة الهجرية" value={r2.ok ? r2.value.hijri.year : h.year} width={4} /> هـ يوافق…</form>
-    <FieldErrors names={['hDay', 'hMonth', 'hYear']} />
-    <ResultCard small uid="r2" view={v2}>
+    <h2 id="q2" class="pq-title">من الهجري إلى الميلادي</h2>
+    <div class="calc-input"><form class="calc-fields" onsubmit="return false">
+        <NumIn name="hDay" label="اليوم الهجري" value={1} />
+        <SelIn name="hMonth" label="الشهر الهجري" options={months} value="9" />
+        <NumIn name="hYear" label="السنة الهجرية" value={r2.ok ? r2.value.hijri.year : h.year} />
+      </form></div>
+    <ResultCard example={false} small uid="r2" view={v2}>
       <p class="formula" slot="formula">نبحث عن اليوم الميلادي الذي يقابله هذا التاريخ في تقويم أم القرى، ونرفض اليوم 30 إذا كان الشهر 29 يوماً بدل أن ننقله للشهر التالي.</p>
     </ResultCard>
   </section>
@@ -132,12 +135,3 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
     },
   });
 </script>
-
-<style>
-  .hijri-month :global(.table-cap) { font-size: var(--t-small); color: var(--soft); margin: 0 0 var(--s-1); }
-  .hijri-month :global(tr.today td) { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
-  .hijri-month :global(td) { white-space: nowrap; }
-  @media (max-width: 480px) { .hijri-month :global(td), .hijri-month :global(th) { padding-inline: 6px; font-size: .88rem; } }
-  .greg-next { margin-block-start: var(--s-2); }
-  .greg-next summary { cursor: pointer; font-weight: 600; color: var(--accent); padding: var(--s-1) 0; min-height: 44px; display: flex; align-items: center; }
-</style>

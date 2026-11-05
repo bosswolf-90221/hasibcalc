@@ -3,7 +3,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import Pills from '../components/Pills.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcZakat } from '../lib/calc/zakat';
 import { zakatView, errorView } from '../lib/views';
@@ -19,17 +18,16 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 
 ---
 <CalcLayout slug="zakat" lede="حساب مبدئي لزكاة النقد والمدخرات والاستثمارات. اكتب سعر غرام الذهب اليوم كما تجده لدى محل أو مصدر موثوق، لأننا لا نعرض سعراً آنياً.">
   <div data-calc="zakat">
-    <div class="sentence-wrap">
-    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-    <form class="sentence" onsubmit="return false" aria-label="بيانات الزكاة">
-      عندي نقد ومدخرات <NumIn name="cash" label="النقد والمدخرات" value={d.cash} width={7} />،
-      واستثمارات تجب فيها الزكاة <NumIn name="investments" label="الاستثمارات الخاضعة للزكاة" value={d.investments} width={7} />،
-      وعليّ ديون حالّة <NumIn name="debts" label="الديون الحالّة التي تُخصم" value={d.debts} width={6} />،
-      وسعر غرام الذهب عيار 24 اليوم <NumIn name="goldPricePerGram" label="سعر غرام الذهب عيار 24" value="" placeholder="؟" width={4} />،
-      وسعر غرام الفضة <NumIn name="silverPricePerGram" label="سعر غرام الفضة، يلزم لخيار الأقل من الذهب والفضة" value="" placeholder="؟" width={4} />،
-      وأعتمد في النصاب <Pills name="basis" legend="أساس النصاب" selected="gold" options={[{ value: 'gold', label: 'الذهب' }, { value: 'lower', label: 'الأقل من الذهب والفضة' }]} />.
-    </form>
-    <FieldErrors names={['cash', 'investments', 'debts', 'goldPricePerGram', 'silverPricePerGram']} />
+    <div class="calc-input">
+    <h2 class="input-title">بياناتك</h2>
+    <form class="calc-fields" onsubmit="return false" aria-label="بيانات الزكاة">
+        <NumIn name="cash" label="النقد والمدخرات" value={d.cash} />
+        <NumIn name="investments" label="الاستثمارات الخاضعة للزكاة" value={d.investments} />
+        <NumIn name="debts" label="الديون الحالّة التي تُخصم" value={d.debts} />
+        <NumIn name="goldPricePerGram" label="سعر غرام الذهب عيار 24" value="" placeholder="؟" />
+        <NumIn name="silverPricePerGram" label="سعر غرام الفضة، يلزم لخيار الأقل من الذهب والفضة" value="" placeholder="؟" />
+        <Pills name="basis" legend="أساس النصاب" selected="gold" options={[{ value: 'gold', label: 'الذهب' }, { value: 'lower', label: 'الأقل من الذهب والفضة' }]} />
+      </form>
     <p class="hint">اختلفت الجهات في نصاب النقود: مجلس الإمارات للإفتاء الشرعي يعتمد 85 غراماً من الذهب، ودليل هيئة الزكاة السعودية يعتمد الأقل من نصاب الذهب أو الفضة. اكتب المبالغ والأسعار بالعملة نفسها.</p>
     </div>
 
@@ -43,7 +41,7 @@ const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 2 
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="nisab-title">
-      <h2 id="nisab-title" class="exhibit-title"><b>02</b> دفتر الحساب</h2>
+      <h2 id="nisab-title" class="exhibit-title">دفتر الحساب</h2>
       <div data-x="ledger" set:html={zakatLedger(d.cash, d.investments, d.debts, r.ok ? r.value : null)} />
     </section>
   </div>

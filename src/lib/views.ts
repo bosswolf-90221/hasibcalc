@@ -188,3 +188,8 @@ export function gratuityWhatIf(g: Gratuity): string[] {
   if (basic > 0) out.push(`لو كان راتبك الأساسي أعلى بـ 1,000 درهم: تصير المكافأة نحو ${int(raised)} درهم.`);
   return out;
 }
+
+/** Nothing typed yet: a calm result, never a made-up number. */
+export function blankView(label: string): View {
+  return { label, value: null, decimals: 0, unit: '', sentence: 'اكتب بياناتك في الخانات لتظهر النتيجة.', rows: [] };
+}

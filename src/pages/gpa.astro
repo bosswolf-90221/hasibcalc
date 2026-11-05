@@ -3,7 +3,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import SelIn from '../components/SelIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcGpa, GRADES, GRADE_AR, SCALES, type GpaSystem } from '../lib/calc/gpa';
 import { gpaView } from '../lib/views-extra';
@@ -24,23 +23,22 @@ const T = (s: GpaSystem) => GRADES.filter((g) => SCALES[s].points[g] !== undefin
 ---
 <CalcLayout slug="gpa" lede="اختر نظام جامعتك، واكتب تقدير كل مادة وعدد ساعاتها، ونحسب معدلك الفصلي. وإذا أضفت معدلك التراكمي السابق وساعاته، نحسب معدلك التراكمي الجديد.">
   <div data-calc="gpa">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اختر النظام واكتب موادك</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات المعدل">
-        نظام جامعتي <SelIn name="system" label="نظام المعدل" options={SYS} value={d.system} />،
-        ومعدلي التراكمي السابق <NumIn name="prevGpa" label="المعدل التراكمي السابق" value={d.prevGpa} width={4} />
-        من <NumIn name="prevHours" label="الساعات المجتازة سابقاً" value={d.prevHours} width={3} /> ساعة.
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات المعدل">
+        <SelIn name="system" label="نظام المعدل" options={SYS} value={d.system} />
+        <NumIn name="prevGpa" label="المعدل التراكمي السابق" value={d.prevGpa} />
+        <NumIn name="prevHours" label="الساعات المجتازة سابقاً" value={d.prevHours} />
       </form>
       <ol class="courses" aria-label="مواد هذا الفصل">
         {Array.from({ length: ROWS }, (_, i) => (
           <li>
             <span class="cn">المادة {i + 1}</span>
             <SelIn name={`g${i + 1}`} label={`تقدير المادة ${i + 1}`} options={GOPTS} value={DEF[i][0]} />
-            <NumIn name={`h${i + 1}`} label={`ساعات المادة ${i + 1}`} value={DEF[i][1]} width={2} /> ساعات
+            <NumIn name={`h${i + 1}`} label={`ساعات المادة ${i + 1}`} value={DEF[i][1]} /> ساعات
           </li>
         ))}
       </ol>
-      <FieldErrors names={names} />
       <p class="hint">اترك الصف فارغاً إذا كانت موادك أقل. وإذا كان هذا أول فصل لك فامسح المعدل والساعات السابقة.</p>
     </div>
 
@@ -53,7 +51,7 @@ const T = (s: GpaSystem) => GRADES.filter((g) => SCALES[s].points[g] !== undefin
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> نقاط موادك هذا الفصل</h2>
+      <h2 id="x-t" class="exhibit-title">نقاط موادك هذا الفصل</h2>
       <div data-x="table" set:html={gpaTable(r.ok ? r.value : null)} />
     </section>
   </div>
@@ -116,10 +114,3 @@ const T = (s: GpaSystem) => GRADES.filter((g) => SCALES[s].points[g] !== undefin
     extras: (o) => { root.querySelector<HTMLElement>('[data-x="table"]')!.innerHTML = gpaTable(o); },
   });
 </script>
-
-<style>
-  .courses { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
-  .courses li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 1.05rem; }
-  .courses .cn { min-width: 5.5em; color: var(--soft); font-weight: 600; }
-  .courses :global(select.in.sel) { min-width: 5.2em; }
-</style>

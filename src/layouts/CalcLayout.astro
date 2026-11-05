@@ -1,11 +1,13 @@
 ---
-import Base from './Base.astro';
+// Calculator page on the life-moments system: the question, the fields beside the answer, then the explanation.
+import '../styles/calc.css';
+import Site from './Site.astro';
 import AdSlot from '../components/AdSlot.astro';
-import CalcIndex from '../components/CalcIndex.astro';
-import Reveal from '../components/motion/Reveal.tsx';
+import MomentIcon from '../components/MomentIcon.astro';
 import { bySlug, CALCULATORS, CATEGORIES } from '../data/calculators';
 import { SITE } from '../config/site';
 import { GUIDES } from '../data/guides';
+import { MOMENTS } from '../data/moments';
 import { arDate } from '../lib/format';
 import { BASIS_LABEL, VERIFICATION } from '../data/verification';
 
@@ -15,8 +17,10 @@ const c = bySlug(slug);
 const cat = CATEGORIES.find((x) => x.key === c.categories[0])!;
 const path = `/${slug}/`;
 const guides = GUIDES.filter((g) => g.calc === slug);
+const moment = MOMENTS.find((m) => m.calcs.includes(slug))!;
 const check = VERIFICATION[slug] ?? { basis: 'partial' as const };
 const edited = c.updated ?? SITE.lastReviewed;
+const near = CALCULATORS.filter((x) => x.slug !== slug && x.categories.includes(cat.key) && !c.related.includes(x.slug));
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -40,76 +44,39 @@ const jsonLd = [
   },
 ];
 ---
-<Base title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd} image={`/og/${c.slug}.png`} bare>
-  <div class="stage calc-stage">
-    <div class="container">
-      <div class="calc-title">
-        <nav class="crumbs" aria-label="مسار التنقل">
-          <ol><li><a href="/">الرئيسية</a></li><li><a href={`/category/${cat.key}/`}>{cat.name}</a></li><li aria-current="page">{c.short}</li></ol>
-        </nav>
-        <p class="ask-line" aria-hidden="true">أريد أن أعرف…</p>
-        <h1>{c.question}</h1>
-        <p class="lede">{lede}</p>
-        <p class="seal"><span class="seal-mark" aria-hidden="true"></span><span>{BASIS_LABEL[check.basis]}{check.verified && <> · <time datetime={check.verified}>{arDate(check.verified)}</time></>}</span></p>
-        <label class="switcher"><span class="sr-only">اختر سؤالاً آخر</span>
-          <select data-switch aria-label="اختر سؤالاً آخر">
-            {CALCULATORS.map((x) => <option value={`/${x.slug}/`} selected={x.slug === slug}>{x.question}</option>)}
-          </select>
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="calc-grid">
-      <div class="calc-main">
-        <div class="machine" id="calc">
-          <div class="machine-top"><span>حاسبة {c.short}</span><b>تحسب وأنت تكتب</b></div>
-          <slot />
-        </div>
-        <AdSlot position="afterCalculator" />
-        <article class="article card" id="explain">
-          <slot name="article" />
-          <p class="reviewed">{BASIS_LABEL[check.basis]}{check.verified ? `: ${arDate(check.verified)}` : ''}. وآخر تعديل لنص الصفحة: {arDate(edited)}.</p>
-        </article>
-        <section class="related" id="related" aria-labelledby="rel-h">
-          <div class="related-head"><h2 id="rel-h">حاسبات قريبة</h2><a href="/#index">كل الحاسبات</a></div>
-          <Reveal client:idle selector="li"><CalcIndex items={c.related.map(bySlug)} /></Reveal>
-        </section>
-      </div>
-      <aside class="calc-side" aria-label="معلومات الحاسبة">
-        <div class="card side-card">
-          <h2>لماذا تثق بالنتيجة؟</h2>
-          <ul class="trust">
-            <li>المعادلة مكتوبة تحت «كيف حسبناها؟»</li>
-            {check.basis === 'math' ? <li>حساب رياضي لا يحتاج إلى مصدر قانوني</li> : <li>مصادر القواعد في آخر الشرح</li>}
-            <li>الحساب في متصفحك، ولا تغادر أرقامك جهازك</li>
-            {check.verified && <li>آخر تحقق من المصادر: {arDate(check.verified)}</li>}
-          </ul>
-        </div>
+<Site title={c.seoTitle} description={c.description} path={path} jsonLd={jsonLd} image={`/og/${c.slug}.png`}>
+  <div class="wrap calc-page" style={`--tint: var(--moment-${moment.tint})`}>
+    <nav class="crumbs" aria-label="مسار التنقل">
+      <ol><li><a href="/">الرئيسية</a></li><li><a href={`/category/${cat.key}/`}>{cat.name}</a></li><li aria-current="page">{c.short}</li></ol>
+    </nav>
+    <header class="page-head">
+      <h1 class="t-h1">{c.question}</h1>
+      <p class="t-lead">{lede}</p>
+      <p class="check-line">{BASIS_LABEL[check.basis]}{check.verified && <>: <time datetime={check.verified}>{arDate(check.verified)}</time></>}</p>
+    </header>
+    <div class="calc-body" id="calc"><slot /></div>
+    <AdSlot position="afterCalculator" />
+    <div class="calc-lower">
+      <article class="article" id="explain">
+        <slot name="article" />
+        <p class="reviewed">{BASIS_LABEL[check.basis]}{check.verified ? `: ${arDate(check.verified)}` : ''}. وآخر تعديل لنص الصفحة: {arDate(edited)}.</p>
+      </article>
+      <aside class="calc-aside" aria-label="روابط مرتبطة">
+        <a class="moment-link" href={`/moments/${moment.slug}/`}>
+          <MomentIcon name={moment.icon} />
+          <small>هذه الحاسبة جزء من موقف</small>
+          <b>{moment.name}</b>
+          <span>{moment.ask}</span>
+        </a>
         {guides.length > 0 && (
-          <div class="card side-card">
-            <h2>أدلة مرتبطة</h2>
-            <ul class="trust toc">{guides.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul>
-          </div>
+          <section><h2>أدلة مرتبطة</h2><ul class="linklist">{guides.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul></section>
         )}
-        <div class="card side-card">
-          <h2>في هذه الصفحة</h2>
-          <ul class="trust toc">
-            <li><a href="#calc">الحاسبة</a></li>
-            <li><a href="#explain">الشرح والمثال</a></li>
-            <li><a href="#related">حاسبات قريبة</a></li>
-          </ul>
-        </div>
-        <div class="card side-card">
-          <h2>{cat.name}</h2>
-          <CalcIndex items={CALCULATORS.filter((x) => x.slug !== slug && x.categories.includes(cat.key))} compact />
-        </div>
+        <section id="related"><h2>حاسبات قريبة</h2><ul class="linklist">{c.related.map(bySlug).map((x) => <li><a href={`/${x.slug}/`}>{x.question}</a></li>)}</ul></section>
+        {near.length > 0 && (
+          <section><h2>{cat.name}</h2><ul class="linklist">{near.map((x) => <li><a href={`/${x.slug}/`}>{x.question}</a></li>)}</ul></section>
+        )}
+        <p class="more-all"><a class="link" href="/#index">كل الحاسبات</a></p>
       </aside>
     </div>
   </div>
-</Base>
-
-<script>
-  document.querySelectorAll<HTMLSelectElement>('[data-switch]').forEach((s) => s.addEventListener('change', () => (location.href = s.value)));
-</script>
+</Site>

@@ -3,7 +3,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import Pills from '../components/Pills.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcGosi, pensionRate, SANED, HAZARDS } from '../lib/calc/gosi';
 import { gosiView } from '../lib/views-extra';
@@ -21,23 +20,22 @@ const WAGES = [4000, 6000, 8000, 10000, 15000, 20000, 30000, 45000];
 ---
 <CalcLayout slug="gosi" lede="للعاملين في السعودية. اختر جنسيتك ونظامك في التأمينات، واكتب الراتب الأساسي وبدل السكن، ونحسب الخصم الشهري من راتبك وحصة صاحب العمل.">
   <div data-calc="gosi">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات التأمينات">
-        أنا <Pills name="nationality" legend="الجنسية" selected="saudi" options={[{ value: 'saudi', label: 'سعودي' }, { value: 'non-saudi', label: 'غير سعودي' }]} />
-        وسجّلت في التأمينات <Pills name="system" legend="تاريخ أول تسجيل" selected="new" options={[{ value: 'legacy', label: 'قبل 3 يوليو 2024' }, { value: 'new', label: 'بعده' }]} />،
-        راتبي الأساسي <NumIn name="basic" label="الراتب الأساسي الشهري بالريال" value={d.basic} width={6} /> ريال،
-        وبدل السكن <NumIn name="housing" label="بدل السكن الشهري بالريال" value={d.housing} width={5} /> ريال،
-        وبدلات أخرى <NumIn name="other" label="البدلات الأخرى الشهرية بالريال (نقل وغيره)" value={d.other} width={5} /> ريال.
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات التأمينات">
+        <Pills name="nationality" legend="الجنسية" selected="saudi" options={[{ value: 'saudi', label: 'سعودي' }, { value: 'non-saudi', label: 'غير سعودي' }]} />
+        <Pills name="system" legend="تاريخ أول تسجيل" selected="new" options={[{ value: 'legacy', label: 'قبل 3 يوليو 2024' }, { value: 'new', label: 'بعده' }]} />
+        <NumIn name="basic" label="الراتب الأساسي الشهري بالريال" value={d.basic} />
+        <NumIn name="housing" label="بدل السكن الشهري بالريال" value={d.housing} />
+        <NumIn name="other" label="البدلات الأخرى الشهرية بالريال (نقل وغيره)" value={d.other} />
       </form>
-      <FieldErrors names={['basic', 'housing', 'other']} />
       <p class="hint">إذا كان السكن يوفّره صاحب العمل عيناً، فقيمته في التأمينات أجر شهرين أساسيين في السنة، أي سدس الأساسي شهرياً تقريباً. بدلات النقل وغيرها لا يُخصم عليها، لكنها تدخل في راتبك الصافي.</p>
     </div>
     <ResultCard view={view} sensitive notes={['النسب من المنصة التوعوية للمؤسسة العامة للتأمينات الاجتماعية. المرجع النهائي فاتورة التأمينات الشهرية لدى صاحب العمل.', 'أجر الاشتراك لا يزيد على 45,000 ريال شهرياً، ولا يقل عن 1,500 للسعودي و400 لغير السعودي. الحدان الأدنيان من صفحة أسئلة رسمية غير مؤرخة، والنظام الجديد لا يذكر رقماً، فالمرجع فاتورتك.', 'مواطنو دول الخليج لهم ترتيبات خاصة لا تغطيها هذه الحاسبة، فراجع التأمينات.', 'النظام الجديد يشمل من سُجّل أول مرة بعد 3 يوليو 2024 ولم تكن له مدد اشتراك سابقة. من كان مسجلاً قبله يبقى على النظام السابق.']}>
       <p class="formula" slot="formula"><code>الخصم = (الأساسي + السكن) × (نسبة المعاشات + 0.75% ساند)</code>. وعلى صاحب العمل النسبة نفسها + <code>2%</code> للأخطار المهنية. وغير السعودي: صاحب العمل يدفع <code>2%</code> فقط.</p>
     </ResultCard>
     <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> النسب حسب النظام والفترة</h2>
+      <h2 id="x-t" class="exhibit-title">النسب حسب النظام والفترة</h2>
       <div data-x="schedule" set:html={gosiSchedule(today, d.system, d.nationality)} />
     </section>
   </div>

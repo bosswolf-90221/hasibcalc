@@ -3,7 +3,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import DateIn from '../components/DateIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcDues } from '../lib/calc/exit-dues';
 import { duesView } from '../lib/views-extra';
@@ -23,16 +22,15 @@ const b = ex2.ok ? ex2.value : null;
 ---
 <CalcLayout slug="exit-dues" lede="لموظفي القطاع الخاص غير المواطنين في الإمارات. نجمع لك مكافأة نهاية الخدمة وبدل الإجازة غير المستخدمة في رقم واحد، على الراتب الأساسي.">
   <div data-calc="exit-dues">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات مستحقات ترك العمل">
-        راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
-        بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
-        وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />،
-        وغبت بدون أجر <NumIn name="unpaidAbsenceDays" label="أيام الغياب بدون أجر" value={d.unpaidAbsenceDays} width={3} /> يوماً،
-        وأخذت من إجازاتي طوال خدمتي <NumIn name="takenDays" label="مجموع أيام الإجازة التي أخذتها" value={d.takenDays} width={3} /> يوماً.
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات مستحقات ترك العمل">
+        <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} />
+        <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+        <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />
+        <NumIn name="unpaidAbsenceDays" label="أيام الغياب بدون أجر" value={d.unpaidAbsenceDays} />
+        <NumIn name="takenDays" label="مجموع أيام الإجازة التي أخذتها" value={d.takenDays} />
       </form>
-      <FieldErrors names={['basicSalary', 'startDate', 'endDate', 'unpaidAbsenceDays', 'takenDays']} />
       <p class="hint">الراتب الأساسي فقط كما في عقدك، بدون البدلات. الإجازة محسوبة على 30 يوماً في السنة وهو الحد الأدنى في القانون.</p>
     </div>
 
@@ -47,7 +45,7 @@ const b = ex2.ok ? ex2.value : null;
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> من أين يأتي مبلغك؟</h2>
+      <h2 id="x-t" class="exhibit-title">من أين يأتي مبلغك؟</h2>
       <div data-x="bar" set:html={duesBar(r.ok ? r.value : null)} />
     </section>
   </div>
@@ -118,14 +116,3 @@ const b = ex2.ok ? ex2.value : null;
     extras: (o) => { root.querySelector<HTMLElement>('[data-x="bar"]')!.innerHTML = duesBar(o); },
   });
 </script>
-
-<style is:global>
-  .dues-bar { display: flex; height: 22px; border: 1.5px solid var(--ink); border-radius: 4px; overflow: hidden; background: var(--card); }
-  .dues-bar .g { background: var(--ink); }
-  .dues-bar .l { background: #c94a2b; }
-  .dues-key { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
-  .dues-key li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .dues-key i { width: 14px; height: 14px; border: 1.5px solid var(--ink); border-radius: 3px; display: inline-block; }
-  .dues-key i.g { background: var(--ink); } .dues-key i.l { background: #c94a2b; }
-  .dues-key small { color: var(--soft); }
-</style>

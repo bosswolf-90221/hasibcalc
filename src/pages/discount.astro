@@ -3,7 +3,6 @@ import { discountPayTable, discountStackTable } from '../lib/exhibits-extra';
 import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcDiscount } from '../lib/calc/discount';
 import { discountView, errorView } from '../lib/views';
@@ -16,14 +15,13 @@ const v = r.ok ? r.value : null;
 ---
 <CalcLayout slug="discount" lede="اكتب السعر ونسبة الخصم. إذا كان هناك خصم إضافي، مثل كود أو عرض بطاقة، اكتبه أيضاً، وإلا اتركه صفراً.">
   <div data-calc="discount">
-    <div class="sentence-wrap">
-    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-    <form class="sentence" onsubmit="return false" aria-label="بيانات الخصم">
-      سعر القطعة <NumIn name="price" label="السعر الأصلي" value={d.price} width={6} /> وعليها خصم
-      <NumIn name="first" label="نسبة الخصم الأول" value={d.first} width={2} />% ثم خصم إضافي
-      <NumIn name="second" label="نسبة الخصم الإضافي" value={d.second} width={2} />%.
-    </form>
-    <FieldErrors names={['price', 'first', 'second']} />
+    <div class="calc-input">
+    <h2 class="input-title">بياناتك</h2>
+    <form class="calc-fields" onsubmit="return false" aria-label="بيانات الخصم">
+        <NumIn name="price" label="السعر الأصلي" value={d.price} />
+        <NumIn name="first" label="نسبة الخصم الأول (%)" value={d.first} />
+        <NumIn name="second" label="نسبة الخصم الإضافي (%)" value={d.second} />
+      </form>
     </div>
 
 
@@ -32,7 +30,7 @@ const v = r.ok ? r.value : null;
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="chain-title">
-      <h2 id="chain-title" class="exhibit-title"><b>02</b> من السعر الأصلي إلى ما تدفعه</h2>
+      <h2 id="chain-title" class="exhibit-title">من السعر الأصلي إلى ما تدفعه</h2>
       <div data-x="chain" set:html={discountChain(v, d.first, d.second)} />
     </section>
   </div>

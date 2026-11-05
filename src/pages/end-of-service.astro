@@ -3,7 +3,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import DateIn from '../components/DateIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcGratuity } from '../lib/calc/gratuity';
 import { gratuityView, errorView } from '../lib/views';
@@ -28,15 +27,14 @@ const gDays = (y: number) => Math.min(720, Math.min(y, 5) * 21 + Math.max(0, y -
 ---
 <CalcLayout slug="end-of-service" lede="لموظفي القطاع الخاص غير المواطنين في الإمارات بدوام كامل، وفق المادة 51 من قانون العمل الاتحادي. اكتب راتبك الأساسي وتاريخي العمل.">
   <div data-calc="end-of-service">
-    <div class="sentence-wrap">
-    <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-    <form class="sentence" onsubmit="return false" aria-label="بيانات مكافأة نهاية الخدمة">
-      راتبي الأساسي <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} width={6} /> درهم،
-      بدأت العمل في <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
-      وآخر يوم عمل لي <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />
-      وغبت بدون أجر <NumIn name="unpaidAbsenceDays" label="أيام الغياب بدون أجر" value={d.unpaidAbsenceDays} width={3} /> يوماً.
-    </form>
-    <FieldErrors names={['basicSalary', 'startDate', 'endDate', 'unpaidAbsenceDays']} />
+    <div class="calc-input">
+    <h2 class="input-title">بياناتك</h2>
+    <form class="calc-fields" onsubmit="return false" aria-label="بيانات مكافأة نهاية الخدمة">
+        <NumIn name="basicSalary" label="الراتب الأساسي الشهري بالدرهم" value={d.basicSalary} />
+        <DateIn name="startDate" label="تاريخ بداية العمل" value={d.startDate} />
+        <DateIn name="endDate" label="تاريخ آخر يوم عمل" value={d.endDate} />
+        <NumIn name="unpaidAbsenceDays" label="أيام الغياب بدون أجر" value={d.unpaidAbsenceDays} />
+      </form>
     <p class="hint">الراتب الأساسي فقط كما في عقدك، بدون بدل السكن والمواصلات وغيرها.</p>
     </div>
 
@@ -51,7 +49,7 @@ const gDays = (y: number) => Math.min(720, Math.min(y, 5) * 21 + Math.max(0, y -
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="tiers-title">
-      <h2 id="tiers-title" class="exhibit-title"><b>02</b> سنوات خدمتك على المسطرة</h2>
+      <h2 id="tiers-title" class="exhibit-title">سنوات خدمتك على المسطرة</h2>
       <div data-x="timeline" set:html={serviceTimeline(g)} />
       <div class="legend"><span class="a"><i></i>أجر 21 يوماً عن كل سنة حتى السنة الخامسة</span><span class="b"><i></i>أجر 30 يوماً عن كل سنة بعدها</span><span>الخط المتقطع: إكمال سنة الاستحقاق</span></div>
     </section>

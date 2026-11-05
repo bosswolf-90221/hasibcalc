@@ -1,4 +1,4 @@
-// Browser runtime shared by every calculator: read the sentence, compute, render, animate, copy, share, reset.
+// Browser runtime shared by every calculator: read the fields, compute, render, copy, share, print, reset.
 import type { CalcResult, FieldError } from '../lib/calc/core';
 import type { View } from '../lib/views';
 import { fmt, odo, odoText } from '../lib/format';
@@ -15,16 +15,11 @@ type Options<R> = {
   paramPrefix?: string;
 };
 
-const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
   const result = root.querySelector<HTMLElement>('[data-result]')!;
   const $ = (k: string) => result.querySelector<HTMLElement>(`[data-r="${k}"]`)!;
   const valueEl = $('value');
   const prefix = opts.paramPrefix ?? '';
-  let shown = Number(odoText(valueEl).replace(/,/g, '')) || 0;
-  let lastInput = 0;
-  let raf = 0;
   let liveTimer = 0;
   let toastTimer = 0;
 
@@ -66,40 +61,13 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     }
   }
 
-  // a short glow on the result when it lands on a new value (typing bursts settle once, after the last key)
-  let settleTimer = 0;
-  function settle() {
-    result.classList.remove('settled');
-    void result.offsetWidth;
-    result.classList.add('settled');
+  // The answer and what depends on it appear together, or not at all: no stale number beside a blank field.
+  function showDependents(on: boolean) {
+    root.querySelectorAll<HTMLElement>('.exhibit, .addcal, [data-needs-result]').forEach((el) => { el.hidden = !on; });
   }
-  function settleSoon() {
-    clearTimeout(settleTimer);
-    settleTimer = window.setTimeout(settle, 280);
-  }
-
-  function animateTo(target: number, decimals: number) {
-    cancelAnimationFrame(raf);
-    const burst = performance.now() - lastInput < 260;
-    const tiny = Math.abs(target - shown) <= Math.abs(shown) * 0.002;
-    if (reduceMotion() || burst || tiny) {
-      const changed = shown !== target;
-      shown = target;
-      valueEl.innerHTML = odo(fmt(target, decimals));
-      if (changed && !reduceMotion()) settleSoon();
-      return;
-    }
-    const from = shown;
-    const t0 = performance.now();
-    const step = (t: number) => {
-      const p = Math.min(1, (t - t0) / 450);
-      const e = 1 - Math.pow(1 - p, 3);
-      shown = from + (target - from) * e;
-      valueEl.innerHTML = odo(fmt(shown, decimals));
-      if (p < 1) raf = requestAnimationFrame(step);
-      else { shown = target; settle(); }
-    };
-    raf = requestAnimationFrame(step);
+  // The numbers on screen stop being an example as soon as the visitor changes one.
+  function dropExample() {
+    root.querySelectorAll<HTMLElement>('[data-example]').forEach((el) => { el.hidden = true; });
   }
 
   function render(view: View) {
@@ -130,7 +98,8 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       wiBox.hidden = list.length === 0;
       $('whatif').replaceChildren(...list.map((w) => Object.assign(document.createElement('li'), { textContent: w })));
     }
-    if (view.value !== null) animateTo(view.value, view.decimals);
+    if (view.value !== null) valueEl.innerHTML = odo(fmt(view.value, view.decimals));
+    showDependents(true);
     clearTimeout(liveTimer);
     liveTimer = window.setTimeout(() => {
       $('live').textContent = `${view.label}: ${fmt(view.value, view.decimals)} ${view.unit}`.trim();
@@ -141,20 +110,20 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
   const isEmpty = (name: string) => {
     const n = CSS.escape(name);
     const el = root.querySelector<HTMLElement>(`[data-field="${n}"], [data-field$="_${n}"]`);
-    return el instanceof HTMLInputElement && el.type !== 'date' && el.value.trim() === '';
+    return el instanceof HTMLInputElement && el.value.trim() === '';
   };
   function showBlank() {
     showErrors([]);
-    result.dataset.state = 'ok';
+    result.dataset.state = 'blank';
     $('error').hidden = true;
     $('badge').hidden = true;
-    $('sentence').textContent = 'اكتب أرقامك في الخانات لتظهر النتيجة.';
+    $('sentence').textContent = 'اكتب بياناتك في الخانات لتظهر النتيجة.';
     $('rows').replaceChildren();
     const wiBox = result.querySelector<HTMLElement>('[data-r="whatif-box"]');
     if (wiBox) wiBox.hidden = true;
-    cancelAnimationFrame(raf);
-    shown = 0;
-    valueEl.innerHTML = odo(fmt(0, Number(valueEl.dataset.decimals ?? 0)));
+    $('unit').textContent = '';
+    valueEl.innerHTML = odo('—');
+    showDependents(false);
   }
 
   function update() {
@@ -168,6 +137,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       const err = $('error');
       err.textContent = real[0]?.message ?? 'تحقق من المدخلات';
       err.hidden = false;
+      showDependents(false);
       return;
     }
     showErrors([]);
@@ -186,14 +156,14 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       filledFromUrl = true;
     }
   }
-  if (filledFromUrl) $('from-url').hidden = false;
+  if (filledFromUrl) { $('from-url').hidden = false; dropExample(); }
 
   // ---- events
   root.addEventListener('input', () => {
-    lastInput = performance.now();
+    dropExample();
     update();
   });
-  root.addEventListener('change', update);
+  root.addEventListener('change', () => { dropExample(); update(); });
   root.addEventListener('focusout', (e) => {
     const el = e.target as HTMLInputElement;
     if (!(el instanceof HTMLInputElement) || el.inputMode !== 'decimal' || !el.value.trim()) return;
@@ -239,7 +209,10 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
       const f = read();
       for (const k of Object.keys(f)) if (f[k] !== '') q.set(prefix + k, f[k]);
       copy(`${cleanUrl()}?${q.toString()}`, btn.dataset.sensitive ? 'نسخنا الرابط، وفيه أرقامك المالية' : 'نسخنا الرابط مع أرقامك');
+    } else if (act === 'print') {
+      window.print();
     } else if (act === 'reset') {
+      dropExample();
       // Clear the typed numbers and return dates to where they started; lists and choices keep their values.
       for (const el of fieldEls()) {
         if (!(el instanceof HTMLInputElement)) continue;

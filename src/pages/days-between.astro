@@ -3,7 +3,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import DateIn from '../components/DateIn.astro';
 import Pills from '../components/Pills.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcDateSpan } from '../lib/calc/dates';
 import { dateSpanView } from '../lib/views-extra';
@@ -27,21 +26,21 @@ const M_ROWS = M_YEARS.map(([m, y]) => ({ m, y, d: Math.round((Date.UTC(2027, m,
 ---
 <CalcLayout slug="days-between" lede="اكتب تاريخ البداية والنهاية، ونحسب المدة بالأيام والأسابيع والأشهر، وعدد أيام العمل بحسب عطلة نهاية الأسبوع في بلدك.">
   <div data-calc="days-between">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتب التاريخين في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="التاريخان">
-        من <DateIn name="startDate" label="تاريخ البداية" value={today} /> إلى <DateIn name="endDate" label="تاريخ النهاية" value={end} />،
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="التاريخان">
+        <DateIn name="startDate" label="تاريخ البداية" value={today} />
+        <DateIn name="endDate" label="تاريخ النهاية" value={end} />
         <Pills name="includeEnd" legend="احتساب اليوم الأخير" selected="no" options={[{ value: 'no', label: 'بدون اليوم الأخير' }, { value: 'yes', label: 'مع اليوم الأخير' }]} />
-        وعطلتي <Pills name="weekend" legend="عطلة نهاية الأسبوع" selected="sat-sun" options={[{ value: 'sat-sun', label: 'السبت والأحد' }, { value: 'fri-sat', label: 'الجمعة والسبت' }]} />
+        <Pills name="weekend" legend="عطلة نهاية الأسبوع" selected="sat-sun" options={[{ value: 'sat-sun', label: 'السبت والأحد' }, { value: 'fri-sat', label: 'الجمعة والسبت' }]} />
       </form>
-      <FieldErrors names={['startDate', 'endDate']} />
       <p class="hint">عطلة السبت والأحد معتمدة في الإمارات، والجمعة والسبت في السعودية ومعظم دول الخليج. الحاسبة لا تخصم العطل الرسمية.</p>
     </div>
     <ResultCard view={view}>
       <p class="formula" slot="formula"><code>الأيام = تاريخ النهاية − تاريخ البداية</code>، ونضيف يوماً إذا اخترت احتساب اليوم الأخير. أيام العمل = الأيام − أيام عطلة نهاية الأسبوع الواقعة في المدة.</p>
     </ResultCard>
     <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> أيام العمل وأيام العطلة</h2>
+      <h2 id="x-t" class="exhibit-title">أيام العمل وأيام العطلة</h2>
       <div data-x="span" set:html={spanBlocks(r.ok ? r.value : null)} />
     </section>
   </div>
@@ -150,8 +149,3 @@ const M_ROWS = M_YEARS.map(([m, y]) => ({ m, y, d: Math.round((Date.UTC(2027, m,
     extras: (sp) => { root.querySelector<HTMLElement>('[data-x="span"]')!.innerHTML = spanBlocks(sp); },
   });
 </script>
-
-<style>
-  .add-days { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-weight: 600; margin: 8px 0 12px; }
-  .add-days output { flex-basis: 100%; color: var(--deep); font-size: 1.05rem; }
-</style>

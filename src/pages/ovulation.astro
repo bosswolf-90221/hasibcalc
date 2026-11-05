@@ -3,38 +3,36 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import DateIn from '../components/DateIn.astro';
 import NumIn from '../components/NumIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcOvulation } from '../lib/calc/ovulation';
 import { ovulationView } from '../lib/views-extra';
-import { errorView } from '../lib/views';
+import { blankView } from '../lib/views';
 import { ovulationTable } from '../lib/exhibits-extra';
 import { toISODate } from '../lib/calc/core';
 
 const now = new Date();
 const today = toISODate(now);
-const lmp = toISODate(new Date(now.getTime() - 10 * 86_400_000));
+const lmp = '';
 const d = { cycleDays: 28, periodDays: 5 };
 const r = calcOvulation({ lmpDate: lmp, ...d, onDate: today });
-const view = r.ok ? ovulationView(r.value) : errorView(r, 'يوم التبويض المتوقع')!;
+const view = blankView('يوم التبويض المتوقع');
 ---
 <CalcLayout slug="ovulation" lede="اكتبي أول يوم من آخر دورة شهرية وطول دورتك المعتاد، ونحسب يوم التبويض المتوقع وأيام الخصوبة وموعد الدورة القادمة، بتاريخ اليوم في جهازك.">
   <div data-calc="ovulation">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتبي التاريخ في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات الدورة">
-        أول يوم من آخر دورة كان <DateIn name="lmpDate" label="أول يوم من آخر دورة شهرية" value={lmp} max={today} />،
-        ودورتي عادة <NumIn name="cycleDays" label="طول الدورة بالأيام" value={d.cycleDays} width={2} /> يوماً،
-        وتستمر <NumIn name="periodDays" label="عدد أيام نزول الدورة" value={d.periodDays} width={2} /> أيام.
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات الدورة">
+        <DateIn name="lmpDate" label="أول يوم من آخر دورة شهرية" value={lmp} max={today} />
+        <NumIn name="cycleDays" label="طول الدورة بالأيام" value={d.cycleDays} />
+        <NumIn name="periodDays" label="عدد أيام نزول الدورة" value={d.periodDays} />
       </form>
-      <FieldErrors names={['lmpDate', 'cycleDays', 'periodDays']} />
       <p class="hint">طول الدورة من أول يوم في دورة إلى أول يوم في الدورة التي بعدها. إذا لم تعرفيه فاتركيه 28.</p>
     </div>
-    <ResultCard view={view} sensitive notes={['الحساب تقديري ويفترض أن دورتك منتظمة. التبويض قد يتقدم أو يتأخر أياماً من شهر لآخر.', 'لا تعتمدي على هذه الحاسبة وسيلةً لمنع الحمل.', 'للمعلومات العامة فقط، واستشيري طبيبتك إذا كانت دورتك غير منتظمة أو تأخر الحمل.']}>
+    <ResultCard example={false} view={view} sensitive notes={['الحساب تقديري ويفترض أن دورتك منتظمة. التبويض قد يتقدم أو يتأخر أياماً من شهر لآخر.', 'لا تعتمدي على هذه الحاسبة وسيلةً لمنع الحمل.', 'للمعلومات العامة فقط، واستشيري طبيبتك إذا كانت دورتك غير منتظمة أو تأخر الحمل.']}>
       <p class="formula" slot="formula">التبويض في اليوم <code>(طول الدورة − 14)</code> من الدورة، أي اليوم 14 في دورة من 28 يوماً. وأيام الخصوبة هي <code>الأيام الخمسة قبل التبويض + يوم التبويض</code>.</p>
     </ResultCard>
-    <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> مواعيدك في الدورات الثلاث القادمة</h2>
+    <section class="exhibit" hidden aria-labelledby="x-t">
+      <h2 id="x-t" class="exhibit-title">مواعيدك في الدورات الثلاث القادمة</h2>
       <div data-x="table" set:html={ovulationTable(r.ok ? r.value : null)} />
     </section>
   </div>

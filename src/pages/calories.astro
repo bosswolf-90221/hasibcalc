@@ -4,7 +4,6 @@ import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import Pills from '../components/Pills.astro';
 import SelIn from '../components/SelIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcCalories, ACTIVITY } from '../lib/calc/calories';
 import { caloriesView } from '../lib/views-extra';
@@ -17,22 +16,22 @@ const view = r.ok ? caloriesView(r.value) : errorView(r, 'سعراتك اليو�
 ---
 <CalcLayout slug="calories" lede="للبالغين من 18 سنة فأكثر. اكتب بياناتك ومستوى نشاطك، ونحسب السعرات التي يحتاجها جسمك يومياً ليحافظ على وزنه.">
   <div data-calc="calories">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات السعرات">
-        أنا <Pills name="sex" legend="الجنس" selected="male" options={[{ value: 'male', label: 'رجل' }, { value: 'female', label: 'امرأة' }]} />
-        عمري <NumIn name="age" label="العمر بالسنوات" value={d.age} width={2} /> سنة، ووزني <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} width={3} /> كجم،
-        وطولي <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} width={3} /> سم، ونشاطي
-        <SelIn name="activity" label="مستوى النشاط" value={d.activity} options={ACTIVITY.map((a) => ({ value: a.key, label: a.label }))} />.
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات السعرات">
+        <Pills name="sex" legend="الجنس" selected="male" options={[{ value: 'male', label: 'رجل' }, { value: 'female', label: 'امرأة' }]} />
+        <NumIn name="age" label="العمر بالسنوات" value={d.age} />
+        <NumIn name="weightKg" label="الوزن بالكيلوغرام" value={d.weightKg} />
+        <NumIn name="heightCm" label="الطول بالسنتيمتر" value={d.heightCm} />
+        <SelIn name="activity" label="مستوى النشاط" value={d.activity} options={ACTIVITY.map((a) => ({ value: a.key, label: a.label }))} />
       </form>
-      <FieldErrors names={['age', 'weightKg', 'heightCm', 'activity']} />
       <p class="hint">{ACTIVITY.map((a) => `${a.label}: ${a.hint}`).join(' · ')}</p>
     </div>
     <ResultCard view={view} sensitive notes={['الأرقام تقديرية، وقد يختلف احتياجك الفعلي بحسب كتلة العضلات والوراثة. ومعاملات النشاط تقريبية وشائعة الاستخدام، ولم نجد لها مصدراً رسمياً واحداً.', 'لا ننصح بأقل من معدل الأيض الأساسي دون إشراف مختص. الحامل والمرضعة ومن لديه حالة صحية يراجع الطبيب أو أخصائي التغذية.']}>
       <p class="formula" slot="formula"><code>الأيض الأساسي = 10 × الوزن + 6.25 × الطول − 5 × العمر + 5</code> للرجل، و<code>− 161</code> بدل <code>+ 5</code> للمرأة. ثم <code>الاحتياج اليومي = الأيض الأساسي × معامل النشاط</code>.</p>
     </ResultCard>
     <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> احتياجك في كل مستوى نشاط</h2>
+      <h2 id="x-t" class="exhibit-title">احتياجك في كل مستوى نشاط</h2>
       <div data-x="table" set:html={activityTable(r.ok ? r.value : null, d.activity)} />
     </section>
   </div>

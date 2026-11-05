@@ -3,7 +3,6 @@ import Faq from '../components/Faq.astro';
 import CalcLayout from '../layouts/CalcLayout.astro';
 import NumIn from '../components/NumIn.astro';
 import SelIn from '../components/SelIn.astro';
-import FieldErrors from '../components/FieldErrors.astro';
 import ResultCard from '../components/ResultCard.astro';
 import { calcGpaTarget, type TargetSystem } from '../lib/calc/gpa-target';
 import { gpaTargetView } from '../lib/views-extra';
@@ -20,17 +19,16 @@ const f2 = (n?: number | null) => (n == null ? '' : (Math.round(n * 100) / 100).
 ---
 <CalcLayout slug="gpa-target" lede="اكتب معدلك التراكمي الآن، وعدد ساعاتك، والمعدل الذي تريد الوصول إليه، ونحسب المعدل الذي تحتاجه في الفصل القادم، ونخبرك إن كان الهدف ممكناً.">
   <div data-calc="gpa-target">
-    <div class="sentence-wrap">
-      <p class="step"><b>01</b> اكتب أرقامك في الجملة</p>
-      <form class="sentence" onsubmit="return false" aria-label="بيانات المعدل المستهدف">
-        معدلي التراكمي <NumIn name="current" label="المعدل التراكمي الحالي" value={d.current} width={4} />
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="بيانات المعدل المستهدف">
+        <NumIn name="current" label="المعدل التراكمي الحالي" value={d.current} />
         <SelIn name="system" label="نظام المعدل" options={SYS} value={d.system} />
-        بعد <NumIn name="doneHours" label="الساعات المجتازة" value={d.doneHours} width={3} /> ساعة،
-        وأريد أن أصل إلى <NumIn name="target" label="المعدل المستهدف" value={d.target} width={4} />،
-        وسأدرس في الفصل القادم <NumIn name="nextHours" label="ساعات الفصل القادم" value={d.nextHours} width={2} /> ساعة،
-        وباقي لي للتخرج <NumIn name="leftHours" label="الساعات الباقية للتخرج (اختياري)" value="" width={3} placeholder="؟" /> ساعة.
+        <NumIn name="doneHours" label="الساعات المجتازة" value={d.doneHours} />
+        <NumIn name="target" label="المعدل المستهدف" value={d.target} />
+        <NumIn name="nextHours" label="ساعات الفصل القادم" value={d.nextHours} />
+        <NumIn name="leftHours" label="الساعات الباقية للتخرج (اختياري)" value="" placeholder="؟" />
       </form>
-      <FieldErrors names={['current', 'system', 'doneHours', 'target', 'nextHours', 'leftHours']} />
       <p class="hint">الساعات الباقية للتخرج اختيارية؛ اكتبها لتعرف أعلى معدل يمكنك الوصول إليه عند التخرج.</p>
     </div>
 
@@ -42,7 +40,7 @@ const f2 = (n?: number | null) => (n == null ? '' : (Math.round(n * 100) / 100).
     </ResultCard>
 
     <section class="exhibit" aria-labelledby="x-t">
-      <h2 id="x-t" class="exhibit-title"><b>02</b> المطلوب حسب عدد ساعات الفصل</h2>
+      <h2 id="x-t" class="exhibit-title">المطلوب حسب عدد ساعات الفصل</h2>
       <div data-x="table" set:html={gpaTargetTable(r.ok ? r.value : null)} />
     </section>
   </div>
