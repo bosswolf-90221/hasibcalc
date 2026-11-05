@@ -1,5 +1,5 @@
 ---
-// The life-moments layout. Pages move onto it phase by phase; pages still on Base.astro keep the old look until then.
+// The life-moments layout: header, footer and the shared styles of every page.
 import '@fontsource-variable/vazirmatn/wght.css';
 import '../styles/system.css';
 import '../styles/site.css';
@@ -20,11 +20,11 @@ export interface Props {
 const { title, description, path, jsonLd = [], image, noindex = false } = Astro.props;
 const NAV = [
   { href: '/#moments', label: 'المواقف' },
-  { href: '/#index', label: 'كل الحاسبات' },
+  { href: '/calculators/', label: 'كل الحاسبات' },
   { href: '/guides/', label: 'الأدلة' },
   { href: '/about/', label: 'كيف نحسب' },
 ];
-const current = (href: string) => (href !== '/#moments' && href !== '/#index' && path.startsWith(href) ? 'page' : undefined);
+const current = (href: string) => (href !== '/#moments' && path.startsWith(href) ? 'page' : undefined);
 ---
 <!doctype html>
 <html lang="ar" dir="rtl">
@@ -41,9 +41,14 @@ const current = (href: string) => (href !== '/#moments' && href !== '/#index' &&
         <nav class="head-nav" aria-label="روابط رئيسية">
           {NAV.map((n) => <a href={n.href} aria-current={current(n.href)}>{n.label}</a>)}
         </nav>
+        <form class="head-search" role="search" action="/search/" method="get" hidden={path === '/search/'}>
+          <label class="sr-only" for="site-q">ابحث في الموقع</label>
+          <input id="site-q" name="q" type="search" placeholder="ابحث…" autocomplete="off" />
+        </form>
         <details class="head-menu">
           <summary>القائمة</summary>
           <nav aria-label="القائمة">
+            <a href="/search/" aria-current={path === '/search/' ? 'page' : undefined}>البحث</a>
             {NAV.map((n) => <a href={n.href} aria-current={current(n.href)}>{n.label}</a>)}
             {MOMENTS.map((m) => <a class="sub" href={`/moments/${m.slug}/`} aria-current={path === `/moments/${m.slug}/` ? 'page' : undefined}>{m.name}</a>)}
           </nav>
@@ -60,7 +65,9 @@ const current = (href: string) => (href !== '/#moments' && href !== '/#index' &&
         <nav aria-label="المواقف"><h2>المواقف</h2><ul>{MOMENTS.map((m) => <li><a href={`/moments/${m.slug}/`}>{m.name}</a></li>)}</ul></nav>
         <nav aria-label="التصنيفات"><h2>التصنيفات</h2><ul>{CATEGORIES.map((c) => <li><a href={`/category/${c.key}/`}>{c.name}</a></li>)}</ul></nav>
         <nav aria-label="الموقع"><h2>الموقع</h2><ul>
+          <li><a href="/calculators/">كل الحاسبات</a></li>
           <li><a href="/guides/">الأدلة</a></li>
+          <li><a href="/search/">البحث</a></li>
           <li><a href="/about/">من نحن وكيف نحسب</a></li>
           <li><a href="/privacy/">سياسة الخصوصية</a></li>
           <li><a href="/terms/">الشروط والأحكام</a></li>
@@ -69,6 +76,7 @@ const current = (href: string) => (href !== '/#moments' && href !== '/#index' &&
         <p class="foot-legal">© {new Date().getFullYear()} {SITE.name}. النتائج تقديرية لأغراض المعلومات ولا تُغني عن استشارة مختص.</p>
       </div>
     </footer>
+    <button class="to-top" type="button" data-to-top aria-label="العودة إلى أعلى الصفحة"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg></button>
     <script>import '../scripts/interactions';</script>
   </body>
 </html>

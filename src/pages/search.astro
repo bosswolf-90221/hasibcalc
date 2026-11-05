@@ -1,0 +1,71 @@
+---
+// Search over everything on the site. The whole list is in the page, so it still works as a directory without scripts.
+// Not indexed: a results page has no content of its own.
+import '../styles/calc.css';
+import Site from '../layouts/Site.astro';
+import { CALCULATORS } from '../data/calculators';
+import { GUIDES } from '../data/guides';
+import { MOMENTS } from '../data/moments';
+
+const ENTRIES = [
+  { kind: 'موقف', items: MOMENTS.map((m) => ({ href: `/moments/${m.slug}/`, title: m.name, text: m.ask, k: [m.name, m.ask, ...m.shows].join(' ') })) },
+  { kind: 'حاسبة', items: CALCULATORS.map((c) => ({ href: `/${c.slug}/`, title: c.question, text: c.blurb, k: [c.question, c.short, c.blurb, ...c.terms].join(' ') })) },
+  { kind: 'دليل', items: GUIDES.map((g) => ({ href: `/guides/${g.slug}/`, title: g.title, text: g.kicker, k: [g.title, g.description, g.kicker].join(' ') })) },
+];
+---
+<Site title="ابحث في حاسِب" description="ابحث في حاسبات حاسِب وأدلته ومواقفه بكلمة واحدة: نهاية الخدمة، القسط، الزكاة، موعد الراتب، الحمل، المعدل الجامعي وغيرها." path="/search/" noindex>
+  <div class="wrap calc-page">
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">البحث</li></ol></nav>
+    <header class="page-head">
+      <h1 class="t-h1">ابحث في حاسِب</h1>
+    </header>
+    <form class="search-box" role="search" action="/search/" method="get" onsubmit="return false">
+      <label class="sr-only" for="sq">ما الذي تبحث عنه؟</label>
+      <input class="finder-input" id="sq" name="q" type="search" placeholder="قرض، زكاة، موعد الراتب…" autocomplete="off" autofocus />
+    </form>
+    <p class="search-count" id="s-count" role="status" hidden></p>
+    {ENTRIES.map(({ kind, items }) => (
+      <section class="search-group" data-group>
+        <h2>{kind === 'موقف' ? 'المواقف' : kind === 'حاسبة' ? 'الحاسبات' : 'الأدلة'}</h2>
+        <ul class="linklist search-list">
+          {items.map((it) => <li data-k={it.k}><a href={it.href}><b>{it.title}</b><span>{it.text}</span></a></li>)}
+        </ul>
+      </section>
+    ))}
+    <div id="s-none" class="search-none" hidden>
+      <p>لا نتيجة لهذه الكلمة. جرّب كلمة أقصر، أو تصفّح <a class="link" href="/calculators/">كل الحاسبات</a> و<a class="link" href="/guides/">الأدلة</a>، أو <a class="link" href="/contact/">اقترح حاسبة</a>.</p>
+    </div>
+  </div>
+</Site>
+
+<script>
+  import { matches, norm, queryWords } from '../lib/search';
+  const input = document.querySelector<HTMLInputElement>('#sq')!;
+  const count = document.querySelector<HTMLElement>('#s-count')!;
+  const none = document.querySelector<HTMLElement>('#s-none')!;
+  const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-group]')).map((g) => ({
+    g, items: Array.from(g.querySelectorAll<HTMLElement>('li')).map((li) => ({ li, k: norm(li.dataset.k ?? '') })),
+  }));
+  function run() {
+    const words = queryWords(input.value);
+    let total = 0;
+    for (const { g, items } of groups) {
+      let shown = 0;
+      for (const { li, k } of items) { const hit = matches(words, k); li.hidden = !hit; if (hit) shown++; }
+      g.hidden = shown === 0;
+      total += shown;
+    }
+    count.hidden = words.length === 0 || total === 0;
+    count.textContent = total === 1 ? 'نتيجة واحدة' : total === 2 ? 'نتيجتان' : total <= 10 ? `${total} نتائج` : `${total} نتيجة`;
+    none.hidden = total > 0;
+  }
+  input.addEventListener('input', () => {
+    run();
+    const url = new URL(location.href);
+    if (input.value.trim()) url.searchParams.set('q', input.value); else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+  });
+  const fromLink = new URLSearchParams(location.search).get('q');
+  if (fromLink) input.value = fromLink.slice(0, 80);
+  run();
+</script>

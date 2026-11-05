@@ -251,6 +251,48 @@ details.how > summary { cursor: pointer; font-weight: var(--w-bold); min-height:
 .guide-cards a:hover b { color: var(--accent-hover); }
 .guides-how { padding-block: var(--s-6) var(--s-7); }
 
+/* الصفحات النصية */
+.doc { padding-bottom: var(--s-7); }
+.doc > h2:first-child { margin-top: var(--s-4); }
+.mailbox { margin-block: var(--s-4); padding: var(--s-5); border-radius: var(--r-card); background: var(--accent-tint); max-width: var(--measure); }
+.article .mailbox p { margin-bottom: var(--s-2); }
+.mailbox .mail { font-size: 1.25rem; font-weight: var(--w-bold); }
+.article .mailbox .hint { margin-bottom: 0; }
+.cform { display: grid; gap: var(--s-4); max-width: 34rem; margin-block: var(--s-4); }
+.f { display: grid; gap: var(--s-1); }
+.f label { font-size: var(--t-small); font-weight: var(--w-medium); }
+.f input, .f select, .f textarea { min-height: var(--target); padding: 10px 13px; border: 1.5px solid var(--line-strong); border-radius: var(--r-field); background: var(--surface); color: inherit; font: inherit; }
+.f [aria-invalid='true'] { border-color: var(--error); }
+.hp { position: absolute; inset-inline-start: -9999px; }
+.status { min-height: 1.6em; color: var(--ink-soft); }
+
+/* كل الحاسبات والتصنيف */
+.calc-group { margin-top: var(--s-6); scroll-margin-top: var(--s-4); }
+.calc-group > h2 { margin-bottom: var(--s-3); }
+.calc-group > h2 a { text-decoration: none; }
+.calc-group > h2 a:hover { color: var(--accent); }
+.list-foot { margin-block: var(--s-6) var(--s-7); }
+.sec-title { margin-bottom: var(--s-3); }
+.cat-body { margin-top: var(--s-6); max-width: var(--measure); }
+.cat-guides a b, .search-list a b { display: block; font-weight: var(--w-bold); }
+.cat-guides a span, .search-list a span { display: block; font-size: var(--t-small); color: var(--ink-soft); }
+.article .cat-guides { list-style: none; padding: 0; }
+.cat-others { margin-block: var(--s-6) var(--s-7); }
+.cat-others h2 { font-size: 1.05rem; font-weight: var(--w-bold); margin-bottom: var(--s-2); }
+.cat-others ul { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+
+/* البحث و404 */
+.search-box { max-width: 40rem; }
+.search-count { margin-top: var(--s-3); color: var(--ink-soft); font-size: var(--t-small); }
+.search-group { margin-top: var(--s-5); max-width: 46rem; }
+.search-group h2 { font-size: 1.05rem; font-weight: var(--w-bold); margin-bottom: var(--s-1); }
+.search-none { margin-block: var(--s-5) var(--s-7); max-width: 40rem; }
+.search-group:last-of-type { margin-bottom: var(--s-7); }
+.page-head.not-found { padding-top: var(--s-7); }
+.nf-moments { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.nf-moments svg { margin-bottom: var(--s-2); }
+.calc-group:last-child { margin-bottom: var(--s-7); }
+
 /* الجانب */
 .calc-aside { display: grid; gap: var(--s-6); position: sticky; top: 14px; font-size: 0.97rem; }
 .calc-aside h2 { font-size: 1.02rem; font-weight: var(--w-bold); margin-bottom: var(--s-1); }
@@ -271,7 +313,7 @@ details.how > summary { cursor: pointer; font-weight: var(--w-bold); min-height:
   .calc-lower { grid-template-columns: minmax(0, 1fr); }
   .calc-aside { position: static; }
   .guide-toc { display: none; }
-  .guide-cards { grid-template-columns: minmax(0, 1fr); }
+  .guide-cards, .nf-moments { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 480px) {
   .article table:not(.ledger) th { white-space: normal; }

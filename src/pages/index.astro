@@ -62,15 +62,15 @@ const READ = ['end-of-service-guide', 'flat-vs-reducing-interest', 'zakat-step-b
 </Site>
 
 <script>
-  const norm = (s: string) => s.toLowerCase().replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').trim();
+  import { matches, norm, queryWords } from '../lib/search';
   const q = document.querySelector<HTMLInputElement>('#q')!;
   const none = document.querySelector<HTMLElement>('#finder-none')!;
   const items = Array.from(document.querySelectorAll<HTMLElement>('#calc-list li')).map((li) => ({ li, k: norm(li.dataset.k ?? '') }));
   q.addEventListener('input', () => {
-    const words = norm(q.value).split(/\s+/).map((w) => w.replace(/^ال/, '')).filter(Boolean);
+    const words = queryWords(q.value);
     let shown = 0;
     for (const { li, k } of items) {
-      const hit = words.every((w) => k.includes(w));
+      const hit = matches(words, k);
       li.hidden = !hit;
       if (hit) shown++;
     }

@@ -12,6 +12,8 @@
 .head-nav a { text-decoration: none; padding-block: var(--s-2); }
 .head-nav a:hover { color: var(--accent); }
 .head-nav a[aria-current='page'] { color: var(--accent); font-weight: var(--w-bold); }
+.head-search input { width: 150px; min-height: 40px; padding: 6px 12px; border: 1.5px solid var(--line-strong); border-radius: var(--r-field); background: var(--surface); color: inherit; font: inherit; font-size: 0.92rem; }
+.head-search input:focus { outline: 0; width: 200px; border-color: var(--accent); box-shadow: var(--focus-ring); }
 .head-menu { display: none; margin-inline-start: auto; position: relative; }
 .head-menu summary { list-style: none; cursor: pointer; min-height: var(--target); display: flex; align-items: center; padding-inline: var(--s-4); border: 1.5px solid var(--line-strong); border-radius: var(--r-field); font-size: 0.95rem; font-weight: var(--w-medium); }
 .head-menu summary::-webkit-details-marker { display: none; }
@@ -20,6 +22,11 @@
 .head-menu nav a:last-child { border-bottom: 0; }
 .head-menu nav a.sub { color: var(--ink-soft); font-size: var(--t-small); }
 .head-menu nav a[aria-current='page'] { color: var(--accent); font-weight: var(--w-bold); }
+
+/* العودة إلى الأعلى */
+.to-top { position: fixed; inset-inline-end: 16px; bottom: 16px; z-index: 20; display: none; place-items: center; width: var(--target); height: var(--target); border: 1.5px solid var(--line-strong); border-radius: 50%; background: var(--surface); color: var(--ink); cursor: pointer; }
+.to-top.show { display: grid; }
+.to-top:hover { border-color: var(--ink); }
 
 /* التذييل */
 .site-foot { background: var(--ink); color: #e9ece6; }
@@ -98,6 +105,7 @@
 
 @media (max-width: 860px) {
   .head-nav { display: none; }
+  .head-search { display: none; }
   .head-menu { display: block; }
   .moments, .guide-row, .trust-band .wrap, .moment-grid, .moment-links { grid-template-columns: minmax(0, 1fr); }
   .moment-lead { grid-column: auto; flex-direction: column; }
@@ -108,9 +116,10 @@
   .moment-form { position: static; }
   .foot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .foot-about { grid-column: 1 / -1; }
+  .to-top { bottom: 70px; }
 }
 @media print {
-  .site-head, .site-foot, .ad-zone, .result-actions, .skip, .moment-links, .about-sec { display: none !important; }
+  .site-head, .site-foot, .to-top, .ad-zone, .result-actions, .skip, .moment-links, .about-sec { display: none !important; }
   .moment-grid { grid-template-columns: minmax(0, 1fr); }
   .moment-form { position: static; background: none; padding: 0; }
   body { background: #fff; }

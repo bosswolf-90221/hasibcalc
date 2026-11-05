@@ -7,7 +7,7 @@ import { join, sep } from 'node:path';
 
 const DIST = 'dist';
 const walk = (d) => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
-const pages = walk(DIST).map((f) => f.split(sep).join('/')).filter((f) => f.endsWith('.html') && !f.includes('/404'));
+const pages = walk(DIST).map((f) => f.split(sep).join('/')).filter((f) => f.endsWith('.html') && !f.includes('/404') && !f.includes('/search/'));
 const fail = [];
 const warn = [];
 const client = process.env.PUBLIC_ADSENSE_CLIENT_ID || '';

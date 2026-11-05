@@ -1,4 +1,4 @@
-/* مكونات النظام الأساسية. تعتمد على tokens.css فقط، وتحل محل global.css في المرحلة 3. */
+/* مكونات النظام الأساسية. تعتمد على tokens.css فقط. */
 @import './tokens.css';
 
 *, *::before, *::after { box-sizing: border-box; }

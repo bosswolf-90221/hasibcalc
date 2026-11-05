@@ -30,6 +30,14 @@ document.addEventListener('keydown', (e) => {
   el.classList.add('nudge');
 });
 
+// «/» jumps to the site search, as long as the visitor is not typing in a field
+document.addEventListener('keydown', (e) => {
+  const t = e.target;
+  if (e.key !== '/' || t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t instanceof HTMLSelectElement) return;
+  const box = document.querySelector<HTMLInputElement>('#sq, #site-q');
+  if (box && box.offsetParent !== null) { e.preventDefault(); box.focus(); }
+});
+
 // back to top
 const top = document.querySelector<HTMLButtonElement>('[data-to-top]');
 if (top) {

@@ -1,0 +1,18 @@
+---
+// Plain reading pages (about, contact, privacy, terms): the question or title, then the text.
+import '../styles/calc.css';
+import Site from './Site.astro';
+export interface Props { title: string; description: string; path: string; crumb: string; heading: string; lede?: string; updated?: string; noindex?: boolean; jsonLd?: Record<string, unknown>[] }
+const { title, description, path, crumb, heading, lede, updated, noindex = false, jsonLd = [] } = Astro.props;
+---
+<Site title={title} description={description} path={path} noindex={noindex} jsonLd={jsonLd}>
+  <div class="wrap calc-page">
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">{crumb}</li></ol></nav>
+    <header class="page-head">
+      <h1 class="t-h1">{heading}</h1>
+      {lede && <p class="t-lead">{lede}</p>}
+      {updated && <p class="check-line">آخر تحديث: {updated}</p>}
+    </header>
+    <div class="article doc"><slot /></div>
+  </div>
+</Site>

@@ -1,0 +1,40 @@
+---
+import '../styles/calc.css';
+import Site from '../layouts/Site.astro';
+import { SITE } from '../config/site';
+import { CALCULATORS, CATEGORIES } from '../data/calculators';
+import { MOMENTS } from '../data/moments';
+import { plural } from '../lib/format';
+
+const count = plural(CALCULATORS.length, { one: 'حاسبة واحدة', two: 'حاسبتان', few: 'حاسبات', many: 'حاسبة' });
+const tint = (slug: string) => MOMENTS.find((m) => m.calcs.includes(slug))!.tint;
+// Each calculator appears once, under its main category.
+const groups = CATEGORIES.map((cat) => ({ cat, items: CALCULATORS.filter((c) => c.categories[0] === cat.key) })).filter((g) => g.items.length);
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+    { '@type': 'ListItem', position: 2, name: 'كل الحاسبات', item: SITE.url + '/calculators/' },
+  ] },
+  { '@context': 'https://schema.org', '@type': 'ItemList', name: 'كل حاسبات حاسِب', numberOfItems: CALCULATORS.length,
+    itemListElement: CALCULATORS.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.question, url: `${SITE.url}/${c.slug}/` })) },
+];
+---
+<Site title="كل الحاسبات: الراتب والقرض والزكاة والحمل والمعدل" description={`قائمة ${count} عربية مجانية مرتبة بالتصنيف: نهاية الخدمة والراتب والقرض والزكاة والضريبة والخصم والعمر والحمل والمعدل الجامعي، وكل نتيجة معها طريقة حسابها.`} path="/calculators/" jsonLd={jsonLd}>
+  <div class="wrap calc-page">
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">كل الحاسبات</li></ol></nav>
+    <header class="page-head">
+      <p class="guide-meta">{count}</p>
+      <h1 class="t-h1">كل الحاسبات</h1>
+      <p class="t-lead">اختر السؤال الذي يطابق حالتك. وإن كنت في موقف يحتاج إلى أكثر من حساب، فابدأ من <a class="link" href="/#moments">المواقف</a>.</p>
+    </header>
+    {groups.map(({ cat, items }) => (
+      <section class="calc-group" aria-labelledby={`g-${cat.key}`}>
+        <h2 id={`g-${cat.key}`} class="t-h2"><a href={`/category/${cat.key}/`}>{cat.name}</a></h2>
+        <ul class="guide-cards">
+          {items.map((c) => <li style={`--tint: var(--moment-${tint(c.slug)})`}><a href={`/${c.slug}/`}><b>{c.question}</b><span>{c.blurb}</span></a></li>)}
+        </ul>
+      </section>
+    ))}
+    <p class="more-all list-foot">لا تجد ما تريد؟ جرّب <a class="link" href="/search/">البحث</a>، أو <a class="link" href="/contact/">اقترح حاسبة</a>.</p>
+  </div>
+</Site>

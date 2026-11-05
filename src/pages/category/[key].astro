@@ -1,9 +1,10 @@
 ---
-import Base from '../../layouts/Base.astro';
-import CalcIndex from '../../components/CalcIndex.astro';
+import '../../styles/calc.css';
+import Site from '../../layouts/Site.astro';
 import Faq from '../../components/Faq.astro';
-import { CATEGORIES, inCategory, CALCULATORS } from '../../data/calculators';
+import { CATEGORIES, inCategory } from '../../data/calculators';
 import { GUIDES } from '../../data/guides';
+import { MOMENTS } from '../../data/moments';
 import { plural } from '../../lib/format';
 
 export function getStaticPaths() {
@@ -11,50 +12,39 @@ export function getStaticPaths() {
 }
 const cat = CATEGORIES.find((c) => c.key === Astro.params.key)!;
 const items = inCategory(cat.key);
-const outside = CALCULATORS.filter((c) => !c.categories.includes(cat.key));
 const slugs = new Set(items.map((c) => c.slug));
 const guides = GUIDES.filter((g) => slugs.has(g.calc));
+const tint = (slug: string) => MOMENTS.find((m) => m.calcs.includes(slug))!.tint;
 ---
-<Base title={cat.seoTitle} description={cat.description} path={`/category/${cat.key}/`} bare>
-  <div class="stage calc-stage">
-    <div class="container calc-title">
-      <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">{cat.name}</li></ol></nav>
-      <p class="kick">{plural(items.length, { one: 'حاسبة واحدة', two: 'حاسبتان', few: 'حاسبات', many: 'حاسبة' })}</p>
-      <h1>{cat.name}</h1>
-      <p class="lede">{cat.intro}</p>
-    </div>
-  </div>
-  <div class="container">
-    <section class="shelf-cat" aria-label={`حاسبات ${cat.name}`}><CalcIndex items={items} /></section>
-    <section class="sec cat-guide" aria-labelledby="w-h">
-      <h2 id="w-h">أي حاسبة تجيب عن سؤالك؟</h2>
-      <dl>
-        {items.map((c) => <><dt><a href={`/${c.slug}/`}>{c.question}</a></dt><dd>{c.description}</dd></>)}
-      </dl>
+<Site title={cat.seoTitle} description={cat.description} path={`/category/${cat.key}/`}>
+  <div class="wrap calc-page">
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/calculators/">كل الحاسبات</a></li><li aria-current="page">{cat.name}</li></ol></nav>
+    <header class="page-head">
+      <p class="guide-meta">{plural(items.length, { one: 'حاسبة واحدة', two: 'حاسبتان', few: 'حاسبات', many: 'حاسبة' })}</p>
+      <h1 class="t-h1">{cat.name}</h1>
+      <p class="t-lead">{cat.intro}</p>
+    </header>
+    <section aria-labelledby="w-h">
+      <h2 id="w-h" class="t-h2 sec-title">أي حاسبة تجيب عن سؤالك؟</h2>
+      <ul class="guide-cards">
+        {items.map((c) => <li style={`--tint: var(--moment-${tint(c.slug)})`}><a href={`/${c.slug}/`}><b>{c.question}</b><span>{c.description}</span></a></li>)}
+      </ul>
+    </section>
+    <div class="article cat-body">
       {guides.length > 0 && <>
         <h2>أدلة في هذا التصنيف</h2>
-        <ul class="cat-guides">
-          {guides.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a><span>{g.description}</span></li>)}
+        <ul class="linklist cat-guides">
+          {guides.map((g) => <li><a href={`/guides/${g.slug}/`}><b>{g.title}</b><span>{g.description}</span></a></li>)}
         </ul>
       </>}
       <Faq items={cat.faq} />
-    </section>
-    <section class="sec" aria-labelledby="o-h">
-      <div class="sec-head"><h2 id="o-h">من تصنيفات أخرى</h2><p>{CATEGORIES.filter((c) => c.key !== cat.key).map((c, i) => <>{i > 0 && ' · '}<a href={`/category/${c.key}/`}>{c.name}</a></>)}</p></div>
-      <CalcIndex items={outside} compact />
-    </section>
+    </div>
+    <nav class="cat-others" aria-labelledby="o-h">
+      <h2 id="o-h">تصنيفات أخرى</h2>
+      <ul>
+        {CATEGORIES.filter((c) => c.key !== cat.key).map((c) => <li><a class="btn" href={`/category/${c.key}/`}>{c.name}</a></li>)}
+        <li><a class="btn" href="/calculators/">كل الحاسبات</a></li>
+      </ul>
+    </nav>
   </div>
-</Base>
-
-<style>
-  .shelf-cat { margin-top: -88px; position: relative; z-index: 2; }
-  .sec-head a { color: var(--accent); }
-  .cat-guide { max-width: 760px; }
-  .cat-guide dl { margin: 0; }
-  .cat-guide dt { font-weight: 600; margin-top: 18px; }
-  .cat-guide dt a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 4px; }
-  .cat-guide dd { margin: 4px 0 0; color: var(--soft); }
-  .cat-guides { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
-  .cat-guides a { font-weight: 600; color: var(--accent); }
-  .cat-guides span { display: block; color: var(--soft); font-size: .95rem; }
-</style>
+</Site>

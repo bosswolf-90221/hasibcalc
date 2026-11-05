@@ -1,12 +1,29 @@
 ---
-import Base from '../layouts/Base.astro';
+import '../styles/calc.css';
+import MomentIcon from '../components/MomentIcon.astro';
+import Site from '../layouts/Site.astro';
 import { CALCULATORS } from '../data/calculators';
+import { MOMENTS } from '../data/moments';
 ---
-<Base title="الصفحة غير موجودة" description="الصفحة التي تبحث عنها غير موجودة في حاسِب. اختر إحدى الحاسبات المتوفرة: نهاية الخدمة، القسط، الضريبة، الزكاة وغيرها." path="/404/" noindex>
-  <Fragment slot="stage">
-    <p class="kick">404</p>
-    <h1>هذه الصفحة غير موجودة</h1>
-    <p class="lede">ربما تغيّر الرابط أو كُتب بشكل خاطئ. هذه الحاسبات المتوفرة:</p>
-  </Fragment>
-  <ul class="qs">{CALCULATORS.map((c) => <li><a href={`/${c.slug}/`}><span>{c.question}</span><span class="ar" aria-hidden="true">←</span></a></li>)}</ul>
-</Base>
+<Site title="الصفحة غير موجودة" description="الصفحة التي تبحث عنها غير موجودة في حاسِب. اختر إحدى الحاسبات المتوفرة: نهاية الخدمة، القسط، الضريبة، الزكاة وغيرها." path="/404/" noindex>
+  <div class="wrap calc-page">
+    <header class="page-head not-found">
+      <h1 class="t-h1">هذه الصفحة غير موجودة</h1>
+      <p class="t-lead">ربما تغيّر الرابط أو كُتب بشكل خاطئ. ابحث عمّا تريد، أو اختر موقفك.</p>
+    </header>
+    <form class="search-box" role="search" action="/search/" method="get">
+      <label class="sr-only" for="nf-q">ما الذي تبحث عنه؟</label>
+      <input class="finder-input" id="nf-q" name="q" type="search" placeholder="قرض، زكاة، موعد الراتب…" autocomplete="off" />
+    </form>
+    <section class="calc-group" aria-labelledby="nf-m">
+      <h2 id="nf-m" class="t-h2">مواقف الحياة</h2>
+      <ul class="guide-cards nf-moments">
+        {MOMENTS.map((m) => <li style={`--tint: var(--moment-${m.tint})`}><a href={`/moments/${m.slug}/`}><MomentIcon name={m.icon} /><b>{m.name}</b><span>{m.ask}</span></a></li>)}
+      </ul>
+    </section>
+    <section class="calc-group" aria-labelledby="nf-c">
+      <h2 id="nf-c" class="t-h2">الحاسبات المتوفرة</h2>
+      <ul class="calc-list linklist">{CALCULATORS.map((c) => <li><a href={`/${c.slug}/`}>{c.question}</a></li>)}</ul>
+    </section>
+  </div>
+</Site>

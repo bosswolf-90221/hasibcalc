@@ -13,6 +13,7 @@ export const GET: APIRoute = () => {
   const entries: [string, string][] = [
     ['/', all],
     ...MOMENTS.map((m) => [`/moments/${m.slug}/`, m.updated] as [string, string]),
+    ['/calculators/', '2026-11-05'],
     ...CALCULATORS.map((c) => [`/${c.slug}/`, calcDate(c)] as [string, string]),
     ...CATEGORIES.map((k) => [`/category/${k.key}/`, latest(CALCULATORS.filter((c) => c.categories.includes(k.key)).map(calcDate))] as [string, string]),
     ['/guides/', latest(GUIDES.map((g) => g.updated ?? g.date))],
