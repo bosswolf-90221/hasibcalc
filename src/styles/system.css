@@ -2,6 +2,7 @@
 @import './tokens.css';
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); font-size: var(--t-body); line-height: var(--lh-body); caret-color: var(--accent); }
 ::selection { background: var(--accent); color: var(--on-accent); }
@@ -32,7 +33,10 @@ a { color: inherit; }
 .field { display: grid; gap: var(--s-1); }
 .field label { font-size: var(--t-small); font-weight: var(--w-medium); }
 .field input, .field select { width: 100%; min-height: var(--target); padding: 10px 13px; border: 1.5px solid var(--line-strong); border-radius: var(--r-field); background: var(--surface); color: var(--ink); font: inherit; font-size: 1.05rem; }
-.field input[inputmode], .field input[type='date'] { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+.field input[inputmode] { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+.field input[type='date'] { font-variant-numeric: tabular-nums; }
+/* في متصفح واجهته عربية تظهر حروف «يوم/شهر/سنة» مقلوبة دون هذا السطر */
+.field input[type='date']::-webkit-datetime-edit-day-field, .field input[type='date']::-webkit-datetime-edit-month-field, .field input[type='date']::-webkit-datetime-edit-year-field { unicode-bidi: plaintext !important; }
 .field input:hover, .field select:hover { border-color: var(--ink); }
 .field input:focus, .field select:focus { outline: 0; border-color: var(--accent); box-shadow: var(--focus-ring); }
 .field small { font-size: var(--t-micro); color: var(--ink-soft); }
@@ -65,6 +69,7 @@ a { color: inherit; }
 
 /* تنبيهات */
 .note { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: var(--s-2); padding: var(--s-4); border-radius: var(--r-field); font-size: var(--t-small); }
+.note:not(:has(svg)) { grid-template-columns: minmax(0, 1fr); }
 .note svg { margin-top: 3px; }
 .note-info { background: var(--info-bg); --c: var(--info); }
 .note-success { background: var(--success-bg); --c: var(--success); }

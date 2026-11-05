@@ -1,0 +1,73 @@
+---
+// The life-moments layout. Pages move onto it phase by phase; pages still on Base.astro keep the old look until then.
+import '@fontsource-variable/vazirmatn/wght.css';
+import '../styles/system.css';
+import '../styles/site.css';
+import arabicFont from '@fontsource-variable/vazirmatn/files/vazirmatn-arabic-wght-normal.woff2?url';
+import Head from '../components/Head.astro';
+import { SITE } from '../config/site';
+import { MOMENTS } from '../data/moments';
+import { CATEGORIES } from '../data/calculators';
+
+export interface Props {
+  title: string;
+  description: string;
+  path: string;
+  jsonLd?: Record<string, unknown>[];
+  image?: string;
+  noindex?: boolean;
+}
+const { title, description, path, jsonLd = [], image, noindex = false } = Astro.props;
+const NAV = [
+  { href: '/#moments', label: 'المواقف' },
+  { href: '/#index', label: 'كل الحاسبات' },
+  { href: '/guides/', label: 'الأدلة' },
+  { href: '/about/', label: 'كيف نحسب' },
+];
+const current = (href: string) => (href !== '/#moments' && href !== '/#index' && path.startsWith(href) ? 'page' : undefined);
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <Head title={title} description={description} path={path} jsonLd={jsonLd} image={image} noindex={noindex} themeColor="#ffffff">
+      <link rel="preload" href={arabicFont} as="font" type="font/woff2" crossorigin />
+    </Head>
+  </head>
+  <body>
+    <a class="skip" href="#main">انتقل إلى المحتوى</a>
+    <header class="site-head">
+      <div class="wrap head-row">
+        <a class="brand" href="/" aria-label={`${SITE.name}، الصفحة الرئيسية`}><img src="/brand/logo.svg" alt="" width="104" height="43" /></a>
+        <nav class="head-nav" aria-label="روابط رئيسية">
+          {NAV.map((n) => <a href={n.href} aria-current={current(n.href)}>{n.label}</a>)}
+        </nav>
+        <details class="head-menu">
+          <summary>القائمة</summary>
+          <nav aria-label="القائمة">
+            {NAV.map((n) => <a href={n.href} aria-current={current(n.href)}>{n.label}</a>)}
+            {MOMENTS.map((m) => <a class="sub" href={`/moments/${m.slug}/`} aria-current={path === `/moments/${m.slug}/` ? 'page' : undefined}>{m.name}</a>)}
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-foot">
+      <div class="wrap foot-grid">
+        <div class="foot-about">
+          <a href="/" aria-label={`${SITE.name}، الصفحة الرئيسية`}><img src="/brand/logo-white.svg" alt="" width="104" height="43" /></a>
+          <p>حاسبات عربية مجانية لمواقف الحياة. كل نتيجة معها طريقة حسابها.</p>
+        </div>
+        <nav aria-label="المواقف"><h2>المواقف</h2><ul>{MOMENTS.map((m) => <li><a href={`/moments/${m.slug}/`}>{m.name}</a></li>)}</ul></nav>
+        <nav aria-label="التصنيفات"><h2>التصنيفات</h2><ul>{CATEGORIES.map((c) => <li><a href={`/category/${c.key}/`}>{c.name}</a></li>)}</ul></nav>
+        <nav aria-label="الموقع"><h2>الموقع</h2><ul>
+          <li><a href="/guides/">الأدلة</a></li>
+          <li><a href="/about/">من نحن وكيف نحسب</a></li>
+          <li><a href="/privacy/">سياسة الخصوصية</a></li>
+          <li><a href="/terms/">الشروط والأحكام</a></li>
+          <li><a href="/contact/">اتصل بنا</a></li>
+        </ul></nav>
+        <p class="foot-legal">© {new Date().getFullYear()} {SITE.name}. النتائج تقديرية لأغراض المعلومات ولا تُغني عن استشارة مختص.</p>
+      </div>
+    </footer>
+  </body>
+</html>

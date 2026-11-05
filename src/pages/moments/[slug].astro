@@ -1,0 +1,204 @@
+---
+import AdSlot from '../../components/AdSlot.astro';
+import Site from '../../layouts/Site.astro';
+import { SITE } from '../../config/site';
+import { bySlug } from '../../data/calculators';
+import { GUIDES } from '../../data/guides';
+import { initialFields, MOMENTS, type Moment } from '../../data/moments';
+import { BASIS_LABEL, VERIFICATION } from '../../data/verification';
+import { toISODate } from '../../lib/calc/core';
+import { arDate } from '../../lib/format';
+import { ACTIVITY_OPTIONS, computeMoment } from '../../lib/moments';
+
+export function getStaticPaths() {
+  return MOMENTS.map((m) => ({ params: { slug: m.slug }, props: { m } }));
+}
+const { m } = Astro.props as { m: Moment };
+const today = toISODate(new Date());
+const values = initialFields(m, today);
+const view = computeMoment(m.slug, values, today);
+const path = `/moments/${m.slug}/`;
+const check = VERIFICATION[`moment:${m.slug}`];
+const guides = m.guides.map((s) => GUIDES.find((g) => g.slug === s)!);
+const hidden = (f: Moment['fields'][number]) => Boolean(f.showIf && values[f.showIf.name] !== f.showIf.value);
+const CHECK = '<path d="M5 12l5 5 9-10"/>';
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: m.title, description: m.description, url: SITE.url + path, inLanguage: 'ar', dateModified: m.updated },
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+    { '@type': 'ListItem', position: 2, name: m.name, item: SITE.url + path },
+  ] },
+];
+const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
+---
+<Site title={m.seoTitle} description={m.description} path={path} jsonLd={jsonLd}>
+  <div class="wrap" data-moment={m.slug}>
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/#moments">المواقف</a></li><li aria-current="page">{m.name}</li></ol></nav>
+    <header class="page-head">
+      <h1 class="t-h1">{m.title}</h1>
+      <p class="t-lead">{m.lead}</p>
+    </header>
+    <div class="moment-grid">
+      <form class="moment-form" style={`--tint:var(--moment-${m.tint})`} novalidate aria-label="بياناتك">
+        <h2>بياناتك</h2>
+        {m.fields.map((f) => (
+          <div class="field-wrap" data-show-name={f.showIf?.name} data-show-value={f.showIf?.value} hidden={hidden(f)}>
+            {f.kind === 'choice' ? (
+              <fieldset class="choice">
+                <legend>{f.label}</legend>
+                {f.options!.map((o) => <label><input type="radio" name={f.name} value={o.value} checked={o.value === values[f.name]} />{o.label}</label>)}
+              </fieldset>
+            ) : f.kind === 'select' ? (
+              <div class="field"><label for={`f-${f.name}`}>{f.label}</label><select id={`f-${f.name}`} name={f.name}>{(f.options ?? ACTIVITY_OPTIONS).map((o) => <option value={o.value} selected={o.value === values[f.name]}>{o.label}</option>)}</select></div>
+            ) : (
+              <div class="field">
+                <label for={`f-${f.name}`}>{f.label}</label>
+                <input id={`f-${f.name}`} name={f.name} value={values[f.name]} data-today={f.today ? 'true' : undefined} data-default={values[f.name]} {...(f.kind === 'date' ? { type: 'date' } : { inputmode: 'decimal', autocomplete: 'off' })} aria-describedby={f.hint ? `h-${f.name}` : undefined} />
+                {f.hint && <small id={`h-${f.name}`}>{f.hint}</small>}
+              </div>
+            )}
+          </div>
+        ))}
+        {m.example && <p class="example-note" data-example>مثال توضيحي. غيّر القيم لتحسب حالتك.</p>}
+      </form>
+
+      <div class="moment-result">
+        <div data-view aria-live="polite">
+          {view.state === 'ok' ? (
+            <>
+              <span class="result-label" data-o="label">{view.label}</span>
+              <span class:list={['result-value', view.wide ? 'result-wide' : 'result-num num']} data-o="value">{view.value}</span>
+              <span class="result-unit" data-o="unit" hidden={!view.unit}>{view.unit}</span>
+            </>
+          ) : view.state === 'empty' ? (
+            <p class="empty-state" data-o="prompt">{view.prompt}</p>
+          ) : (
+            <p class="field-error" role="alert">{view.message}</p>
+          )}
+        </div>
+        <div class="split" data-split aria-hidden="true" hidden={!(view.state === 'ok' && view.split)}>
+          <i class="a" style={view.state === 'ok' && view.split ? `width:${view.split[0] * 100}%` : ''}></i>
+          <i class="b" style={view.state === 'ok' && view.split ? `width:${view.split[1] * 100}%` : ''}></i>
+        </div>
+        <ol class="steps" data-steps>
+          {view.state === 'ok' && view.steps.map((s) => (
+            <li>
+              <h3 class="t-h3">{s.title}</h3>
+              {s.value && <span class:list={['step-value', isWideValue(s.value) ? 'wide' : 'num']}>{s.value}</span>}
+              {(s.text || s.href) && <p>{s.text}{s.href && <> <a class="link" href={s.href}>{s.link}</a></>}</p>}
+            </li>
+          ))}
+        </ol>
+        <ul class="notes-list" data-notes>{view.state === 'ok' && view.notes?.map((n) => <li class="note note-info"><span>{n}</span></li>)}</ul>
+        <div class="result-actions">
+          <button class="btn" type="button" data-copy data-needs-result hidden={view.state !== 'ok'}>انسخ النتيجة</button>
+          <button class="btn" type="button" data-print data-needs-result hidden={view.state !== 'ok'}>اطبع</button>
+          <button class="btn" type="button" data-reset>ابدأ من جديد</button>
+          <span class="copy-done" data-copied role="status"></span>
+        </div>
+
+        <section class="next-box" aria-labelledby="next-h">
+          <h2 id="next-h">وماذا بعد؟</h2>
+          <ul>{m.next.map((n) => <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={CHECK} /><span>{n}</span></li>)}</ul>
+        </section>
+
+        <AdSlot position="afterCalculator" />
+
+        <section class="about-sec" aria-labelledby="about-h">
+          <h2 id="about-h" class="t-h2">كيف حسبناها؟</h2>
+          {m.about.map((p) => <p>{p}</p>)}
+        </section>
+
+        <div class="moment-links">
+          <nav aria-label="حاسبات هذا الموقف"><h2>حاسبات هذا الموقف</h2><ul class="linklist">{m.calcs.map((s) => <li><a href={`/${s}/`}>{bySlug(s).question}</a></li>)}</ul></nav>
+          {guides.length > 0 && <nav aria-label="أدلة هذا الموقف"><h2>للفهم أكثر</h2><ul class="linklist">{guides.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul></nav>}
+        </div>
+
+        <section class="sources" aria-labelledby="src-h">
+          <h2 id="src-h">المصادر</h2>
+          <ul>{m.sources.map((s) => <li><a class="link" href={s.href} rel="noopener" target="_blank">{s.label}</a></li>)}</ul>
+          <p class="check-line">{BASIS_LABEL[check.basis]}{check.verified ? `: ${arDate(check.verified)}` : ''}. وآخر تعديل لنص الصفحة: {arDate(m.updated)}.{m.health && ' هذه الصفحة للمعلومات العامة وليست استشارة طبية.'}</p>
+        </section>
+      </div>
+    </div>
+  </div>
+</Site>
+
+<script>
+  import { localTodayISO } from '../../lib/calc/core';
+  import { computeMoment, type Fields, type MomentView } from '../../lib/moments';
+
+  const root = document.querySelector<HTMLElement>('[data-moment]')!;
+  const slug = root.dataset.moment!;
+  const form = root.querySelector<HTMLFormElement>('form')!;
+  const viewBox = root.querySelector<HTMLElement>('[data-view]')!;
+  const split = root.querySelector<HTMLElement>('[data-split]')!;
+  const stepsEl = root.querySelector<HTMLElement>('[data-steps]')!;
+  const notesEl = root.querySelector<HTMLElement>('[data-notes]')!;
+  const inputs = () => Array.from(form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input,select'));
+  const el = (tag: string, cls?: string, text?: string) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+  const isArabic = (v: string) => /[؀-ۿ]/.test(v);
+
+  function read(): Fields {
+    const f: Fields = {};
+    for (const i of inputs()) {
+      if (i instanceof HTMLInputElement && i.type === 'radio') { if (i.checked) f[i.name] = i.value; }
+      else f[i.name] = i.value;
+    }
+    return f;
+  }
+  let last: MomentView | null = null;
+  function paint(view: MomentView) {
+    last = view;
+    root.querySelectorAll<HTMLElement>('[data-needs-result]').forEach((b) => { b.hidden = view.state !== 'ok'; });
+    viewBox.replaceChildren();
+    for (const i of inputs()) i.removeAttribute('aria-invalid');
+    if (view.state === 'empty') viewBox.append(el('p', 'empty-state', view.prompt));
+    if (view.state === 'error') {
+      const p = el('p', 'field-error', view.message); p.setAttribute('role', 'alert'); viewBox.append(p);
+      const bad = view.field && form.querySelector(`[name="${CSS.escape(view.field)}"]`);
+      if (bad) bad.setAttribute('aria-invalid', 'true');
+    }
+    if (view.state === 'ok') {
+      viewBox.append(el('span', 'result-label', view.label), el('span', `result-value ${view.wide ? 'result-wide' : 'result-num num'}`, view.value));
+      if (view.unit) viewBox.append(el('span', 'result-unit', view.unit));
+    }
+    const has = view.state === 'ok' && view.split;
+    split.hidden = !has;
+    if (view.state === 'ok' && view.split) {
+      split.querySelector<HTMLElement>('.a')!.style.width = `${view.split[0] * 100}%`;
+      split.querySelector<HTMLElement>('.b')!.style.width = `${view.split[1] * 100}%`;
+    }
+    stepsEl.replaceChildren(...(view.state === 'ok' ? view.steps : []).map((s) => {
+      const li = el('li'); li.append(el('h3', 't-h3', s.title));
+      if (s.value) li.append(el('span', `step-value ${isArabic(s.value) ? 'wide' : 'num'}`, s.value));
+      if (s.text || s.href) {
+        const p = el('p', undefined, s.text ? `${s.text} ` : '');
+        if (s.href) { const a = el('a', 'link', s.link) as HTMLAnchorElement; a.href = s.href; p.append(a); }
+        li.append(p);
+      }
+      return li;
+    }));
+    notesEl.replaceChildren(...(view.state === 'ok' ? view.notes ?? [] : []).map((n) => { const li = el('li', 'note note-info'); li.append(el('span', undefined, n)); return li; }));
+  }
+  function update() {
+    const f = read();
+    form.querySelectorAll<HTMLElement>('[data-show-name]').forEach((w) => { w.hidden = f[w.dataset.showName!] !== w.dataset.showValue; });
+    paint(computeMoment(slug, f, localTodayISO()));
+  }
+  // The build's date may be old by the time a visitor arrives.
+  const syncToday = () => form.querySelectorAll<HTMLInputElement>('input[data-today]').forEach((i) => { i.value = localTodayISO(); });
+  syncToday();
+  form.addEventListener('submit', (e) => e.preventDefault());
+  form.addEventListener('input', () => { root.querySelector<HTMLElement>('[data-example]')?.setAttribute('hidden', ''); update(); });
+  root.querySelector('[data-reset]')!.addEventListener('click', () => { form.reset(); inputs().forEach((i) => { if (i instanceof HTMLInputElement && i.dataset.default !== undefined) i.value = i.dataset.default; }); syncToday(); root.querySelector<HTMLElement>('[data-example]')?.removeAttribute('hidden'); update(); });
+  root.querySelector('[data-print]')!.addEventListener('click', () => window.print());
+  const copied = root.querySelector<HTMLElement>('[data-copied]')!;
+  root.querySelector('[data-copy]')!.addEventListener('click', async () => {
+    if (!last || last.state !== 'ok') { copied.textContent = 'اكتب بياناتك أولاً.'; return; }
+    const lines = [`${last.label}: ${last.value}${last.unit ? ` ${last.unit}` : ''}`, ...last.steps.filter((s) => s.value).map((s) => `${s.title}: ${s.value}`), location.origin + location.pathname];
+    try { await navigator.clipboard.writeText(lines.join('\n')); copied.textContent = 'نسخنا النتيجة.'; }
+    catch { copied.textContent = 'لم نتمكن من النسخ في هذا المتصفح.'; }
+  });
+  update();
+</script>

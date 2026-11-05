@@ -35,6 +35,16 @@ export const VERIFICATION: Record<string, Verification> = {
   gosi: partial, // wage floors come from an undated official FAQ
   gpa: official,
   'gpa-target': math,
+  // life moments
+  'moment:leaving-job': partial,
+  'moment:monthly-pay': partial, // no official 2027 salary calendar; GOSI floors from an undated FAQ
+  'moment:taking-loan': official,
+  'moment:ramadan-zakat': partial,
+  'moment:expecting-baby': partial,
+  'moment:health-weight': partial,
+  'moment:shopping': official,
+  'moment:university': official,
+  'moment:dates-ages': partial,
   // guides
   'guide:end-of-service-guide': partial,
   'guide:flat-vs-reducing-interest': official,

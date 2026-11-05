@@ -7,7 +7,8 @@ import '../styles/global.css';
 import ar300 from '@fontsource/readex-pro/files/readex-pro-arabic-300-normal.woff2?url';
 import ar600 from '@fontsource/readex-pro/files/readex-pro-arabic-600-normal.woff2?url';
 import la600 from '@fontsource/readex-pro/files/readex-pro-latin-600-normal.woff2?url';
-import { SITE, ADS, ANALYTICS } from '../config/site';
+import Head from '../components/Head.astro';
+import { SITE } from '../config/site';
 import { CALCULATORS, CATEGORIES } from '../data/calculators';
 
 export interface Props {
@@ -20,37 +21,13 @@ export interface Props {
   image?: string; // social preview, site-relative
 }
 const { title, description, path, bare = false, noindex = false, jsonLd = [], image = '/og.png' } = Astro.props;
-const canonical = SITE.url + path;
-const fullTitle = path === '/' ? title : `${title} | ${SITE.name}`;
-const ld = [{ '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.name, url: SITE.url + '/', inLanguage: 'ar' }, ...jsonLd];
 ---
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>{fullTitle}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#0b1020" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {[ar300, ar600, la600].map((f) => <link rel="preload" href={f} as="font" type="font/woff2" crossorigin />)}
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:locale" content={SITE.locale} />
-    <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={SITE.url + image} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta name="twitter:card" content="summary_large_image" />
-    {ANALYTICS.searchConsoleToken && <meta name="google-site-verification" content={ANALYTICS.searchConsoleToken} />}
-    <meta name="msvalidate.01" content="E0CD9B525F8D327D4B8FF7032845D07F" />
-    {ADS.enabled && <meta name="google-adsense-account" content={ADS.client} />}
-    {ADS.enabled && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADS.client}`} crossorigin="anonymous"></script>}
-    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <Head title={title} description={description} path={path} noindex={noindex} jsonLd={jsonLd} image={image}>
+      {[ar300, ar600, la600].map((f) => <link rel="preload" href={f} as="font" type="font/woff2" crossorigin />)}
+    </Head>
   </head>
   <body>
     <div class="read-progress" aria-hidden="true"></div>
