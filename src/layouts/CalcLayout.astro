@@ -68,6 +68,15 @@ const jsonLd = [
           <b>{moment.name}</b>
           <span>{moment.ask}</span>
         </a>
+        <section>
+          <h2>لماذا تثق بالنتيجة؟</h2>
+          <ul class="trust-list">
+            <li>المعادلة مكتوبة تحت «كيف حسبناها؟»</li>
+            {check.basis === 'math' ? <li>حساب رياضي لا يحتاج إلى مصدر قانوني</li> : <li>مصادر القواعد في آخر الشرح</li>}
+            <li>الحساب في متصفحك، ولا تغادر أرقامك جهازك</li>
+            {check.verified && <li>آخر تحقق من المصادر: {arDate(check.verified)}</li>}
+          </ul>
+        </section>
         {guides.length > 0 && (
           <section><h2>أدلة مرتبطة</h2><ul class="linklist">{guides.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul></section>
         )}
