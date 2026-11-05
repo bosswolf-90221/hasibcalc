@@ -150,7 +150,7 @@ function expectingBaby(f: Fields): MomentView {
     state: 'ok', label: 'موعد التبويض المتوقع', value: arDate(o.focus.ovulation), wide: true,
     steps: [
       { title: 'أيام الخصوبة', value: `${arDate(o.focus.fertileStart)} إلى ${arDate(o.focus.fertileEnd)}`, text: 'الحساب تقديري، ولا يصلح وسيلة لمنع الحمل.', href: '/ovulation/', link: 'الأشهر الثلاثة القادمة' },
-      { title: 'الدورة القادمة', value: arDate(o.focus.nextStart), text: dayCount(o.daysToNextPeriod) + '.' },
+      { title: 'الدورة القادمة', value: arDate(o.current.nextStart), text: dayCount(o.daysToNextPeriod) + '.' },
     ],
     notes,
   };

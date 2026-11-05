@@ -38,6 +38,13 @@ document.addEventListener('keydown', (e) => {
   if (box && box.offsetParent !== null) { e.preventDefault(); box.focus(); }
 });
 
+// A table wider than the screen scrolls sideways, and keyboard users must be able to do that too
+const markScrollers = () => document.querySelectorAll<HTMLElement>('.scroll-x').forEach((el) => {
+  if (el.scrollWidth > el.clientWidth) { el.tabIndex = 0; el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'جدول يمكن تمريره جانباً'); } else { el.removeAttribute('tabindex'); el.removeAttribute('role'); el.removeAttribute('aria-label'); }
+});
+markScrollers();
+window.addEventListener('resize', markScrollers);
+
 // back to top
 const top = document.querySelector<HTMLButtonElement>('[data-to-top]');
 if (top) {

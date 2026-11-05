@@ -126,7 +126,7 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
 
 <script>
   import { mountPeek } from '../../scripts/peek';
-  import { localTodayISO } from '../../lib/calc/core';
+  import { localTodayISO, toNumber } from '../../lib/calc/core';
   import { computeMoment, type Fields, type MomentView } from '../../lib/moments';
 
   const root = document.querySelector<HTMLElement>('[data-moment]')!;
@@ -148,10 +148,12 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
     }
     return f;
   }
+  const copied = root.querySelector<HTMLElement>('[data-copied]')!;
   let last: MomentView | null = null;
   const peek = mountPeek(form, viewBox);
   function paint(view: MomentView) {
     last = view;
+    copied.textContent = '';
     const isExample = root.querySelector<HTMLElement>('[data-example]')?.hidden === false;
     if (view.state === 'ok') peek(`${isExample ? 'مثال: ' : ''}${view.label}`, view.unit ? `${view.value} ${view.unit}` : view.value); else peek();
     root.querySelectorAll<HTMLElement>('[data-needs-result]').forEach((b) => { b.hidden = view.state !== 'ok'; });
@@ -188,7 +190,9 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
   function update() {
     const f = read();
     form.querySelectorAll<HTMLElement>('[data-show-name]').forEach((w) => { w.hidden = f[w.dataset.showName!] !== w.dataset.showValue; });
-    paint(computeMoment(slug, f, localTodayISO()));
+    // Text we cannot read is an error, never a silent zero.
+    const notNumber = inputs().find((i) => i instanceof HTMLInputElement && i.inputMode === 'decimal' && !i.closest('[hidden]') && i.value.trim() !== '' && toNumber(i.value) === null);
+    paint(notNumber ? { state: 'error', message: 'اكتب رقماً صحيحاً، مثل 1500.', field: notNumber.name } : computeMoment(slug, f, localTodayISO()));
   }
   // The build's date may be old by the time a visitor arrives.
   const syncToday = () => form.querySelectorAll<HTMLInputElement>('input[data-today]').forEach((i) => { i.value = localTodayISO(); });
@@ -197,12 +201,23 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
   form.addEventListener('input', () => { root.querySelector<HTMLElement>('[data-example]')?.setAttribute('hidden', ''); update(); });
   root.querySelector('[data-reset]')!.addEventListener('click', () => { form.reset(); inputs().forEach((i) => { if (i instanceof HTMLInputElement && i.dataset.default !== undefined) i.value = i.dataset.default; }); syncToday(); root.querySelector<HTMLElement>('[data-example]')?.removeAttribute('hidden'); update(); });
   root.querySelector('[data-print]')!.addEventListener('click', () => window.print());
-  const copied = root.querySelector<HTMLElement>('[data-copied]')!;
   root.querySelector('[data-copy]')!.addEventListener('click', async () => {
     if (!last || last.state !== 'ok') { copied.textContent = 'اكتب بياناتك أولاً.'; return; }
     const lines = [`${last.label}: ${last.value}${last.unit ? ` ${last.unit}` : ''}`, ...last.steps.filter((s) => s.value).map((s) => `${s.title}: ${s.value}`), location.origin + location.pathname];
     try { await navigator.clipboard.writeText(lines.join('\n')); copied.textContent = 'نسخنا النتيجة.'; }
     catch { copied.textContent = 'لم نتمكن من النسخ في هذا المتصفح.'; }
   });
-  update();
+  // The browser restores fields on Back after this script first ran.
+  const syncRestored = () => {
+    const changed = inputs().some((i) => {
+      if (i instanceof HTMLInputElement && i.dataset.today !== undefined) return false;
+      if (i instanceof HTMLInputElement && i.type === 'radio') return i.checked !== i.defaultChecked;
+      if (i instanceof HTMLSelectElement) return Array.from(i.options).some((o) => o.selected !== o.defaultSelected);
+      return i.value !== i.defaultValue;
+    });
+    if (changed) root.querySelector<HTMLElement>('[data-example]')?.setAttribute('hidden', '');
+    update();
+  };
+  window.addEventListener('pageshow', syncRestored);
+  syncRestored();
 </script>

@@ -26,6 +26,11 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
   let toastTimer = 0;
 
   const fieldEls = () => Array.from(root.querySelectorAll<HTMLElement>('[data-field]'));
+  const hadExample = root.querySelector<HTMLElement>('[data-example]')?.hidden === false;
+  const isAtDefaults = () => fieldEls().every((el) => {
+    if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement) return el.value === (el.dataset.default ?? '');
+    return (el.querySelector<HTMLInputElement>('input:checked')?.value ?? '') === (el.dataset.default ?? '');
+  });
 
   function read(): Fields {
     const f: Fields = {};
@@ -65,8 +70,12 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
 
   // The answer and what depends on it appear together, or not at all: no stale number beside a blank field.
   function showDependents(on: boolean) {
-    if (!on) peek();
     root.querySelectorAll<HTMLElement>('.exhibit, .addcal, [data-needs-result]').forEach((el) => { el.hidden = !on; });
+    if (!on) {
+      peek();
+      clearTimeout(liveTimer);
+      $('live').textContent = '';
+    }
   }
   // The numbers on screen stop being an example as soon as the visitor changes one.
   function dropExample() {
@@ -75,6 +84,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
 
   function render(view: View) {
     result.dataset.state = 'ok';
+    $('label').hidden = false;
     $('error').hidden = true;
     $('label').textContent = view.label;
     $('unit').textContent = view.unit;
@@ -122,6 +132,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     result.dataset.state = 'blank';
     $('error').hidden = true;
     $('badge').hidden = true;
+    $('label').hidden = /\d/.test($('label').textContent ?? '');
     $('sentence').textContent = 'اكتب بياناتك في الخانات لتظهر النتيجة.';
     $('rows').replaceChildren();
     const wiBox = result.querySelector<HTMLElement>('[data-r="whatif-box"]');
@@ -131,8 +142,22 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     showDependents(false);
   }
 
+  const unreadable = (): FieldError[] => fieldEls()
+    .filter((el): el is HTMLInputElement => el instanceof HTMLInputElement && el.inputMode === 'decimal' && el.value.trim() !== '' && toNumber(el.value) === null)
+    .map((el) => ({ field: el.dataset.field!, message: 'اكتب رقماً صحيحاً، مثل 1500.' }));
+
   function update() {
     const f = read();
+    const notNumbers = unreadable();
+    if (notNumbers.length) {
+      showErrors(notNumbers);
+      result.dataset.state = 'error';
+      const err = $('error');
+      err.textContent = notNumbers[0].message;
+      err.hidden = false;
+      showDependents(false);
+      return;
+    }
     const { result: r, view } = opts.compute(f);
     if (!r.ok) {
       const real = r.errors.filter((e) => !isEmpty(e.field));
@@ -223,17 +248,24 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
         if (!(el instanceof HTMLInputElement)) continue;
         el.value = el.type === 'date' ? (el.dataset.default ?? '') : '';
       }
+      // Back on the example dates, the result is the example again, so it says so again.
+      if (hadExample && isAtDefaults()) root.querySelectorAll<HTMLElement>('[data-example]').forEach((el) => { el.hidden = false; });
       update();
       root.querySelector<HTMLInputElement>('[data-field] input:not([type=date]):not([type=radio]), input[data-field]:not([type=date])')?.focus();
       toast('أعدنا الخانات إلى بدايتها');
     } else if (act === 'clear-url') {
       history.replaceState(null, '', location.pathname);
-      $('from-url').hidden = true;
+      document.querySelectorAll<HTMLElement>('[data-r="from-url"]').forEach((el) => { el.hidden = true; });
       toast('حذفنا أرقامك من الرابط');
     }
   });
 
-  update();
+  const syncRestored = () => {
+    if (!isAtDefaults()) dropExample();
+    update();
+  };
+  window.addEventListener('pageshow', syncRestored);
+  syncRestored();
   return { update, read, write };
 }
 

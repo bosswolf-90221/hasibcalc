@@ -42,7 +42,7 @@ const current = (href: string) => (href !== '/#moments' && path.startsWith(href)
         <nav class="head-nav" aria-label="روابط رئيسية">
           {NAV.map((n) => <a href={n.href} aria-current={current(n.href)}>{n.label}</a>)}
         </nav>
-        <form class="head-search" role="search" action="/search/" method="get" hidden={path === '/search/'}>
+        <form class="head-search" role="search" aria-label="البحث في الموقع" action="/search/" method="get" hidden={path === '/search/'}>
           <label class="sr-only" for="site-q">ابحث في الموقع</label>
           <input id="site-q" name="q" type="search" placeholder="ابحث…" autocomplete="off" />
         </form>

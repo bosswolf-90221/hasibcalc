@@ -5,7 +5,7 @@ import { initialFields, MOMENTS } from '../src/data/moments';
 import { VERIFICATION } from '../src/data/verification';
 import { calcDues } from '../src/lib/calc/exit-dues';
 import { calcLoan } from '../src/lib/calc/loan';
-import { money } from '../src/lib/format';
+import { arDate, money } from '../src/lib/format';
 import { computeMoment } from '../src/lib/moments';
 
 const TODAY = '2026-11-05';
@@ -116,5 +116,16 @@ describe('each moment reports the same numbers as its calculators', () => {
   test('dates and ages always show today, and the age once a birth date is given', () => {
     expect(ok('dates-ages').steps[0].title).toBe('تاريخ اليوم بالهجري');
     expect(ok('dates-ages', { birth: '1995-01-01' }).label).toBe('عمرك بالضبط');
+  });
+});
+
+describe('expecting-baby: the next period', () => {
+  test('shows the same cycle the countdown counts to', () => {
+    const v = computeMoment('expecting-baby', { stage: 'planning', lmp: '2026-10-16', cycle: '28', period: '5', today: '2026-11-05' }, '2026-11-05');
+    expect(v.state).toBe('ok');
+    if (v.state !== 'ok') return;
+    const step = v.steps.find((x) => x.title === 'الدورة القادمة')!;
+    expect(step.value).toBe(arDate('2026-11-13'));
+    expect(step.text).toContain('8');
   });
 });

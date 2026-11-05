@@ -95,7 +95,13 @@ const DIVS = [{ value: '30', label: '÷ 30' }, { value: '365', label: '× 12 ÷ 
   import { calcLeave } from '../lib/calc/annual-leave';
   import { leaveView } from '../lib/views-extra';
   import { leaveTable } from '../lib/exhibits-extra';
+  import { localTodayISO } from '../lib/calc/core';
   const root = document.querySelector<HTMLElement>('[data-calc="annual-leave"]')!;
+  const end = root.querySelector<HTMLInputElement>('#f-endDate')!;
+  if (!new URLSearchParams(location.search).has('endDate')) {
+    end.value = localTodayISO();
+    end.dataset.default = end.value;
+  }
   mountCalculator(root, {
     compute: (f) => {
       const result = calcLeave({ salary: num(f.salary), startDate: f.startDate, endDate: f.endDate, annualDays: num(f.annualDays), takenDays: num(f.takenDays), divisor: f.divisor === '365' ? '365' : '30' });
