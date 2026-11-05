@@ -12,6 +12,7 @@ export const GET: APIRoute = () => {
   const all = latest([...CALCULATORS.map(calcDate), ...GUIDES.map((g) => g.updated ?? g.date), ...MOMENTS.map((m) => m.updated)]);
   const entries: [string, string][] = [
     ['/', all],
+    ['/moments/', latest(MOMENTS.map((m) => m.updated))],
     ...MOMENTS.map((m) => [`/moments/${m.slug}/`, m.updated] as [string, string]),
     ['/calculators/', '2026-11-05'],
     ...CALCULATORS.map((c) => [`/${c.slug}/`, calcDate(c)] as [string, string]),

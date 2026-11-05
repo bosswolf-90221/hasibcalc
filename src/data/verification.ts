@@ -11,6 +11,7 @@ const official: Verification = { basis: 'official', verified: CHECKED };
 const partial: Verification = { basis: 'partial', verified: CHECKED };
 const math: Verification = { basis: 'math' };
 const partial5Nov: Verification = { basis: 'partial', verified: '2026-11-05' };
+const official5Nov: Verification = { basis: 'official', verified: '2026-11-05' };
 
 export const VERIFICATION: Record<string, Verification> = {
   // calculators
@@ -37,13 +38,13 @@ export const VERIFICATION: Record<string, Verification> = {
   gpa: official,
   'gpa-target': math,
   // life moments
-  'moment:leaving-job': partial,
-  'moment:monthly-pay': partial, // no official 2027 salary calendar; GOSI floors from an undated FAQ
-  'moment:taking-loan': official,
-  'moment:ramadan-zakat': partial,
-  'moment:expecting-baby': partial,
-  'moment:health-weight': partial,
-  'moment:shopping': official,
+  'moment:leaving-job': partial5Nov,
+  'moment:monthly-pay': partial5Nov, // no official 2027 salary calendar; GOSI floors from an undated FAQ
+  'moment:taking-loan': official5Nov,
+  'moment:ramadan-zakat': partial5Nov,
+  'moment:expecting-baby': partial5Nov,
+  'moment:health-weight': partial5Nov,
+  'moment:shopping': official5Nov,
   'moment:university': official,
   'moment:dates-ages': partial,
   // guides
@@ -68,4 +69,4 @@ export const BASIS_LABEL: Record<Basis, string> = {
 };
 
 /** The latest date a page's text changed, separate from when its sources were checked. */
-export const TRUST_PAGES_UPDATED = { about: '2026-11-05', privacy: '2026-11-05', terms: '2026-10-17', contact: '2026-11-05' };
+export const TRUST_PAGES_UPDATED = { about: '2026-11-05', privacy: '2026-11-05', terms: '2026-11-05', contact: '2026-11-05' };

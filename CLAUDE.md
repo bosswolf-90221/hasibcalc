@@ -18,6 +18,7 @@
 | --- | --- |
 | بيانات كل حاسبة (العنوان، الوصف، التصنيف، كلمات البحث، الروابط ذات الصلة، تاريخ التحديث) والتصنيفات | `src/data/calculators.ts` (`CALCULATORS`، `CATEGORIES`) |
 | بيانات الأدلة | `src/data/guides.ts` (`GUIDES`) |
+| بيانات صفحات المواقف ونصوصها، وأرقام أمثلتها | `src/data/moments.ts` و`src/data/moment-content.ts`، واختبارها `tests/moment-content.test.ts` |
 | معادلات الحساب (TypeScript خالص، بلا DOM) | `src/lib/calc/<slug>.ts` — تستخدم `Validator` و`ok/fail` من `core.ts` |
 | تحويل النتيجة إلى بطاقة النتيجة (View) | `src/lib/views.ts` (القديمة) و`src/lib/views-extra.ts` (الجديدة: أضف هنا) |
 | الجداول والرسوم تحت النتيجة (HTML نصي) | `src/lib/exhibits.ts` و`src/lib/exhibits-extra.ts` (أضف هنا) |
@@ -60,6 +61,7 @@
 ## الفحص قبل أي push (إلزامي)
 ```bash
 npx vitest run
+npx tsc --noEmit                         # يكشف الأسماء غير المعرّفة التي لا يكشفها البناء؛ الخطأ المعروف الوحيد: node:fs في tests/tokens.test.ts
 npx vite-node scripts/og-data.ts > /tmp/og.json && python3 scripts/og.py /tmp/og.json   # إذا تغيّر عنوان أو أضيفت صفحة
 npm run build
 npx astro preview --port 4321 &          # في الخلفية

@@ -1,0 +1,35 @@
+---
+// Every life moment on one page, so the /moments/ address and its breadcrumb lead somewhere.
+import '../../styles/calc.css';
+import MomentIcon from '../../components/MomentIcon.astro';
+import Site from '../../layouts/Site.astro';
+import { SITE } from '../../config/site';
+import { MOMENTS } from '../../data/moments';
+
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
+    { '@type': 'ListItem', position: 2, name: 'مواقف الحياة', item: SITE.url + '/moments/' },
+  ] },
+  { '@context': 'https://schema.org', '@type': 'ItemList', name: 'مواقف الحياة في حاسِب', numberOfItems: MOMENTS.length,
+    itemListElement: MOMENTS.map((m, i) => ({ '@type': 'ListItem', position: i + 1, name: m.name, url: `${SITE.url}/moments/${m.slug}/` })) },
+];
+---
+<Site title="مواقف الحياة: اختر موقفك واحصل على كل أرقامه" description="ترك العمل، أخذ قرض، الراتب، رمضان والزكاة، انتظار طفل، التسوق، الوزن، الجامعة، والتواريخ: كل موقف يجمع حساباته في صفحة واحدة." path="/moments/" jsonLd={jsonLd}>
+  <div class="wrap calc-page">
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li aria-current="page">مواقف الحياة</li></ol></nav>
+    <header class="page-head">
+      <h1 class="t-h1">مواقف الحياة</h1>
+      <p class="t-lead">كل موقف يجمع في صفحة واحدة الحسابات التي يحتاجها، فتكتب بياناتك مرة واحدة وترى كل الأرقام معاً. وإن كنت تعرف الحساب الذي تريده، فاذهب إلى <a class="link" href="/calculators/">كل الحاسبات</a>.</p>
+    </header>
+    <ul class="guide-cards nf-moments">
+      {MOMENTS.map((m) => <li style={`--tint: var(--moment-${m.tint})`}><a href={`/moments/${m.slug}/`}><MomentIcon name={m.icon} /><b>{m.name}</b><span>{m.ask}</span><small>{m.shows.join('، ')}</small></a></li>)}
+    </ul>
+    <section class="calc-group" aria-labelledby="how">
+      <h2 id="how" class="t-h2">كيف تعمل صفحة الموقف؟</h2>
+      <p>اختر الموقف الأقرب إلى ما تمر به الآن. فمن ترك عمله يبدأ من مستحقاته ومدة الإنذار، ومن يفكر في قرض يقارن القسط بالحدود الرسمية قبل أن يوقّع، ومن تنتظر طفلاً تعرف مواعيدها من تاريخ واحد.</p>
+      <p>تكتب بياناتك في خانات قليلة، فتظهر لك النتيجة الأساسية، ثم الخطوات والأرقام المرتبطة بها بالترتيب. وتحت كل نتيجة رابط إلى الحاسبة الكاملة وطريقة الحساب والمصادر، لتتحقق بنفسك أو تدخل تفاصيل أكثر.</p>
+      <p>تبقى أرقامك في متصفحك ولا تُرسل إلينا. والنتائج تقديرية للمعلومات العامة، فارجع إلى الجهة المختصة في القرارات المهمة. <a class="link" href="/about/">كيف نعدّ المحتوى ونراجعه</a>.</p>
+    </section>
+  </div>
+</Site>

@@ -26,7 +26,7 @@ with sync_playwright() as p:
         ctx = br.new_context(viewport={'width': w, 'height': 800}, locale='ar')
         pg = ctx.new_page()
         cur = {'p': ''}
-        pg.on('pageerror', lambda e: bad(f"{cur['p']} @{w}", f'script error {e}'))
+        pg.on('pageerror', lambda e: None if 'googlesyndication' in (e.stack or '') else bad(f"{cur['p']} @{w}", f'script error {e.name}: {e.message} | {(e.stack or "")[:300]}'))
         pg.on('response', lambda r: bad(f"{cur['p']} @{w}", f'{r.status} {r.url}') if r.status >= 400 and '127.0.0.1' in r.url and '/nothing' not in r.url else None)
         for path in paths:
             cur['p'] = path
@@ -49,7 +49,7 @@ with sync_playwright() as p:
     ctx = br.new_context(viewport={'width': 390, 'height': 800}, locale='ar')
     pg = ctx.new_page()
     cur = {'p': ''}
-    pg.on('pageerror', lambda e: bad(cur['p'], f'script error {e}'))
+    pg.on('pageerror', lambda e: None if 'googlesyndication' in (e.stack or '') else bad(cur['p'], f'script error {e.name}: {e.message}'))
     for slug in CALCS:
         cur['p'] = f'/{slug}/'
         pg.goto(f'{B}/{slug}/', wait_until='load')

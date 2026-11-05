@@ -1,10 +1,12 @@
 ---
 import AdSlot from '../../components/AdSlot.astro';
+import Faq from '../../components/Faq.astro';
 import Site from '../../layouts/Site.astro';
 import { SITE } from '../../config/site';
 import { bySlug } from '../../data/calculators';
 import { GUIDES } from '../../data/guides';
 import { initialFields, MOMENTS, type Moment } from '../../data/moments';
+import { MOMENT_CONTENT } from '../../data/moment-content';
 import { BASIS_LABEL, VERIFICATION } from '../../data/verification';
 import { toISODate } from '../../lib/calc/core';
 import { arDate } from '../../lib/format';
@@ -20,20 +22,22 @@ const view = computeMoment(m.slug, values, today);
 const path = `/moments/${m.slug}/`;
 const check = VERIFICATION[`moment:${m.slug}`];
 const guides = m.guides.map((s) => GUIDES.find((g) => g.slug === s)!);
+const content = MOMENT_CONTENT[m.slug];
 const hidden = (f: Moment['fields'][number]) => Boolean(f.showIf && values[f.showIf.name] !== f.showIf.value);
 const CHECK = '<path d="M5 12l5 5 9-10"/>';
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'WebPage', name: m.title, description: m.description, url: SITE.url + path, inLanguage: 'ar', dateModified: m.updated },
   { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
     { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url + '/' },
-    { '@type': 'ListItem', position: 2, name: m.name, item: SITE.url + path },
+    { '@type': 'ListItem', position: 2, name: 'مواقف الحياة', item: SITE.url + '/moments/' },
+    { '@type': 'ListItem', position: 3, name: m.name, item: SITE.url + path },
   ] },
 ];
 const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
 ---
 <Site title={m.seoTitle} description={m.description} path={path} jsonLd={jsonLd} image={`/og/m-${m.slug}.png`}>
   <div class="wrap" data-moment={m.slug}>
-    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/#moments">المواقف</a></li><li aria-current="page">{m.name}</li></ol></nav>
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/moments/">المواقف</a></li><li aria-current="page">{m.name}</li></ol></nav>
     <header class="page-head">
       <h1 class="t-h1">{m.title}</h1>
       <p class="t-lead">{m.lead}</p>
@@ -109,6 +113,17 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
           {m.about.map((p) => <p>{p}</p>)}
         </section>
 
+        {content.sections.map((s) => (
+          <section class="about-sec">
+            <h2 class="t-h2">{s.heading}</h2>
+            {s.paragraphs?.map((p) => <p>{p}</p>)}
+            {s.items && <ul class="moment-list">{s.items.map((i) => <li>{i}</li>)}</ul>}
+            {s.example && <div class="example"><p>{s.example}</p></div>}
+          </section>
+        ))}
+
+        <div class="about-sec"><Faq items={content.faq} /></div>
+
         <div class="moment-links">
           <nav aria-label="حاسبات هذا الموقف"><h2>حاسبات هذا الموقف</h2><ul class="linklist">{m.calcs.map((s) => <li><a href={`/${s}/`}>{bySlug(s).question}</a></li>)}</ul></nav>
           {guides.length > 0 && <nav aria-label="أدلة هذا الموقف"><h2>للفهم أكثر</h2><ul class="linklist">{guides.map((g) => <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>)}</ul></nav>}
@@ -116,7 +131,7 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
 
         <section class="sources" aria-labelledby="src-h">
           <h2 id="src-h">المصادر</h2>
-          <ul>{m.sources.map((s) => <li><a class="link" href={s.href} rel="noopener" target="_blank">{s.label}</a></li>)}</ul>
+          <ul>{[...m.sources, ...content.sources].map((s) => <li><a class="link" href={s.href} rel="noopener" target="_blank">{s.label}</a></li>)}</ul>
           <p class="check-line">{BASIS_LABEL[check.basis]}{check.verified ? `: ${arDate(check.verified)}` : ''}. وآخر تعديل لنص الصفحة: {arDate(m.updated)}.{m.health && ' هذه الصفحة للمعلومات العامة وليست استشارة طبية.'}</p>
         </section>
       </div>

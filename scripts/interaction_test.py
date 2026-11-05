@@ -231,6 +231,29 @@ with sync_playwright() as p:
     pg.goto(B + '/end-of-service/')
     check('wide table: reachable by keyboard', pg.evaluate("[...document.querySelectorAll('.scroll-x')].filter(e => e.scrollWidth > e.clientWidth).every(e => e.tabIndex === 0)"))
 
+    # Full-site review: zakat with both prices used to freeze the result
+    pg.goto(B + '/zakat/')
+    pg.fill('#f-goldPricePerGram', '300'); pg.fill('#f-silverPricePerGram', '3'); pg.wait_for_timeout(100)
+    check('zakat: both prices show the silver row', '595' in pg.locator('[data-result]').inner_text())
+    pg.fill('#f-cash', '20000'); pg.wait_for_timeout(100)
+    check('zakat: the result still updates with both prices', '20,000' in pg.locator('[data-result]').inner_text() or '35,000' in pg.locator('[data-result]').inner_text(), pg.locator('[data-result]').inner_text()[:90])
+    # Full-site review: a custom VAT rate, and the moments index
+    pg.goto(B + '/vat/')
+    check('vat: custom rate field starts hidden', not pg.locator('#f-customRate').is_visible())
+    pg.locator('input[name="ratePercent"][value="other"]').check(force=True); pg.wait_for_timeout(100)
+    check('vat: custom rate field appears', pg.locator('#f-customRate').is_visible())
+    check('vat: choosing it shows a prompt, not an error', pg.locator('[data-calc="vat"] [data-result]').get_attribute('data-state') == 'blank' and pg.locator('[data-calc="vat"] .field-error:visible').count() == 0)
+    pg.fill('#f-customRate', '150'); pg.wait_for_timeout(100)
+    check('vat: an impossible rate is an error under its own box', pg.locator('#f-customRate-err').is_visible())
+    pg.fill('#f-customRate', '7'); pg.fill('#f-amount', '1000'); pg.wait_for_timeout(100)
+    check('vat: 7% of 1000 gives 1,070', '1,070' in pg.locator('[data-calc="vat"] [data-result]').inner_text(), pg.locator('[data-calc="vat"] [data-result]').inner_text()[:80])
+    pg.fill('#f-customRate', 'abc'); pg.wait_for_timeout(100)
+    check('vat: unreadable custom rate is an error', pg.locator('#f-customRate-err').is_visible())
+    pg.locator('input[name="ratePercent"][value="15"]').check(force=True); pg.fill('#f-customRate', ''); pg.wait_for_timeout(100)
+    check('vat: a preset hides the custom field', not pg.locator('#f-customRate').is_visible())
+    r = pg.goto(B + '/moments/')
+    check('moments index: opens and lists all nine', r.status == 200 and pg.locator('.nf-moments li').count() == 9, str(r.status))
+
     pg.goto(B + '/bmi/?weightKg=80&heightCm=180')
     check('example: no mark on numbers from a link', not pg.locator('[data-example]').is_visible())
     for slug, field in (('age', 'birthDate'), ('pregnancy', 'lmpDate'), ('ovulation', 'lmpDate')):

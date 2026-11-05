@@ -96,6 +96,9 @@
 .about-sec { margin-top: var(--s-6); }
 .about-sec h2 { margin-bottom: var(--s-2); }
 .about-sec p { max-width: var(--measure); margin-bottom: var(--s-3); }
+.moment-list { max-width: var(--measure); margin: 0 0 var(--s-3); padding-inline-start: 1.2em; list-style: disc; display: grid; gap: var(--s-2); }
+.about-sec .example { max-width: var(--measure); margin-block: var(--s-3) var(--s-4); padding: var(--s-4) var(--s-5); border-radius: var(--r-field); background: var(--tint, var(--accent-tint)); }
+.about-sec .example p { margin-bottom: 0; }
 .moment-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); margin-top: var(--s-6); }
 .moment-links h2 { font-size: 1.05rem; font-weight: var(--w-bold); margin-bottom: var(--s-1); }
 .sources { margin-top: var(--s-6); font-size: var(--t-small); color: var(--ink-soft); }

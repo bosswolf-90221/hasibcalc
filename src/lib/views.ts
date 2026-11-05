@@ -7,7 +7,7 @@ import type { Discount } from './calc/discount';
 import type { Age } from './calc/age';
 import { BMI_BANDS, type Bmi } from './calc/bmi';
 import type { Zakat } from './calc/zakat';
-import { NISAB_GOLD_GRAMS } from './calc/zakat';
+import { NISAB_GOLD_GRAMS, NISAB_SILVER_GRAMS } from './calc/zakat';
 import { arDate, days, fmt, int, money, months, pct, years } from './format';
 
 export type Row = [label: string, value: string];

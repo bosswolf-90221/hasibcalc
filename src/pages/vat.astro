@@ -20,7 +20,8 @@ const v = r.ok ? r.value : null;
     <h2 class="input-title">بياناتك</h2>
     <form class="calc-fields" onsubmit="return false" aria-label="بيانات حساب الضريبة">
         <Pills name="mode" legend="نوع الحساب" selected={d.mode} options={[{ value: 'add', label: 'إضافة' }, { value: 'extract', label: 'استخراج' }]} />
-        <Pills name="ratePercent" legend="نسبة الضريبة" selected={d.ratePercent} options={[{ value: '5', label: '5%' }, { value: '15', label: '15%' }, { value: '10', label: '10%' }]} />
+        <Pills name="ratePercent" legend="نسبة الضريبة" selected={d.ratePercent} options={[{ value: '5', label: '5%' }, { value: '15', label: '15%' }, { value: '10', label: '10%' }, { value: 'other', label: 'نسبة أخرى' }]} />
+        <div data-other-rate hidden><NumIn name="customRate" label="اكتب النسبة (%)" value="" placeholder="مثل 7" /></div>
         <NumIn name="amount" label="المبلغ" value={d.amount} />
       </form>
     <p class="hint">النسبة الأساسية لضريبة القيمة المضافة 5% في الإمارات وعُمان، و15% في السعودية، و10% في البحرين.</p>
@@ -56,7 +57,6 @@ const v = r.ok ? r.value : null;
     ]} />
     <h2>المصادر</h2>
     <ul class="sources">
-      <li><a href="https://mof.gov.ae/en/public-finance/tax/" rel="noopener" target="_blank">وزارة المالية الإماراتية: الضرائب</a></li>
       <li><a href="https://mof.gov.ae/en/public-finance/tax/" rel="noopener" target="_blank">وزارة المالية، الإمارات: ضريبة القيمة المضافة 5% منذ 1 يناير 2018</a></li>
     </ul>
   </Fragment>
@@ -69,10 +69,15 @@ const v = r.ok ? r.value : null;
   import { vatEquation } from '../lib/exhibits';
   const root = document.querySelector<HTMLElement>('[data-calc="vat"]')!;
   const x = (k: string) => root.querySelector<HTMLElement>(`[data-x="${k}"]`)!;
+  const otherRate = root.querySelector<HTMLElement>('[data-other-rate]')!;
   mountCalculator(root, {
     compute: (f) => {
       const mode = f.mode === 'extract' ? 'extract' : 'add';
-      const result = calcVat({ mode, ratePercent: num(f.ratePercent), amount: num(f.amount) });
+      const other = f.ratePercent === 'other';
+      otherRate.hidden = !other;
+      const raw = calcVat({ mode, ratePercent: num(other ? f.customRate : f.ratePercent), amount: num(f.amount) });
+      // A rate problem belongs to the box the visitor types in; left empty, it is a calm prompt, not an error.
+      const result = other && !raw.ok ? { ...raw, errors: raw.errors.map((e) => (e.field === 'ratePercent' ? { ...e, field: 'customRate' } : e)) } : raw;
       return { result, view: result.ok ? vatView(result.value, mode) : null };
     },
     extras: (v) => { x('eq').innerHTML = vatEquation(v); },
