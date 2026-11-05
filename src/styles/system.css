@@ -101,3 +101,9 @@ a { color: inherit; }
 .ad-zone > small { font-size: 0.74rem; color: var(--ink-soft); }
 
 @media (prefers-reduced-motion: reduce) { .moment, .btn { transition: none; } .moment:hover { transform: none; } }
+
+/* شريط النتيجة على الهاتف: يظهر حين تكون الخانات أمامك والنتيجة خارج الشاشة */
+.result-peek { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); width: 100%; min-height: 54px; padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom)); border: 0; border-top: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font: inherit; text-align: start; cursor: pointer; }
+.result-peek span { min-width: 0; font-size: var(--t-small); color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.result-peek b { flex: none; font-size: 1.25rem; font-weight: var(--w-heavy); color: var(--accent); white-space: nowrap; }
+@media (min-width: 861px), print { .result-peek { display: none !important; } }

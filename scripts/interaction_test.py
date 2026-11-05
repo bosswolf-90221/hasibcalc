@@ -132,6 +132,21 @@ with sync_playwright() as p:
         pg.fill('#wk', wk)
         check(f'pregnancy guide: week {wk} is in the {tri} trimester', f'الثلث {tri}' in pg.locator('#wk-out').inner_text())
 
+    # On a phone the answer stays reachable while filling a long form
+    pg.goto(B + '/gpa/'); pg.wait_for_timeout(200)
+    bar = pg.locator('.result-peek')
+    check('peek: shown at the top of a long form, marked as an example', bar.is_visible() and '4.24' in bar.inner_text() and 'مثال' in bar.inner_text(), bar.inner_text() if bar.count() else '')
+    pg.fill('#f-prevGpa', ''); pg.fill('#f-prevHours', ''); pg.wait_for_timeout(200)
+    check('peek: follows the new result, no longer an example', bar.is_visible() and '4.38' in bar.inner_text() and 'مثال' not in bar.inner_text(), bar.inner_text())
+    bar.click(); pg.wait_for_timeout(300)
+    check('peek: tapping shows the full result and hides the bar', pg.locator('[data-result] .display').is_visible() and not bar.is_visible())
+    pg.goto(B + '/pregnancy/'); pg.wait_for_timeout(200)
+    check('peek: no bar without a result', not pg.locator('.result-peek').is_visible())
+    pg.goto(B + '/moments/university/'); pg.wait_for_timeout(200)
+    check('peek: works on moment pages', pg.locator('.result-peek').count() == 1)
+    ctx2 = b.new_context(viewport={'width': 1280, 'height': 800}); pg2 = ctx2.new_page(); pg2.goto(B + '/gpa/'); pg2.wait_for_timeout(200)
+    check('peek: never on a computer', not pg2.locator('.result-peek').is_visible()); ctx2.close()
+
     pg.goto(B + '/bmi/?weightKg=80&heightCm=180')
     check('example: no mark on numbers from a link', not pg.locator('[data-example]').is_visible())
     for slug, field in (('age', 'birthDate'), ('pregnancy', 'lmpDate'), ('ovulation', 'lmpDate')):

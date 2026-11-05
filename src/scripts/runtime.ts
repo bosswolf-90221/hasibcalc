@@ -3,6 +3,7 @@ import type { CalcResult, FieldError } from '../lib/calc/core';
 import type { View } from '../lib/views';
 import { fmt, odo, odoText } from '../lib/format';
 import { toNumber } from '../lib/calc/core';
+import { mountPeek } from './peek';
 
 export type Fields = Record<string, string>;
 export type Computed<R> = { result: CalcResult<R>; view: View | null };
@@ -20,6 +21,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
   const $ = (k: string) => result.querySelector<HTMLElement>(`[data-r="${k}"]`)!;
   const valueEl = $('value');
   const prefix = opts.paramPrefix ?? '';
+  const peek = mountPeek(root.querySelector('.calc-input') ?? root, result.querySelector('.display')!);
   let liveTimer = 0;
   let toastTimer = 0;
 
@@ -63,6 +65,7 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
 
   // The answer and what depends on it appear together, or not at all: no stale number beside a blank field.
   function showDependents(on: boolean) {
+    if (!on) peek();
     root.querySelectorAll<HTMLElement>('.exhibit, .addcal, [data-needs-result]').forEach((el) => { el.hidden = !on; });
   }
   // The numbers on screen stop being an example as soon as the visitor changes one.
@@ -100,6 +103,8 @@ export function mountCalculator<R>(root: HTMLElement, opts: Options<R>) {
     }
     if (view.value !== null) valueEl.innerHTML = odo(fmt(view.value, view.decimals));
     showDependents(true);
+    const isExample = root.querySelector<HTMLElement>('[data-example]')?.hidden === false;
+    peek(`${isExample ? 'مثال: ' : ''}${view.label}`, `${fmt(view.value, view.decimals)} ${view.unit}`.trim());
     clearTimeout(liveTimer);
     liveTimer = window.setTimeout(() => {
       $('live').textContent = `${view.label}: ${fmt(view.value, view.decimals)} ${view.unit}`.trim();

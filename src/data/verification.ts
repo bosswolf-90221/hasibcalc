@@ -10,12 +10,13 @@ const CHECKED = '2026-11-04';
 const official: Verification = { basis: 'official', verified: CHECKED };
 const partial: Verification = { basis: 'partial', verified: CHECKED };
 const math: Verification = { basis: 'math' };
+const partial5Nov: Verification = { basis: 'partial', verified: '2026-11-05' };
 
 export const VERIFICATION: Record<string, Verification> = {
   // calculators
-  'end-of-service': partial, // daily-wage divisor and the base of the two-year cap are not settled by a text
-  'annual-leave': partial, // effect of unpaid absence on accrued leave is not stated
-  'exit-dues': partial,
+  'end-of-service': partial5Nov, // daily-wage divisor and the base of the two-year cap are not settled by a text
+  'annual-leave': partial5Nov, // effect of unpaid absence on accrued leave is not stated
+  'exit-dues': partial5Nov,
   vat: official,
   loan: official,
   zakat: partial, // authorities differ on the nisab; combining karats not found in the official statements
@@ -46,9 +47,9 @@ export const VERIFICATION: Record<string, Verification> = {
   'moment:university': official,
   'moment:dates-ages': partial,
   // guides
-  'guide:end-of-service-guide': partial,
+  'guide:end-of-service-guide': partial5Nov,
   'guide:flat-vs-reducing-interest': official,
-  'guide:vat-gulf-guide': partial, // no official statement found for Kuwait
+  'guide:vat-gulf-guide': partial5Nov, // no official statement found for Kuwait
   'guide:zakat-step-by-step': partial,
   'guide:pregnancy-weeks-months': official,
   'guide:ideal-weight-by-height': official,

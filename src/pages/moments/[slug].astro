@@ -125,6 +125,7 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
 </Site>
 
 <script>
+  import { mountPeek } from '../../scripts/peek';
   import { localTodayISO } from '../../lib/calc/core';
   import { computeMoment, type Fields, type MomentView } from '../../lib/moments';
 
@@ -148,8 +149,11 @@ const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
     return f;
   }
   let last: MomentView | null = null;
+  const peek = mountPeek(form, viewBox);
   function paint(view: MomentView) {
     last = view;
+    const isExample = root.querySelector<HTMLElement>('[data-example]')?.hidden === false;
+    if (view.state === 'ok') peek(`${isExample ? 'مثال: ' : ''}${view.label}`, view.unit ? `${view.value} ${view.unit}` : view.value); else peek();
     root.querySelectorAll<HTMLElement>('[data-needs-result]').forEach((b) => { b.hidden = view.state !== 'ok'; });
     viewBox.replaceChildren();
     for (const i of inputs()) i.removeAttribute('aria-invalid');

@@ -33,6 +33,7 @@
 | بطاقات الحاسبات والرمز في كل بطاقة | `src/components/CalcIndex.astro` (`GLYPH`) |
 | القوالب العامة (meta، OG، JSON-LD، التنقل) | `src/layouts/Base.astro`، `CalcLayout.astro`، `GuideLayout.astro` |
 | تشغيل الحاسبة في المتصفح (قراءة الحقول، روابط URL، المشاركة) | `src/scripts/runtime.ts` (`mountCalculator`، `num`) |
+| شريط النتيجة أسفل الهاتف | `src/scripts/peek.ts` |
 | الأنماط | `src/styles/site.css` (الرأس والتذييل والرئيسية والمواقف) و`src/styles/calc.css` (الحاسبات وجداولها ورسومها). `src/styles/global.css` للصفحات التي لم تنتقل بعد فقط |
 | إعدادات الموقع | `src/config/site.ts` |
 | ما تحققنا منه لكل صفحة وتاريخه (منفصل عن `updated`، وهو تاريخ تعديل النص فقط) | `src/data/verification.ts` |
