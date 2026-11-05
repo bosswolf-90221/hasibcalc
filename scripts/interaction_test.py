@@ -187,6 +187,21 @@ with sync_playwright() as p:
     pg.goto(B + '/privacy/')
     check('privacy: names the font really used', 'Vazirmatn' in pg.locator('main').inner_text() and 'Readex' not in pg.locator('main').inner_text())
 
+    # Phase 7
+    pg.goto(B + '/gpa/'); pg.wait_for_timeout(200)
+    pg.evaluate('''() => { const i = document.createElement('ins'); i.className = 'adsbygoogle'; i.dataset.anchorStatus = 'displayed'; document.body.append(i); }''')
+    pg.fill('#f-prevGpa', '4'); pg.wait_for_timeout(150)
+    check('peek: gives way to a bottom-anchored ad', not pg.locator('.result-peek').is_visible())
+    for path, words in (('/moments/expecting-baby/', 'استشارة طبية'), ('/moments/health-weight/', 'استشارة طبية'), ('/bmi/', 'للمعلومات العامة'), ('/calories/', 'للمعلومات العامة'), ('/pregnancy/', 'للمعلومات العامة'), ('/ovulation/', 'للمعلومات العامة'), ('/guides/pregnancy-weeks-months/', 'للمعلومات العامة'), ('/guides/ideal-weight-by-height/', 'للمعلومات العامة')):
+        pg.goto(B + path)
+        check(f'{path}: health notice present', words in pg.locator('main').inner_text())
+    pg.goto(B + '/ovulation/')
+    check('ovulation: the contraception warning is visible without opening anything', pg.locator('.calc-input', has_text='وسيلةً لمنع الحمل').is_visible())
+    pg.goto(B + '/guides/ramadan-1448/')
+    check('guides: marked as articles', pg.get_attribute('meta[property="og:type"]', 'content') == 'article')
+    pg.goto(B + '/moments/leaving-job/')
+    check('moments: own preview image', pg.get_attribute('meta[property="og:image"]', 'content').endswith('/og/m-leaving-job.png'))
+
     pg.goto(B + '/bmi/?weightKg=80&heightCm=180')
     check('example: no mark on numbers from a link', not pg.locator('[data-example]').is_visible())
     for slug, field in (('age', 'birthDate'), ('pregnancy', 'lmpDate'), ('ovulation', 'lmpDate')):

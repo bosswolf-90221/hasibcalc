@@ -31,7 +31,7 @@ const jsonLd = [
 ];
 const isWideValue = (v: string) => /[؀-ۿ]/.test(v);
 ---
-<Site title={m.seoTitle} description={m.description} path={path} jsonLd={jsonLd}>
+<Site title={m.seoTitle} description={m.description} path={path} jsonLd={jsonLd} image={`/og/m-${m.slug}.png`}>
   <div class="wrap" data-moment={m.slug}>
     <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/#moments">المواقف</a></li><li aria-current="page">{m.name}</li></ol></nav>
     <header class="page-head">

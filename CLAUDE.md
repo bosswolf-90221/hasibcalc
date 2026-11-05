@@ -65,6 +65,7 @@ npm run build
 npx astro preview --port 4321 &          # في الخلفية
 python3 scripts/interaction_test.py
 set -a; . ./.env.production; set +a; node scripts/check-site.mjs
+node scripts/seo-audit.mjs              # عناوين، canonical، JSON-LD، صور المشاركة، الروابط الداخلية، خريطة الموقع
 node scripts/adsense-audit.mjs          # شروط قبول AdSense: لا نصوص «قريباً/غير مفعّل»، بريد تواصل يعمل، سياسة خصوصية كاملة، كود الإعلان في head، ads.txt، robots
 ```
 ثم لقطة Playwright بعرض 390px للصفحة المعدّلة: لا تمرير أفقي، ولا نص متداخل، ولا رموز مقلوبة. انتبه إلى أن الخلايا التي تحمل `class="num"` تُعرض LTR، فلا تضع فيها نصاً عربياً مختلطاً مثل «1 إلى 4» أو «سنة 39».

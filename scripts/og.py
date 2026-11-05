@@ -36,7 +36,7 @@ with sync_playwright() as p:
         t = html.escape(it['title'])
         size = ' xlong' if len(it['title']) > 44 else ' long' if len(it['title']) > 26 else ''
         sub = f'<p class="sub">{html.escape(it["sub"])}</p>' if it.get('sub') else ''
-        doc = f'<html lang="ar"><head><style>{CSS}</style></head><body><div class="wrap"><h1 class="title{size}">{t}</h1>{sub}<div class="foot">{LOGO}<span class="url">hasibcalc.com</span></div></div></body></html>'
+        doc = f'<html lang="ar"><head><style>{CSS}</style></head><body style="background:{it.get('bg', '#e4f1ec')}"><div class="wrap"><h1 class="title{size}">{t}</h1>{sub}<div class="foot">{LOGO}<span class="url">hasibcalc.com</span></div></div></body></html>'
         pg.set_content(doc)
         pg.evaluate('document.fonts.ready')
         pg.wait_for_timeout(120)

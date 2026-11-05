@@ -16,8 +16,9 @@ export interface Props {
   jsonLd?: Record<string, unknown>[];
   image?: string;
   noindex?: boolean;
+  ogType?: 'website' | 'article';
 }
-const { title, description, path, jsonLd = [], image, noindex = false } = Astro.props;
+const { title, description, path, jsonLd = [], image, noindex = false, ogType } = Astro.props;
 const NAV = [
   { href: '/#moments', label: 'المواقف' },
   { href: '/calculators/', label: 'كل الحاسبات' },
@@ -29,7 +30,7 @@ const current = (href: string) => (href !== '/#moments' && path.startsWith(href)
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
-    <Head title={title} description={description} path={path} jsonLd={jsonLd} image={image} noindex={noindex} themeColor="#ffffff">
+    <Head title={title} description={description} path={path} jsonLd={jsonLd} image={image} noindex={noindex} ogType={ogType} themeColor="#ffffff">
       <link rel="preload" href={arabicFont} as="font" type="font/woff2" crossorigin />
     </Head>
   </head>

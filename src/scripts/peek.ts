@@ -16,7 +16,9 @@ export function mountPeek(fields: Element, answer: Element) {
   let fieldsInView = false;
   let answerInView = false;
   const phone = window.matchMedia('(max-width: 860px)');
-  const sync = () => { bar.hidden = !(hasResult && fieldsInView && !answerInView && phone.matches); };
+  // AdSense marks its anchor ad with this attribute. While one is showing, the bar stays out of the way.
+  const anchorAd = () => document.querySelector('ins.adsbygoogle[data-anchor-status="displayed"]') !== null;
+  const sync = () => { bar.hidden = !(hasResult && fieldsInView && !answerInView && phone.matches && !anchorAd()); };
 
   new IntersectionObserver(([e]) => { fieldsInView = e.isIntersecting; sync(); }).observe(fields);
   new IntersectionObserver(([e]) => { answerInView = e.isIntersecting; sync(); }).observe(answer);

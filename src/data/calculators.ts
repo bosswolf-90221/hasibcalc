@@ -34,7 +34,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['نهاية الخدمة', 'مكافأة', 'المكافأة', 'استقالة', 'قانون العمل', 'الإمارات', 'راتب أساسي', 'gratuity'],
     related: ['exit-dues', 'annual-leave', 'loan', 'zakat'],
-    updated: '2026-11-04',
+    updated: '2026-11-05',
   },
   {
     slug: 'annual-leave',
@@ -48,7 +48,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['الإجازة السنوية', 'بدل الإجازة', 'رصيد الإجازة', 'إجازة', 'قانون العمل', 'الإمارات', 'نهاية الخدمة', 'استقالة', 'leave salary'],
     related: ['exit-dues', 'end-of-service', 'salary-uae', 'gosi'],
-    updated: '2026-11-04',
+    updated: '2026-11-05',
   },
   {
     slug: 'exit-dues',
@@ -62,7 +62,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money'],
     terms: ['مستحقات', 'ترك العمل', 'استقالة', 'نهاية الخدمة', 'بدل الإجازة', 'تصفية', 'مخالصة', 'قانون العمل', 'الإمارات', 'final settlement'],
     related: ['end-of-service', 'annual-leave', 'salary-uae', 'days-between'],
-    updated: '2026-11-04',
+    updated: '2026-11-05',
   },
   {
     slug: 'vat',
@@ -76,7 +76,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['money', 'shopping'],
     terms: ['ضريبة', 'الضريبة', 'القيمة المضافة', 'vat', '5%', 'شامل الضريبة', 'فاتورة'],
     related: ['discount', 'percentage', 'loan', 'zakat'],
-    updated: '2026-11-04',
+    updated: '2026-11-05',
   },
   {
     slug: 'loan',
@@ -117,7 +117,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['shopping'],
     terms: ['خصم', 'الخصم', 'تخفيض', 'تخفيضات', 'عروض', 'سعر', 'تسوق', 'sale'],
     related: ['percentage', 'vat', 'loan', 'age'],
-    updated: '2026-11-01',
+    updated: '2026-11-05',
   },
   {
     slug: 'age',
@@ -257,7 +257,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['حمل', 'الحمل', 'ولادة', 'موعد الولادة', 'حاسبة الحمل', 'أسابيع الحمل', 'حامل', 'الدورة'],
     related: ['ovulation', 'days-between', 'hijri', 'calories'],
-    updated: '2026-11-04',
+    updated: '2026-11-05',
   },
   {
     slug: 'ovulation',
@@ -271,7 +271,7 @@ export const CALCULATORS: CalculatorMeta[] = [
     categories: ['health-age'],
     terms: ['التبويض', 'حاسبة التبويض', 'أيام الخصوبة', 'الدورة الشهرية', 'موعد الدورة', 'الحمل', 'الإباضة', 'خصوبة'],
     related: ['pregnancy', 'days-between', 'calories', 'bmi'],
-    updated: '2026-11-04',
+    updated: '2026-11-05',
   },
   {
     slug: 'calories',
