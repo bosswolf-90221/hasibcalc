@@ -184,6 +184,7 @@ with sync_playwright() as p:
     desk.close()
     pg.goto(B + '/about/')
     check('about: the sentence wording is gone', 'في جملة' not in pg.locator('main').inner_text())
+    check('about: says AI tools help, and claims no location it cannot prove', 'بمساعدة أدوات الذكاء الاصطناعي' in pg.locator('main').inner_text() and 'يُدار من' not in pg.locator('main').inner_text())
     pg.goto(B + '/privacy/')
     check('privacy: names the font really used', 'Vazirmatn' in pg.locator('main').inner_text() and 'Readex' not in pg.locator('main').inner_text())
 
