@@ -207,7 +207,7 @@ details.how > summary { cursor: pointer; font-weight: var(--w-bold); min-height:
 .article .example p { margin-bottom: var(--s-2); }
 .article .example > :last-child { margin-bottom: 0; }
 .article table:not(.ledger) { border-collapse: collapse; width: 100%; font-size: 0.95rem; margin-block: var(--s-2) var(--s-4); }
-.article table:not(.ledger) th { padding: 10px; border-bottom: 1.5px solid var(--ink); font-size: var(--t-small); font-weight: var(--w-bold); text-align: start; white-space: nowrap; }
+.article table:not(.ledger) th { padding: 10px; border-bottom: 1.5px solid var(--ink); font-size: var(--t-small); font-weight: var(--w-bold); white-space: nowrap; }
 .article table:not(.ledger) td { padding: 9px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .article .data-table { white-space: nowrap; }
 .article .data-table tbody tr:hover td { background: var(--accent-tint); }
@@ -224,6 +224,32 @@ details.how > summary { cursor: pointer; font-weight: var(--w-bold); min-height:
 .faq details[open] summary::after { content: '−'; }
 .faq details p { color: var(--ink-soft); margin-bottom: var(--s-4); }
 .copy-tip { position: absolute; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 2px 10px; border-radius: 6px; font-size: var(--t-micro); pointer-events: none; z-index: 30; }
+
+/* الأدلة */
+.guide-meta { font-size: var(--t-small); font-weight: var(--w-medium); color: var(--ink-soft); margin-bottom: var(--s-2); }
+.guide-lower { margin-top: var(--s-5); border-top: 0; padding-top: var(--s-3); }
+.cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-2) var(--s-5); margin-block: var(--s-4) var(--s-5); padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-field); background: var(--surface); max-width: var(--measure); }
+.article .cta p { margin: 0; font-weight: var(--w-medium); }
+.article .cta a { font-weight: var(--w-bold); }
+.guide .addcal { margin-block: 0 var(--s-5); }
+.guide-toc ol { list-style: none; font-size: var(--t-small); }
+.guide-toc li { padding-block: 3px; }
+.guide-toc a { color: var(--ink-soft); text-decoration: none; }
+.guide-toc a:hover { color: var(--accent); text-decoration: underline; }
+.all-cm { margin-block: var(--s-3); }
+.all-cm summary { cursor: pointer; font-weight: var(--w-bold); color: var(--accent); min-height: var(--target); display: flex; align-items: center; }
+.wk-conv { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); margin-top: var(--s-3); font-weight: var(--w-medium); }
+.wk-conv input { min-height: var(--target); padding: 8px 12px; border: 1.5px solid var(--line-strong); border-radius: var(--r-field); background: var(--surface); color: inherit; font: inherit; direction: ltr; text-align: center; font-variant-numeric: tabular-nums; }
+.wk-conv input, .add-days input[inputmode] { width: 5rem; }
+.wk-conv output { font-weight: var(--w-bold); color: var(--accent-hover); }
+.article td.span { white-space: nowrap; }
+.guide-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.guide-cards a { display: flex; flex-direction: column; gap: var(--s-1); height: 100%; padding: var(--s-5); border-radius: var(--r-card); background: var(--tint, var(--accent-tint)); text-decoration: none; }
+.guide-cards small { font-size: var(--t-micro); color: #3f4a46; }
+.guide-cards b { font-size: 1.15rem; line-height: 1.4; }
+.guide-cards span { font-size: var(--t-small); color: #3f4a46; }
+.guide-cards a:hover b { color: var(--accent-hover); }
+.guides-how { padding-block: var(--s-6) var(--s-7); }
 
 /* الجانب */
 .calc-aside { display: grid; gap: var(--s-6); position: sticky; top: 14px; font-size: 0.97rem; }
@@ -244,8 +270,11 @@ details.how > summary { cursor: pointer; font-weight: var(--w-bold); min-height:
   [data-calc] > .result { margin-top: var(--s-5); }
   .calc-lower { grid-template-columns: minmax(0, 1fr); }
   .calc-aside { position: static; }
+  .guide-toc { display: none; }
+  .guide-cards { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 480px) {
+  .article table:not(.ledger) th { white-space: normal; }
   .ledger th, .ledger td, .article table:not(.ledger) th, .article table:not(.ledger) td { padding-inline: 7px; }
   .bscale .z i { font-size: 0.62rem; }
 }

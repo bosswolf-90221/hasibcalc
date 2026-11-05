@@ -53,7 +53,7 @@ const M_ROWS = M_YEARS.map(([m, y]) => ({ m, y, d: Math.round((Date.UTC(2027, m,
     <h2>ما التاريخ بعد عدد من الأيام؟</h2>
     <form class="add-days" onsubmit="return false" aria-label="إضافة أيام إلى تاريخ">
       <label for="ad-n">التاريخ بعد</label>
-      <input class="in" id="ad-n" type="text" inputmode="numeric" value="90" style="width:5ch" autocomplete="off" />
+      <input class="in" id="ad-n" type="text" inputmode="numeric" value="90" autocomplete="off" />
       <span>يوماً من</span>
       <label class="sr-only" for="ad-d">تاريخ البداية</label>
       <input class="in" id="ad-d" type="date" value={today} />

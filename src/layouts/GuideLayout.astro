@@ -1,6 +1,8 @@
 ---
-import Base from './Base.astro';
-import CalcIndex from '../components/CalcIndex.astro';
+import '../styles/calc.css';
+import Site from './Site.astro';
+import MomentIcon from '../components/MomentIcon.astro';
+import { MOMENTS } from '../data/moments';
 import { guideBySlug, GUIDES } from '../data/guides';
 import { bySlug } from '../data/calculators';
 import { SITE } from '../config/site';
@@ -20,33 +22,43 @@ const jsonLd = [
   ] },
 ];
 const check = VERIFICATION[`guide:${g.slug}`];
-const others = GUIDES.filter((x) => x.slug !== g.slug).slice(0, 3);
+const moment = MOMENTS.find((m) => m.guides.includes(g.slug)) ?? MOMENTS.find((m) => m.calcs.includes(g.calc))!;
+// Nearest reading first: guides of the same moment, then the rest.
+const others = [...GUIDES.filter((x) => x.slug !== g.slug && moment.guides.includes(x.slug)), ...GUIDES.filter((x) => x.slug !== g.slug && !moment.guides.includes(x.slug))].slice(0, 3);
+// A contents list for the long guides, built from the guide's own headings.
+const toc: { id: string; text: string }[] = [];
+const body = (await Astro.slots.render('default')).replace(/<h2>(.*?)<\/h2>/g, (_: string, text: string) => {
+  const id = `s${toc.length + 1}`;
+  toc.push({ id, text });
+  return `<h2 id="${id}">${text}</h2>`;
+});
 ---
-<Base title={g.title} description={g.description} path={path} jsonLd={jsonLd} image={`/og/g-${g.slug}.png`} bare>
-  <div class="stage calc-stage">
-    <div class="container calc-title">
-      <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/guides/">أدلة</a></li><li aria-current="page">{g.kicker}</li></ol></nav>
-      <p class="kick">{g.kicker} · {g.minutes} دقائق قراءة</p>
-      <h1>{g.title}</h1>
-      <p class="lede">{g.description}</p>
-    </div>
-  </div>
-  <div class="container">
-    <div class="calc-grid guide-page">
-      <article class="article card guide">
-        <slot />
+<Site title={g.title} description={g.description} path={path} jsonLd={jsonLd} image={`/og/g-${g.slug}.png`}>
+  <div class="wrap calc-page guide-page" style={`--tint: var(--moment-${moment.tint})`}>
+    <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/guides/">أدلة</a></li><li aria-current="page">{g.kicker}</li></ol></nav>
+    <header class="page-head">
+      <p class="guide-meta">{g.kicker} · {g.minutes} دقائق قراءة</p>
+      <h1 class="t-h1">{g.title}</h1>
+      <p class="t-lead">{g.description}</p>
+    </header>
+    <div class="calc-lower guide-lower">
+      <article class="article guide">
+        <Fragment set:html={body} />
         <p class="reviewed">نُشر في {arDate(g.date)}{g.updated ? `، وحُدّث في ${arDate(g.updated)}` : ''}.{check && ` ${BASIS_LABEL[check.basis]}${check.verified ? `: ${arDate(check.verified)}` : ''}.`} المعلومات للتوعية العامة، وراجع الجهة المختصة قبل أي قرار.</p>
       </article>
-      <aside class="calc-side" aria-label="الحاسبة المرتبطة">
-        <div class="card side-card">
-          <h2>احسبها الآن</h2>
-          <CalcIndex items={[c]} />
-        </div>
-        <div class="card side-card">
-          <h2>أدلة أخرى</h2>
-          <ul class="trust toc">{others.map((o) => <li><a href={`/guides/${o.slug}/`}>{o.title}</a></li>)}</ul>
-        </div>
+      <aside class="calc-aside" aria-label="الحاسبة المرتبطة">
+        <a class="moment-link" href={`/${c.slug}/`}>
+          <MomentIcon name={moment.icon} />
+          <small>احسبها الآن</small>
+          <b>{c.question}</b>
+          <span>جزء من موقف: {moment.name}</span>
+        </a>
+        {toc.length >= 4 && (
+          <nav class="guide-toc" aria-label="في هذا الدليل"><h2>في هذا الدليل</h2><ol>{toc.map((t) => <li><a href={`#${t.id}`} set:html={t.text} /></li>)}</ol></nav>
+        )}
+        <section><h2>أدلة أخرى</h2><ul class="linklist">{others.map((o) => <li><a href={`/guides/${o.slug}/`}>{o.title}</a></li>)}</ul></section>
+        <p class="more-all"><a class="link" href="/guides/">كل الأدلة</a></p>
       </aside>
     </div>
   </div>
-</Base>
+</Site>

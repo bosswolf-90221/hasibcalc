@@ -121,6 +121,17 @@ with sync_playwright() as p:
         bad = pg.evaluate(TABLES_JS)
         check(f'{slug}: table numbers under their headings', not bad, str(bad))
 
+    for slug in 'white-friday-2026 uae-national-day-2026 new-year-2027 ramadan-1448 end-of-service-guide flat-vs-reducing-interest vat-gulf-guide zakat-step-by-step pregnancy-weeks-months ideal-weight-by-height how-to-calculate-percentage age-in-hijri'.split():
+        pg.goto(f'{B}/guides/{slug}/')
+        bad = pg.evaluate(TABLES_JS)
+        over = pg.evaluate('document.documentElement.scrollWidth - window.innerWidth')
+        check(f'guide {slug}: one h1, new look, tables aligned, no overflow', pg.locator('h1').count() == 1 and pg.locator('.stage, .card, astro-island').count() == 0 and not bad and over <= 0, f'{bad} over {over}')
+    pg.goto(B + '/guides/'); check('guides index: 12 guides listed', pg.locator('.guide-cards a').count() == 12)
+    pg.goto(B + '/guides/pregnancy-weeks-months/')
+    for wk, tri in (('13', 'الأول'), ('14', 'الأول'), ('28', 'الثاني'), ('29', 'الثالث')):
+        pg.fill('#wk', wk)
+        check(f'pregnancy guide: week {wk} is in the {tri} trimester', f'الثلث {tri}' in pg.locator('#wk-out').inner_text())
+
     pg.goto(B + '/bmi/?weightKg=80&heightCm=180')
     check('example: no mark on numbers from a link', not pg.locator('[data-example]').is_visible())
     for slug, field in (('age', 'birthDate'), ('pregnancy', 'lmpDate'), ('ovulation', 'lmpDate')):
