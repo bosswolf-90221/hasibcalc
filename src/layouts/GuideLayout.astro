@@ -33,7 +33,7 @@ const body = (await Astro.slots.render('default')).replace(/<h2>(.*?)<\/h2>/g, (
   return `<h2 id="${id}">${text}</h2>`;
 });
 ---
-<Site title={g.title} description={g.description} path={path} jsonLd={jsonLd} image={`/og/g-${g.slug}.png`} ogType="article">
+<Site title={g.seoTitle ?? g.title} description={g.description} path={path} jsonLd={jsonLd} image={`/og/g-${g.slug}.png`} ogType="article">
   <div class="wrap calc-page guide-page" style={`--tint: var(--moment-${moment.tint})`}>
     <nav class="crumbs" aria-label="مسار التنقل"><ol><li><a href="/">الرئيسية</a></li><li><a href="/guides/">أدلة</a></li><li aria-current="page">{g.kicker}</li></ol></nav>
     <header class="page-head">
