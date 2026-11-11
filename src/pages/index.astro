@@ -13,11 +13,18 @@ const sampleTotal = sample.ok ? money(sample.value.total) : '';
 const READ = ['end-of-service-guide', 'flat-vs-reducing-interest', 'zakat-step-by-step'].map((s) => GUIDES.find((g) => g.slug === s)!);
 ---
 <Site title="حاسِب: حاسبات عربية مجانية لمواقف حياتك" description="تركت عملك، أو ستأخذ قرضاً، أو تنتظر طفلاً؟ اختر موقفك، واعرف كل الأرقام التي تحتاجها فيه: نهاية الخدمة، الراتب، القسط، الزكاة، الحمل، المعدل وغيرها." path="/">
-  <div class="wrap">
-    <section class="home-lead">
+  <section class="hero">
+    <div class="wrap">
       <h1 class="t-display">ماذا يحدث معك الآن؟</h1>
       <p class="t-lead">اختر موقفك، ونعطيك كل الأرقام التي تحتاجها فيه.</p>
-    </section>
+      <form class="hero-search" role="search" aria-label="ابحث عن حاسبة" action="/search/" method="get">
+        <label class="sr-only" for="hero-q">ابحث عن حاسبة</label>
+        <input id="hero-q" name="q" type="search" placeholder="مثلاً: نهاية الخدمة، القسط، الزكاة" autocomplete="off" />
+        <button class="btn btn-primary" type="submit">ابحث</button>
+      </form>
+    </div>
+  </section>
+  <div class="wrap">
 
     <section class="moments" id="moments" aria-label="المواقف">
       {MOMENTS.map((m, i) => (

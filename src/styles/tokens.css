@@ -70,11 +70,19 @@
   --gutter: clamp(18px, 4vw, 40px);
   --container: 1200px;
 
-  /* الأشكال: بلا ظلال، والفصل بالمساحة واللون */
+  /* الأشكال */
   --r-field: 11px;
   --r-card: 18px;
   --target: 46px;
   --focus-ring: 0 0 0 3px rgba(11, 110, 95, 0.18);
+
+  /* العمق: ظل خفيف مائل إلى لون الموقع، للبطاقات والنماذج والنتيجة فقط */
+  --deep: #0a3d36;
+  --deep-ink: #d3ebe4;
+  --border-soft: rgba(21, 32, 29, 0.08);
+  --shadow-1: 0 1px 2px rgba(21, 32, 29, 0.05), 0 8px 24px -14px rgba(21, 32, 29, 0.18);
+  --shadow-2: 0 2px 6px rgba(21, 32, 29, 0.06), 0 22px 44px -22px rgba(11, 110, 95, 0.45);
+  --head-h: 68px;
 
   /* الحركة */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);

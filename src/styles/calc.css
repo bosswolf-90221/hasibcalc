@@ -326,3 +326,14 @@ details.how > summary { cursor: pointer; font-weight: var(--w-bold); min-height:
   .calc-input { background: none; padding: 0; position: static; margin-bottom: var(--s-5); }
   details.how { display: none; }
 }
+
+/* ===== تطوير الشكل (11 نوفمبر 2026): النموذج والنتيجة في بطاقتين ===== */
+[data-calc] > .calc-input { top: calc(var(--head-h) + 16px); }
+.calc-input { border: 1px solid var(--border-soft); box-shadow: var(--shadow-1); }
+.result { background: var(--surface); border: 1px solid var(--border-soft); border-top: 4px solid var(--accent); border-radius: var(--r-card); box-shadow: var(--shadow-1); padding: var(--s-5) clamp(18px, 3vw, 30px); }
+.result.mini { padding: var(--s-4); }
+.whatif { background: var(--paper); }
+.eq-t, .ch-v { box-shadow: var(--shadow-1); }
+.moment-link { box-shadow: var(--shadow-1); }
+@media (max-width: 860px) { .result { padding: var(--s-4); } }
+.calc-aside { top: calc(var(--head-h) + 16px); }
