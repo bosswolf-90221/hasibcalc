@@ -69,4 +69,4 @@ export const BASIS_LABEL: Record<Basis, string> = {
 };
 
 /** The latest date a page's text changed, separate from when its sources were checked. */
-export const TRUST_PAGES_UPDATED = { about: '2026-11-05', privacy: '2026-11-05', terms: '2026-11-05', contact: '2026-11-05' };
+export const TRUST_PAGES_UPDATED = { about: '2026-11-05', privacy: '2026-11-11', terms: '2026-11-05', contact: '2026-11-05' };
