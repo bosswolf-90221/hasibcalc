@@ -4,6 +4,7 @@ import { SITE } from '../config/site';
 import { GUIDES } from '../data/guides';
 import { TRUST_PAGES_UPDATED as T } from '../data/verification';
 import { MOMENTS } from '../data/moments';
+import { UPDATES_LATEST } from '../data/updates';
 
 export const GET: APIRoute = () => {
   // lastmod = when that page's content last changed, so Google knows what to re-crawl.
@@ -19,7 +20,7 @@ export const GET: APIRoute = () => {
     ...CATEGORIES.map((k) => [`/category/${k.key}/`, latest(CALCULATORS.filter((c) => c.categories.includes(k.key)).map(calcDate))] as [string, string]),
     ['/guides/', latest(GUIDES.map((g) => g.updated ?? g.date))],
     ...GUIDES.map((g) => [`/guides/${g.slug}/`, g.updated ?? g.date] as [string, string]),
-    ['/about/', T.about], ['/privacy/', T.privacy], ['/terms/', T.terms], ['/contact/', T.contact],
+    ['/about/', T.about], ['/privacy/', T.privacy], ['/terms/', T.terms], ['/contact/', T.contact], ['/updates/', UPDATES_LATEST],
   ];
   const urls = entries.map(([p, d]) => `  <url><loc>${SITE.url}${p}</loc><lastmod>${d}</lastmod></url>`).join('\n');
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;

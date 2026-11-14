@@ -1,0 +1,41 @@
+---
+import Page from '../layouts/Page.astro';
+import { SITE } from '../config/site';
+import { FIXES, KEPT, UPDATES, UPDATES_LATEST } from '../data/updates';
+import { arDate } from '../lib/format';
+---
+<Page title="سجل التحديثات والتصحيحات" description="ما صححناه في طريقة الحساب ولماذا ومن أي مصدر، وما راجعناه وأبقيناه مع تنبيه، وما أضفناه إلى حاسِب من حاسبات وأدلة، بتاريخ كل تغيير." path="/updates/" crumb="سجل التحديثات" heading="سجل التحديثات والتصحيحات" lede="نسجّل هنا كل تغيير يمسّ نتيجة حاسبة: ما الذي تغيّر، ولماذا، ومن أي مصدر. ونسجّل أيضاً ما أضفناه إلى الموقع." updated={arDate(UPDATES_LATEST)}>
+  <p>إذا وجدت نتيجة تخالف مصدراً رسمياً، أو رقماً قديماً، فراسلنا على <a href={`mailto:${SITE.contactEmail}`} dir="ltr">{SITE.contactEmail}</a>. نراجع الملاحظة على المصدر، ونصحّح ما يلزم، ونسجّله هنا. وطريقة عملنا كاملة في <a class="link" href="/about/">من نحن وكيف نحسب</a>.</p>
+
+  <h2>تصحيحات في طريقة الحساب</h2>
+  <p>راجعنا كل المعادلات على مصادرها في 4 نوفمبر 2026، وصحّحنا ما يلي. ونُشرت هذه التصحيحات في 5 نوفمبر 2026.</p>
+  <ul class="log">
+    {FIXES.map((f) => (
+      <li>
+        <h3><a href={f.href}>{f.page}</a></h3>
+        <p><strong>قبل:</strong> {f.before}</p>
+        <p><strong>بعد:</strong> {f.after}</p>
+        <p><strong>السبب:</strong> {f.why}</p>
+      </li>
+    ))}
+  </ul>
+
+  <h2>ما راجعناه وأبقيناه مع تنبيه</h2>
+  <p>هذه قواعد لم نجد فيها نصاً رسمياً قاطعاً، فأبقينا الحساب كما هو، وكتبنا في الصفحة أنه غير محسوم.</p>
+  <ul class="log">
+    {KEPT.map((k) => <li><h3><a href={k.href}>{k.topic}</a></h3><p>{k.why}</p></li>)}
+  </ul>
+
+  <h2>الإضافات والتحديثات</h2>
+  <ul class="log">
+    {UPDATES.map((u) => <li><p><time datetime={u.date}>{arDate(u.date)}</time>: <a href={u.href}>{u.text}</a></p></li>)}
+  </ul>
+</Page>
+
+<style>
+  .log { list-style: none; padding: 0; margin: 0 0 var(--s-7); }
+  .log li { padding: var(--s-4) 0; border-bottom: 1px solid var(--border-soft); }
+  .log h3 { margin: 0 0 var(--s-2); font-size: 1.05rem; }
+  .log p { margin: 0 0 var(--s-1); }
+  .log time { font-weight: 700; white-space: nowrap; }
+</style>
