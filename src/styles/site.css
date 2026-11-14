@@ -190,3 +190,9 @@
   .moment-result { padding: var(--s-4); }
 }
 @media (prefers-reduced-motion: reduce) { .moment:hover, .guide-row a:hover, .btn-primary:hover { transform: none; } }
+
+/* مراجعة التصميم (14 نوفمبر 2026): بطاقة التواريخ فيها تاريخ اليوم بالهجري، ومساحات لمس 44px */
+.moment-last.moment-lead h2 { font-size: 1.45rem; }
+.moment-last .moment-sample { flex-basis: 34%; }
+.brand { padding-block: 2px; }
+.more-link { display: inline-flex; align-items: center; min-height: 44px; }

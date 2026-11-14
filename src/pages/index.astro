@@ -5,11 +5,16 @@ import { CALCULATORS } from '../data/calculators';
 import { GUIDES } from '../data/guides';
 import { MOMENTS } from '../data/moments';
 import { calcDues } from '../lib/calc/exit-dues';
-import { money } from '../lib/format';
+import { arDate, money } from '../lib/format';
+import { toHijri, HIJRI_MONTHS, WEEKDAYS } from '../lib/calc/hijri';
+import { toISODate } from '../lib/calc/core';
 
 // A fixed example, so the number on the home page never drifts away from its label.
 const sample = calcDues({ basicSalary: 8000, startDate: '2019-03-01', endDate: '2026-10-31', unpaidAbsenceDays: 0, takenDays: 120 });
 const sampleTotal = sample.ok ? money(sample.value.total) : '';
+// Today in Hijri for the dates card; built into the page and refreshed in the browser from the visitor's date.
+const nowIso = toISODate(new Date());
+const nowH = toHijri(new Date(nowIso + 'T00:00:00Z'));
 const READ = ['end-of-service-guide', 'flat-vs-reducing-interest', 'zakat-step-by-step'].map((s) => GUIDES.find((g) => g.slug === s)!);
 ---
 <Site title="حاسِب: حاسبات عربية مجانية لمواقف حياتك" description="تركت عملك، أو ستأخذ قرضاً، أو تنتظر طفلاً؟ اختر موقفك، واعرف كل الأرقام التي تحتاجها فيه: نهاية الخدمة، الراتب، القسط، الزكاة، الحمل، المعدل وغيرها." path="/">
@@ -34,16 +39,23 @@ const READ = ['end-of-service-guide', 'flat-vs-reducing-interest', 'zakat-step-b
             <span class="moment-sample"><span>مثال: راتب 8,000 من مارس 2019 إلى أكتوبر 2026، و120 يوم إجازة مأخوذة</span><b class="num">{sampleTotal}</b><span>درهم مستحقات تقريباً</span></span>
           </a>
         ) : (
-          <a class:list={['moment', i === MOMENTS.length - 1 && 'moment-last']} href={`/moments/${m.slug}/`} style={`--moment:var(--moment-${m.tint})`}>
+          i === MOMENTS.length - 1 ? (
+            <a class="moment moment-lead moment-last" href={`/moments/${m.slug}/`} style={`--moment:var(--moment-${m.tint})`}>
+              <span class="text"><MomentIcon name={m.icon} /><h2>{m.name}</h2><p>{m.ask}</p><small>{m.shows.join(' · ')}</small></span>
+              <span class="moment-sample"><span>اليوم بالهجري (أم القرى)</span><b data-hnow="d">{nowH.day} {HIJRI_MONTHS[nowH.month - 1]}</b><span data-hnow="g">{nowH.year} هـ، {WEEKDAYS[new Date(nowIso + 'T00:00:00Z').getUTCDay()]} {arDate(nowIso)}</span></span>
+            </a>
+          ) : (
+          <a class="moment" href={`/moments/${m.slug}/`} style={`--moment:var(--moment-${m.tint})`}>
             <MomentIcon name={m.icon} /><h2>{m.name}</h2><p>{m.ask}</p><small>{m.shows.join(' · ')}</small>
           </a>
+          )
         )
       ))}
     </section>
 
     <section class="home-sec" id="index" aria-labelledby="all-h">
-      <h2 id="all-h" class="t-h2">تعرف ما تريد؟ ابحث مباشرة</h2>
-      <label><span class="sr-only">ابحث عن حاسبة</span><input class="finder-input" id="q" type="search" placeholder="قرض، زكاة، موعد الراتب…" autocomplete="off" /></label>
+      <h2 id="all-h" class="t-h2">كل الحاسبات</h2>
+      <label><span class="sr-only">صفِّ قائمة الحاسبات</span><input class="finder-input" id="q" type="search" placeholder="صفِّ القائمة: قرض، زكاة، موعد الراتب…" autocomplete="off" /></label>
       <ul class="calc-list linklist" id="calc-list">
         {CALCULATORS.map((c) => <li data-k={[c.question, c.short, c.blurb, ...c.terms].join(' ')}><a href={`/${c.slug}/`}>{c.question}</a></li>)}
       </ul>
@@ -70,6 +82,17 @@ const READ = ['end-of-service-guide', 'flat-vs-reducing-interest', 'zakat-step-b
 
 <script>
   import { matches, norm, queryWords } from '../lib/search';
+  import { toHijri, HIJRI_MONTHS, WEEKDAYS } from '../lib/calc/hijri';
+  import { localTodayISO } from '../lib/calc/core';
+  import { arDate } from '../lib/format';
+  {
+    const iso = localTodayISO();
+    const d = new Date(iso + 'T00:00:00Z');
+    const h = toHijri(d);
+    const dEl = document.querySelector<HTMLElement>('[data-hnow="d"]');
+    const gEl = document.querySelector<HTMLElement>('[data-hnow="g"]');
+    if (dEl && gEl) { dEl.textContent = `${h.day} ${HIJRI_MONTHS[h.month - 1]}`; gEl.textContent = `${h.year} هـ، ${WEEKDAYS[d.getUTCDay()]} ${arDate(iso)}`; }
+  }
   const q = document.querySelector<HTMLInputElement>('#q')!;
   const none = document.querySelector<HTMLElement>('#finder-none')!;
   const items = Array.from(document.querySelectorAll<HTMLElement>('#calc-list li')).map((li) => ({ li, k: norm(li.dataset.k ?? '') }));
