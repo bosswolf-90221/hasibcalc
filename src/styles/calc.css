@@ -337,3 +337,7 @@ details.how > summary { cursor: pointer; font-weight: var(--w-bold); min-height:
 .moment-link { box-shadow: var(--shadow-1); }
 @media (max-width: 860px) { .result { padding: var(--s-4); } }
 .calc-aside { top: calc(var(--head-h) + 16px); }
+
+/* جواب «أي شهر هجري الآن؟» أعلى صفحة التحويل */
+.hijri-now { margin-bottom: var(--s-6); padding: var(--s-4) var(--s-5); background: var(--surface); border: 1px solid var(--border-soft); border-inline-start: 4px solid var(--accent); border-radius: var(--r-card); box-shadow: var(--shadow-1); font-size: 1.08rem; max-width: 60em; }
+.hijri-now strong { color: var(--accent); font-weight: var(--w-heavy); }

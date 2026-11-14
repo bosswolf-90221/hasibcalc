@@ -9,7 +9,7 @@ import { gregorianToHijri, hijriToGregorian, toHijri, fromHijri, HIJRI_MONTHS } 
 import { HIJRI_YEAR_NOW } from '../data/calculators';
 import { toHijriView, toGregorianView } from '../lib/views-extra';
 import { errorView } from '../lib/views';
-import { calendarLeaves, hijriTodayLine, hijriMonthTable, gregMonthHijriTable, hijriYearsTable } from '../lib/exhibits-extra';
+import { calendarLeaves, hijriNowLine, hijriTodayLine, hijriMonthTable, gregMonthHijriTable, hijriYearsTable } from '../lib/exhibits-extra';
 import { toISODate } from '../lib/calc/core';
 import { arDate } from '../lib/format';
 
@@ -24,6 +24,7 @@ const exRamadan = hijriToGregorian({ hYear: 1448, hMonth: 9, hDay: 1 });
 const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
 ---
 <CalcLayout slug="hijri" lede={`السنة الهجرية الآن ${HIJRI_YEAR_NOW} هـ. اختر اتجاه التحويل: من الميلادي إلى الهجري، أو من الهجري إلى الميلادي، بتقويم أم القرى الرسمي في السعودية.`}>
+  <p class="hijri-now" data-x="hijri-now" set:html={hijriNowLine(today)} />
   <section class="pq" data-calc="to-hijri" aria-labelledby="q1">
     <h2 id="q1" class="pq-title">من الميلادي إلى الهجري</h2>
     <div class="calc-input"><form class="calc-fields" onsubmit="return false">
@@ -108,7 +109,7 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
   import { mountCalculator, num } from '../scripts/runtime';
   import { gregorianToHijri, hijriToGregorian } from '../lib/calc/hijri';
   import { toHijriView, toGregorianView } from '../lib/views-extra';
-  import { calendarLeaves, hijriTodayLine, hijriMonthTable, gregMonthHijriTable } from '../lib/exhibits-extra';
+  import { calendarLeaves, hijriNowLine, hijriTodayLine, hijriMonthTable, gregMonthHijriTable } from '../lib/exhibits-extra';
   import { localTodayISO } from '../lib/calc/core';
 
   const a = document.querySelector<HTMLElement>('[data-calc="to-hijri"]')!;
@@ -125,6 +126,8 @@ const nextNewYear = fromHijri({ year: HIJRI_YEAR_NOW + 1, month: 1, day: 1 });
   const todayEl = document.querySelector<HTMLElement>('[data-x="hijri-today"]');
   const monthEl = document.querySelector<HTMLElement>('[data-x="hijri-month"]');
   if (todayEl) todayEl.innerHTML = hijriTodayLine(nowIso);
+  const nowEl = document.querySelector<HTMLElement>('[data-x="hijri-now"]');
+  if (nowEl) nowEl.innerHTML = hijriNowLine(nowIso);
   if (monthEl) monthEl.innerHTML = hijriMonthTable(nowIso);
   for (const k of [-1, 0, 1]) { const el = document.querySelector<HTMLElement>(`[data-x="greg-month-${k}"]`); if (el) el.innerHTML = gregMonthHijriTable(nowIso, k); }
   const b = document.querySelector<HTMLElement>('[data-calc="to-greg"]')!;

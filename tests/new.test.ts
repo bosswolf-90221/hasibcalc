@@ -330,3 +330,21 @@ describe('exit dues', () => {
     if (!r.ok) expect(r.errors[0].field).toBe('basicSalary');
   });
 });
+
+describe('hijriNowLine: the answer to «أي شهر هجري الآن؟»', () => {
+  test('names the current Umm al-Qura month and its order', async () => {
+    const { hijriNowLine } = await import('../src/lib/exhibits-extra');
+    // 11 November 2026 is 1 Jumada al-Akhirah 1448, the same day the page shows in its calendar check.
+    const line = hijriNowLine('2026-11-11');
+    expect(line).toContain('جمادى الآخرة 1448 هـ');
+    expect(line).toContain('الشهر السادس');
+    expect(line).toContain('واليوم 1 جمادى الآخرة');
+  });
+  test('gives the twelfth month its full ordinal', async () => {
+    const { hijriNowLine } = await import('../src/lib/exhibits-extra');
+    const { fromHijri } = await import('../src/lib/calc/hijri');
+    const d = fromHijri({ year: 1448, month: 12, day: 10 });
+    const iso = d!.toISOString().slice(0, 10);
+    expect(hijriNowLine(iso)).toContain('الشهر الثاني عشر');
+  });
+});

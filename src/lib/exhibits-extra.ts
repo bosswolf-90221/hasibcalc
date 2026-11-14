@@ -219,6 +219,14 @@ export function bmiHeightTable(): string {
 }
 
 /** "Today in Hijri" line and the current Hijri month day by day (Umm al-Qura). `iso` is the visitor's local date. */
+const ORDINALS = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع', 'العاشر', 'الحادي عشر', 'الثاني عشر'];
+
+/** The direct answer to «أي شهر هجري الآن؟», shown at the top of the Hijri page. */
+export function hijriNowLine(iso: string): string {
+  const h = toHijriDate(new Date(iso + 'T00:00:00Z'));
+  return `نحن الآن في شهر <strong>${HIJRI_MONTHS[h.month - 1]} ${h.year} هـ</strong>، وهو الشهر ${ORDINALS[h.month - 1]} من السنة الهجرية. واليوم ${h.day} ${HIJRI_MONTHS[h.month - 1]}، الموافق ${arDate(iso)}.`;
+}
+
 export function hijriTodayLine(iso: string): string {
   const d = new Date(iso + 'T00:00:00Z');
   const h = toHijriDate(d);
