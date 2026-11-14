@@ -1,0 +1,106 @@
+---
+import Faq from '../components/Faq.astro';
+import CalcLayout from '../layouts/CalcLayout.astro';
+import NumIn from '../components/NumIn.astro';
+import DateIn from '../components/DateIn.astro';
+import Pills from '../components/Pills.astro';
+import ResultCard from '../components/ResultCard.astro';
+import { calcWeeks, AVG_MONTH_DAYS } from '../lib/calc/weeks';
+import { weeksView } from '../lib/views-extra';
+import { errorView } from '../lib/views';
+import { toISODate } from '../lib/calc/core';
+import { months, days } from '../lib/format';
+
+const today = toISODate(new Date());
+const r = calcWeeks({ amount: 70, unit: 'weeks', startDate: today });
+const view = r.ok ? weeksView(r.value) : errorView(r, 'المدة')!;
+const wk = (n: number) => `${n} ${n >= 3 && n <= 10 ? 'أسابيع' : 'أسبوعاً'}`;
+const one = (n: number) => (Math.round(n * 10) / 10).toFixed(1).replace(/\.0$/, '');
+const cal = (m: number, d: number) => (m === 0 ? days(d) : `${months(m)}${d ? ` و${days(d)}` : ''}`);
+const W_ROWS = [4, 8, 12, 13, 16, 20, 24, 26, 30, 36, 40, 43, 52, 70, 100].map((w) => {
+  const x = calcWeeks({ amount: w, unit: 'weeks', startDate: '2027-01-01' });
+  return x.ok ? { w, d: w * 7, m: one(x.value.months), c: cal(x.value.calMonths, x.value.calRemainderDays) } : null;
+}).filter((x) => x !== null);
+const M_ROWS = [1, 2, 3, 6, 9, 12, 18, 24].map((m) => ({ m, w: one((m * AVG_MONTH_DAYS) / 7), d: Math.round(m * AVG_MONTH_DAYS) }));
+---
+<CalcLayout slug="weeks-to-months" lede="اكتب عدد الأسابيع، ونحوّله إلى أشهر وأيام وسنوات، ونعطيك التاريخ الذي تنتهي فيه المدة. ويمكنك التحويل من الأشهر إلى الأسابيع أيضاً.">
+  <div data-calc="weeks-to-months">
+    <div class="calc-input">
+      <h2 class="input-title">بياناتك</h2>
+      <form class="calc-fields" onsubmit="return false" aria-label="المدة">
+        <Pills name="unit" legend="ماذا تحوّل؟" selected="weeks" options={[{ value: 'weeks', label: 'أسابيع إلى أشهر' }, { value: 'months', label: 'أشهر إلى أسابيع' }]} />
+        <NumIn name="amount" label="العدد" value={70} />
+        <DateIn name="startDate" label="تبدأ المدة في" value={today} />
+      </form>
+      <p class="hint">تاريخ البداية يحدد طول الأشهر الفعلية في المدة، ولا يغيّر عدد الأيام.</p>
+    </div>
+    <ResultCard view={view}>
+      <p class="formula" slot="formula"><code>الأيام = الأسابيع × 7</code>، و<code>الأشهر = الأيام ÷ 30.44</code>، وهو متوسط طول الشهر الميلادي (365.2425 ÷ 12). والأشهر الكاملة على التقويم نعدّها من تاريخ البداية.</p>
+    </ResultCard>
+  </div>
+
+  <Fragment slot="article">
+    <div class="example">
+      <p><strong>الجواب المختصر:</strong> الشهر نحو <strong>4.35 أسبوع</strong>، لا 4 أسابيع بالضبط. فاضرب عدد الأسابيع في 7 لتعرف الأيام، ثم اقسم على 30.44 لتعرف الأشهر: <strong>70 أسبوعاً = 490 يوماً ≈ 16.1 شهراً</strong>، و43 أسبوعاً = 301 يوم ≈ 9.9 أشهر.</p>
+    </div>
+
+    <h2>جدول الأسابيع بالأشهر</h2>
+    <p>العمود الأخير يعدّ الأشهر الكاملة على التقويم من 1 يناير 2027، لأن الأشهر الفعلية تختلف بين 28 و31 يوماً.</p>
+    <div class="scroll-x"><table>
+      <thead><tr><th>الأسابيع</th><th>الأيام</th><th>بالأشهر تقريباً</th><th>على التقويم من 1 يناير 2027</th></tr></thead>
+      <tbody>{W_ROWS.map((x) => <tr><td>{wk(x.w)}</td><td>{x.d.toLocaleString('en-US')} يوماً</td><td>{months(Number(x.m))}</td><td>{x.c}</td></tr>)}</tbody>
+    </table></div>
+
+    <h2>الأشهر بالأسابيع</h2>
+    <div class="scroll-x"><table>
+      <thead><tr><th>الأشهر</th><th>بالأسابيع تقريباً</th><th>بالأيام تقريباً</th></tr></thead>
+      <tbody>{M_ROWS.map((x) => <tr><td>{x.m} {x.m === 1 ? 'شهر' : x.m <= 10 ? 'أشهر' : 'شهراً'}</td><td>{x.w} أسبوعاً</td><td>{x.d} يوماً</td></tr>)}</tbody>
+    </table></div>
+
+    <h2>لماذا الشهر ليس 4 أسابيع؟</h2>
+    <p>الأسبوع 7 أيام دائماً، أما الشهر الميلادي فبين 28 و31 يوماً. فبراير وحده يساوي 4 أسابيع بالضبط في السنة العادية، وبقية الأشهر تزيد يومين أو ثلاثة. لذلك تعطي القسمة على 4 نتيجة أكبر من الحقيقة: 70 ÷ 4 = 17.5 شهراً، والصحيح نحو 16.1 شهراً، أي أن الفرق شهر ونصف تقريباً.</p>
+    <p>متوسط طول الشهر 30.44 يوماً، لأن السنة الميلادية في المتوسط 365.2425 يوماً (التقويم يتكرر كل 400 سنة فيها 97 سنة كبيسة)، وقسمتها على 12 تعطي 30.436875 يوماً، أي 4.348 أسبوعاً.</p>
+
+    <h2>مثال محسوب</h2>
+    <div class="example">
+      <p>مدة 70 أسبوعاً تبدأ في 1 يناير 2027: 70 × 7 = <strong>490 يوماً</strong>. بالمتوسط 490 ÷ 30.44 ≈ 16.1 شهراً. وعلى التقويم تنتهي في 5 مايو 2028، أي <strong>16 شهراً و4 أيام</strong>، لأن فبراير 2028 فيه 29 يوماً.</p>
+    </div>
+
+    <h2>أسابيع الحمل وعمر الطفل</h2>
+    <p>أشهر الحمل تُعدّ بطريقة مختلفة: الحمل الكامل 40 أسبوعاً تقريباً، ويُقسّم عادة إلى 9 أشهر، لذلك لا يطابق شهر الحمل القسمة على 4.35 تماماً. إذا كتبت عدداً من الأسابيع بين 1 و42، نذكر لك في النتيجة شهر الحمل المقابل. ولحساب عمر الحمل وموعد الولادة من تاريخ آخر دورة استعملي <a class="link" href="/pregnancy/">حاسبة الحمل</a>، وفي <a class="link" href="/guides/pregnancy-weeks-months/">دليل أسابيع الحمل بالأشهر</a> الجدول كاملاً.</p>
+    <p>أما عمر الطفل بالأسابيع فيُحوَّل بالطريقة العادية: طفل عمره 26 أسبوعاً عمره نحو 6 أشهر. ولمعرفة عمر دقيق من تاريخ الميلاد استعمل <a class="link" href="/age/">حاسبة العمر</a>.</p>
+
+    <h2>أخطاء شائعة</h2>
+    <ul>
+      <li>قسمة الأسابيع على 4: تعطي أشهراً أكثر من الحقيقة، ويكبر الخطأ كلما طالت المدة.</li>
+      <li>اعتبار كل شهر 30 يوماً: أقرب، لكنه يُبعد النتيجة يوماً تقريباً عن كل شهرين.</li>
+      <li>الخلط بين أشهر الحمل والأشهر العادية.</li>
+    </ul>
+
+    <Faq title="أسئلة شائعة" items={[
+      { q: "كم أسبوعاً في الشهر؟", a: "نحو 4.35 أسبوع في المتوسط، أي 4 أسابيع ويومان أو ثلاثة. وفبراير في السنة العادية 4 أسابيع بالضبط." },
+      { q: "70 أسبوعاً كم شهراً؟", a: "70 أسبوعاً = 490 يوماً ≈ 16.1 شهراً، أي سنة و4 أشهر تقريباً." },
+      { q: "43 أسبوعاً كم شهراً؟", a: "43 أسبوعاً = 301 يوم ≈ 9.9 أشهر، أي أقل من 10 أشهر بقليل." },
+      { q: "52 أسبوعاً كم شهراً؟", a: "52 أسبوعاً = 364 يوماً ≈ 12 شهراً، أي أقل من السنة بيوم واحد، أو يومين في السنة الكبيسة." },
+      { q: "6 أشهر كم أسبوعاً؟", a: "نحو 26.1 أسبوع، أي 26 أسبوعاً ويوم تقريباً، وبالأيام بين 181 و184 يوماً بحسب الأشهر." },
+      { q: "السنة كم أسبوعاً؟", a: "52 أسبوعاً ويوم واحد، أو يومان في السنة الكبيسة." },
+      { q: "لماذا يختلف الجواب عن قسمة الأسابيع على 4؟", a: "لأن الشهر أطول من 4 أسابيع بيومين أو ثلاثة، فالقسمة على 4 تعطي أشهراً أكثر من الحقيقة." },
+    ]} />
+  </Fragment>
+</CalcLayout>
+
+<script>
+  import { mountCalculator, num } from '../scripts/runtime';
+  import { calcWeeks, type WeeksUnit } from '../lib/calc/weeks';
+  import { weeksView } from '../lib/views-extra';
+  import { localTodayISO } from '../lib/calc/core';
+  const root = document.querySelector<HTMLElement>('[data-calc="weeks-to-months"]')!;
+  const s = root.querySelector<HTMLInputElement>('#f-startDate')!;
+  if (!new URLSearchParams(location.search).has('startDate')) { s.value = localTodayISO(); s.dataset.default = s.value; }
+  mountCalculator(root, {
+    compute: (f) => {
+      const result = calcWeeks({ amount: num(f.amount), unit: (f.unit as WeeksUnit) || 'weeks', startDate: f.startDate });
+      return { result, view: result.ok ? weeksView(result.value) : null };
+    },
+  });
+</script>

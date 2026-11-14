@@ -294,7 +294,7 @@ export const MOMENTS: Moment[] = [
   },
   {
     slug: 'dates-ages', icon: 'dates', tint: 'dates', name: 'تواريخ وأعمار', ask: 'كم عمري، وكم بين تاريخين؟',
-    shows: ['العمر', 'العمر بالهجري', 'تحويل التاريخ', 'الأيام بين تاريخين'], calcs: ['age', 'hijri-age', 'hijri', 'days-between'], guides: ['age-in-hijri', 'new-year-2027', 'uae-national-day-2026'],
+    shows: ['العمر', 'العمر بالهجري', 'تحويل التاريخ', 'الأيام بين تاريخين'], calcs: ['age', 'hijri-age', 'hijri', 'days-between', 'weeks-to-months'], guides: ['age-in-hijri', 'new-year-2027', 'uae-national-day-2026'],
     seoTitle: 'تواريخ وأعمار: عمرك بالميلادي والهجري والأيام بين تاريخين',
     description: 'اكتب تاريخ ميلادك، واعرف عمرك بالضبط بالميلادي والهجري وموعد عيد ميلادك القادم، وتاريخ اليوم بالهجري، وعدد الأيام بين أي تاريخين.',
     title: 'تواريخ وأعمار: كم عمري؟ وكم بقي؟',

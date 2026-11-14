@@ -348,3 +348,33 @@ describe('hijriNowLine: the answer to «أي شهر هجري الآن؟»', () =
     expect(hijriNowLine(iso)).toContain('الشهر الثاني عشر');
   });
 });
+
+describe('weeks to months (calcWeeks)', () => {
+  test('70 weeks = 490 days ≈ 16.1 months; from 1 Jan 2027 ends 5 May 2028 = 16 months and 4 days', async () => {
+    const { calcWeeks } = await import('../src/lib/calc/weeks');
+    const r = val(calcWeeks({ amount: 70, unit: 'weeks', startDate: '2027-01-01' }));
+    expect(r.days).toBe(490);
+    expect(r.months).toBeCloseTo(16.0989, 3);
+    expect(r.endDate).toBe('2028-05-05');
+    expect([r.calMonths, r.calRemainderDays]).toEqual([16, 4]);
+    expect(r.pregnancyMonth).toBeNull();
+  });
+  test('40 weeks is month 9 of pregnancy; 43 weeks ≈ 9.9 months', async () => {
+    const { calcWeeks } = await import('../src/lib/calc/weeks');
+    expect(val(calcWeeks({ amount: 40, unit: 'weeks', startDate: '2027-01-01' })).pregnancyMonth).toBe(9);
+    expect(val(calcWeeks({ amount: 43, unit: 'weeks', startDate: '2027-01-01' })).months).toBeCloseTo(9.889, 3);
+  });
+  test('6 months ≈ 26.09 weeks; calendar end 31 Aug + 6 months clamps to 28 Feb', async () => {
+    const { calcWeeks } = await import('../src/lib/calc/weeks');
+    const r = val(calcWeeks({ amount: 6, unit: 'months', startDate: '2026-08-31' }));
+    expect(r.weeks).toBeCloseTo(26.0887, 3);
+    expect(r.endDate).toBe('2027-02-28');
+    expect([r.calMonths, r.calRemainderDays]).toEqual([6, 0]);
+  });
+  test('rejects empty and negative input', async () => {
+    const { calcWeeks } = await import('../src/lib/calc/weeks');
+    expect(calcWeeks({ amount: null, unit: 'weeks', startDate: '2027-01-01' }).ok).toBe(false);
+    expect(calcWeeks({ amount: -3, unit: 'weeks', startDate: '2027-01-01' }).ok).toBe(false);
+    expect(calcWeeks({ amount: 3, unit: 'months', startDate: 'x' }).ok).toBe(false);
+  });
+});

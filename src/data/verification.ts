@@ -25,6 +25,7 @@ export const VERIFICATION: Record<string, Verification> = {
   discount: math,
   age: math,
   'days-between': math,
+  'weeks-to-months': math,
   bmi: official,
   calories: partial, // Mifflin-St Jeor is cited; activity factors have no single official source
   pregnancy: official,

@@ -63,7 +63,7 @@ with sync_playwright() as p:
 
     pg.goto(B + '/')
     check('home: all nine moments are listed', pg.locator('#moments .moment').count() == 9)
-    check('home: all calculators are listed', pg.locator('#calc-list a').count() == 22)
+    check('home: all calculators are listed', pg.locator('#calc-list a').count() == 23)
     visible = lambda href: pg.locator(f'#calc-list a[href="{href}"]').is_visible()
     pg.fill('#q', 'قسط سيارة'); pg.wait_for_timeout(100)
     check('home search: finds the loan page', visible('/loan/') and not visible('/bmi/'))
@@ -153,9 +153,9 @@ with sync_playwright() as p:
         over = pg.evaluate('document.documentElement.scrollWidth - window.innerWidth')
         check(f'{path}: one h1, new look, no overflow, footer present', pg.locator('h1').count() == 1 and pg.locator('.stage, .card, astro-island, .colophon').count() == 0 and over <= 0 and pg.locator('.site-foot').count() == 1, str(over))
     pg.goto(B + '/calculators/')
-    check('calculators: all 22 listed once', pg.locator('.guide-cards a').count() == 22 and len(set(pg.eval_on_selector_all('.guide-cards a', 'e => e.map(a => a.getAttribute("href"))'))) == 22)
+    check('calculators: all 23 listed once', pg.locator('.guide-cards a').count() == 23 and len(set(pg.eval_on_selector_all('.guide-cards a', 'e => e.map(a => a.getAttribute("href"))'))) == 23)
     pg.goto(B + '/search/')
-    check('search: everything listed before typing', pg.locator('.search-list li:visible').count() == 9 + 22 + 12, str(pg.locator('.search-list li:visible').count()))
+    check('search: everything listed before typing', pg.locator('.search-list li:visible').count() == 9 + 23 + 12, str(pg.locator('.search-list li:visible').count()))
     pg.fill('#sq', 'زكاه'); pg.wait_for_timeout(100)
     hrefs = pg.eval_on_selector_all('.search-list li:not([hidden]) a', 'e => e.map(a => a.getAttribute("href"))')
     check('search: finds calculator, guide and moment, tolerant of ة/ه', '/zakat/' in hrefs and '/guides/zakat-step-by-step/' in hrefs and '/moments/ramadan-zakat/' in hrefs and '/bmi/' not in hrefs, str(hrefs))
@@ -259,7 +259,7 @@ with sync_playwright() as p:
     for slug, field in (('age', 'birthDate'), ('pregnancy', 'lmpDate'), ('ovulation', 'lmpDate')):
         pg.goto(f'{B}/{slug}/')
         check(f'{slug}: starts empty with no made-up result', pg.input_value(f'#f-{field}') == '' and val(pg) == '—' and not pg.locator('[data-example]').is_visible() and not pg.locator('[data-r="error"]').is_visible() and not pg.locator('.exhibit').first.is_visible(), val(pg))
-    for slug in 'age annual-leave bmi calories days-between discount end-of-service exit-dues gosi gpa-target gpa hijri-age hijri loan ovulation percentage pregnancy salary-day salary-saudi salary-uae vat zakat'.split():
+    for slug in 'age annual-leave bmi calories days-between discount end-of-service exit-dues gosi gpa-target gpa hijri-age hijri loan ovulation percentage pregnancy salary-day salary-saudi salary-uae vat weeks-to-months zakat'.split():
         pg.goto(f'{B}/{slug}/')
         unlabeled = pg.evaluate('''[...document.querySelectorAll('[data-calc] input[data-field], [data-calc] select[data-field]')].filter((i) => !i.labels || !i.labels.length || !i.labels[0].textContent.trim()).length''')
         check(f'{slug}: every field has a label, one h1, old look gone', unlabeled == 0 and pg.locator('h1').count() == 1 and pg.locator('.sentence, .machine, .ask-line').count() == 0, str(unlabeled))
@@ -275,6 +275,14 @@ with sync_playwright() as p:
     check('days: Oct 2026 inclusive = 31', val(pg) == '31', val(pg))
     check('days: 22 working days (Sat–Sun)', '22 يوم عمل' in pg.locator('[data-r="badge"]').inner_text())
 
+    pg.goto(B + '/weeks-to-months/')
+    pg.fill('#f-startDate', '2027-01-01'); pg.fill('#f-amount', '70'); pg.wait_for_timeout(300)
+    check('weeks: 70 weeks ≈ 16.1 months', val(pg) == '16.1', val(pg))
+    check('weeks: calendar 16 months and 4 days', '16 شهراً و4 أيام' in pg.locator('[data-result]').inner_text())
+    pg.click('label:has(input[value="months"])'); pg.fill('#f-amount', '6'); pg.wait_for_timeout(300)
+    check('weeks: 6 months ≈ 26.1 weeks', val(pg) == '26.1', val(pg))
+    pg.fill('#f-amount', '-2'); pg.wait_for_timeout(300)
+    check('weeks: negative flagged', pg.locator('#f-amount-err').is_visible())
     pg.goto(B + '/pregnancy/')
     pg.fill('#f-cycleDays', '60'); pg.wait_for_timeout(300)
     check('pregnancy: invalid cycle flagged', pg.locator('#f-cycleDays-err').is_visible())

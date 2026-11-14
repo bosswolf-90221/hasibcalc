@@ -2,6 +2,7 @@
 import type { View } from './views';
 import { HIJRI_MONTHS, type Conversion } from './calc/hijri';
 import type { DateSpan } from './calc/dates';
+import type { WeeksResult } from './calc/weeks';
 import type { Pregnancy } from './calc/pregnancy';
 import type { Calories } from './calc/calories';
 import { arDate, days, int, months, years } from './format';
@@ -317,5 +318,30 @@ export function duesView(d: Dues): View {
       ['رصيد الإجازة المتبقي', leaveDays(l.remaining)],
     ],
     whatif: l.remaining > 0 ? [`لو لم يبقَ لك رصيد إجازة، لانخفضت المستحقات بمقدار ${moneyFmt(l.amount)} درهم.`] : undefined,
+  };
+}
+
+const PREG_ORD = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع'];
+const one = (n: number) => { const r = Math.round(n * 10) / 10; return Number.isInteger(r) ? int(r) : r.toFixed(1); };
+const wk = (n: number) => `${one(n)} ${Number.isInteger(n) && n >= 3 && n <= 10 ? 'أسابيع' : 'أسبوعاً'}`;
+export function weeksView(w: WeeksResult): View {
+  const isWeeks = w.unit === 'weeks';
+  const cal = w.calMonths === 0 ? days(w.calRemainderDays) : `${months(w.calMonths)}${w.calRemainderDays ? ` و${days(w.calRemainderDays)}` : ''}`;
+  const rows: [string, string][] = [
+    [isWeeks ? 'بالأيام' : 'بالأيام تقريباً', int(Math.round(w.days))],
+    isWeeks ? ['بالأشهر الكاملة على التقويم', cal] : ['بالأسابيع الكاملة', `${wk(Math.floor(w.weeks))}${Math.round(w.days) % 7 ? ` و${days(Math.round(w.days - Math.floor(w.weeks) * 7))}` : ''}`],
+    ['بالسنوات', `${one(w.years)} سنة`],
+    ['تنتهي المدة في', arDate(w.endDate)],
+  ];
+  if (w.pregnancyMonth) rows.push(['في الحمل', `الشهر ${PREG_ORD[w.pregnancyMonth - 1]}`]);
+  return {
+    label: isWeeks ? 'المدة بالأشهر' : 'المدة بالأسابيع',
+    value: Math.round((isWeeks ? w.months : w.weeks) * 10) / 10,
+    decimals: 1,
+    unit: isWeeks ? 'شهراً تقريباً' : 'أسبوعاً تقريباً',
+    sentence: isWeeks
+      ? `${wk(w.amount)} = ${int(Math.round(w.days))} يوماً، أي ${cal} على التقويم من تاريخ البداية.`
+      : `${months(w.amount)} ≈ ${int(Math.round(w.days))} يوماً بمتوسط طول الشهر، وعلى التقويم تنتهي المدة في ${arDate(w.endDate)}.`,
+    rows,
   };
 }
